@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    font-size: 3.75rem; /* 60px */
+    line-height: 1.2; /* 72px */
+    letter-spacing: -1%; /* -1% */
+  }
+
+  h2 {
+    font-size: 3rem; /* 48px */
+    line-height: 1.4; /* 140% */
+  }
+
+  h3 {
+    font-size: 2.25rem; /* 36px */
+    line-height: 40px; /* 40px */
+  }
+
+  h4 {
+    font-size: 1.875rem; /* 30px */
+    line-height: 36px; /* 36px */
+  }
+}
