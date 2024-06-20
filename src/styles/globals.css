@@ -24,3 +24,26 @@
     line-height: 36px; /* 36px */
   }
 }
+
+@layer utilities {
+  .text-sm {
+    /* font-size: 14px */
+    line-height: 20px;
+  }
+  .text-base {
+    /* font-size: 16px */
+    line-height: 24px;
+  }
+  .text-lg {
+    /* font-size: 18px */
+    line-height: 28px;
+  }
+  .text-xl {
+    /* font-size: 20px */
+    line-height: 28px;
+  }
+  .text-2xl {
+    /* font-size: 24px */
+    line-height: 32px;
+  }
+}
