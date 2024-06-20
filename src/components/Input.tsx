@@ -83,8 +83,8 @@ export default function Input(props: TInputProps) {
           }
           disabled:bg-grayscale-100 focus:border-blue-500
           `}
-          placeholder="Enter text"
           disabled={disabled}
+          {...rest}
         />
 
         {/* Icon */}
