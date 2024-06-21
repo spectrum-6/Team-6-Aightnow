@@ -1,14 +1,15 @@
 import IconEyeHide from "@/icons/IconEyeHide";
 import IconEyeShow from "@/icons/IconEyeShow";
 import IconSearch from "@/icons/IconSearch";
-import { InputHTMLAttributes, useId } from "react";
+import { InputHTMLAttributes, useId, useState } from "react";
 
 type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
+  caption?: string;
   iconType?: "eyeShow" | "eyeHide" | "search";
   iconPosition?: "left" | "right";
-  caption?: string;
-  state?: "warning" | "success";
+  state?: "warning" | "success" | null;
+  iconClickHandler?: () => void; //icon 버튼 클릭 시 실행 함수 전달
 };
 
 const iconComponentType = {
@@ -18,70 +19,80 @@ const iconComponentType = {
 };
 
 export default function Input(props: TInputProps) {
-  const { label, iconType, iconPosition, caption, disabled, state, ...rest } =
-    props;
+  const {
+    label,
+    caption,
+    iconType,
+    iconPosition,
+    disabled,
+    state,
+    iconClickHandler,
+    ...rest
+  } = props;
 
   // input Id
   const inputId = useId();
 
+  // focus 상태 - input border color, caption text color 에 영향을 미침
+  const [isFocused, setFocused] = useState(false);
+
+  // icon 종류와 위치
   const IconComponent = iconType ? iconComponentType[iconType] : null;
   const iconPos = iconPosition ? iconPosition : iconType ? "right" : null;
 
-  // input state에 따른 label text color classname
-  const labelTextColor = () => {
+  // caption text color
+  const captionTextColor = () => {
     if (disabled) {
-      return "text-grayscale-300-";
+      return "text-grayscale-300";
+    } else if (isFocused) {
+      return "text-blue-300";
     } else if (state === "warning") {
       return "text-warning-100";
+    } else if (state === "success") {
+      return "text-success-100";
     } else {
-      return "text-navy-900";
-    }
-  };
-  // input state에 따른 input border color classname
-  const inputBorderColor = () => {
-    if (state === "warning") {
-      return "border-warning-100";
-    } else {
-      return "border-grayscale-300";
-    }
-  };
-
-  // input state에 따른 Caption text color classname
-  const captionTextColor = () => {
-    switch (state) {
-      case "warning":
-        return "text-warning-100";
-      case "success":
-        return "text-success-100";
-      default:
-        return "text-grayscale-700";
+      return "text-grayscale-700";
     }
   };
 
   return (
     <div className="flex flex-col gap-1">
       {/* Label */}
+      {/* 라벨의 text color는 disabled, warning, default 상태가 있음 */}
       {label && (
         <label
           htmlFor={inputId}
-          className={`text-medium text-base ${labelTextColor()}`}
+          className={`text-medium text-base ${
+            disabled
+              ? "text-grayscale-300"
+              : state === "warning"
+              ? "text-warning-100"
+              : "text-grayscale-900"
+          }`}
         >
           {label}
         </label>
       )}
 
-      {/* Input Wrapper */}
+      {/* Input */}
       <div className="relative min-w-40">
         <input
           id={inputId}
-          className={`w-full py-4 border rounded-lg bg-white placeholder-grayscale-400 text-grayscal-900 outline-0 ${inputBorderColor()} ${
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className={`w-full py-4 border rounded-lg bg-white placeholder-grayscale-400 outline-0 ${
+            state === "warning"
+              ? "border-warning-100 text-warning-100"
+              : "border-grayscale-300 text-grayscal-900"
+          } ${
             iconPos === "left"
               ? "pl-11 pr-4"
               : iconPos === "right"
               ? "pl-4 pr-11"
               : "px-4"
           }
-          disabled:bg-grayscale-100 focus:border-blue-500
+          disabled:bg-grayscale-100 disabled:border-grayscale-300 disabled:placeholder-grayscale-300 
+          focus:border-blue-500
           `}
           disabled={disabled}
           {...rest}
@@ -89,15 +100,17 @@ export default function Input(props: TInputProps) {
 
         {/* Icon */}
         {IconComponent && iconPos && (
-          <div
-            className={`absolute top-2/4 -translate-y-1/2 cursor-pointer ${
-              iconPos === "left" ? "left-4" : "right-4"
-            }`}
+          <button
+            type="button"
+            onClick={iconClickHandler}
+            className={`absolute top-2/4 -translate-y-1/2 ${
+              iconPos ? iconPos + "-4" : ""
+            } ${disabled ? "cursor-default" : "cursor-pointer"}`}
           >
             <IconComponent
               color={!disabled && state === "warning" ? "#FF294F" : ""}
             />
-          </div>
+          </button>
         )}
       </div>
 
