@@ -18,12 +18,6 @@ type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   buttonClickHandler?: () => void; // 버튼 클릭 시 실행 함수 전달
 };
 
-const iconComponentType = {
-  eyeShow: IconEyeShow,
-  eyeHide: IconEyeHide,
-  search: IconSearch,
-};
-
 export default function Input(props: TInputProps) {
   const {
     label,

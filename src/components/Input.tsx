@@ -1,7 +1,7 @@
 import IconEyeHide from "@/icons/IconEyeHide";
 import IconEyeShow from "@/icons/IconEyeShow";
 import IconSearch from "@/icons/IconSearch";
-import { InputHTMLAttributes, useId, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes, useId, useState } from "react";
 
 type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -9,6 +9,8 @@ type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   iconType?: "eyeShow" | "eyeHide" | "search";
   iconPosition?: "left" | "right";
   state?: "warning" | "success" | null;
+  inputValue: string;
+  setInputValue: (e: ChangeEvent<HTMLInputElement>) => void;
   iconClickHandler?: () => void; //icon 버튼 클릭 시 실행 함수 전달
 };
 
@@ -26,6 +28,8 @@ export default function Input(props: TInputProps) {
     iconPosition,
     disabled,
     state,
+    inputValue,
+    setInputValue,
     iconClickHandler,
     ...rest
   } = props;
@@ -95,6 +99,8 @@ export default function Input(props: TInputProps) {
           focus:border-blue-500
           `}
           disabled={disabled}
+          value={inputValue}
+          onChange={setInputValue}
           {...rest}
         />
 
