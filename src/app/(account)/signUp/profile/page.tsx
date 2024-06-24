@@ -1,8 +1,8 @@
 "use client";
 
 import TextButton from "@/components/Button/TextButton";
-import DuplicateCheckInput from "@/components/DuplicateCheckInput";
 import AccountFormBox from "@/containers/account/AccountFormBox";
+import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 import SerchDropdown from "@/containers/account/signUp/SerchDropdown";
 import Image from "next/image";
 import Link from "next/link";

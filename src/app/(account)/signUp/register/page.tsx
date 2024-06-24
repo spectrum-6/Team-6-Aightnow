@@ -1,9 +1,9 @@
 "use client";
 
 import TextButton from "@/components/Button/TextButton";
-import DuplicateCheckInput from "@/components/DuplicateCheckInput";
 import Input from "@/components/Input";
 import AccountFormBox from "@/containers/account/AccountFormBox";
+import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 
