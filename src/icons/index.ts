@@ -11,6 +11,7 @@ import IconRefresh from "@/icons/IconRefresh";
 import IconSearch from "@/icons/IconSearch";
 import IconTime from "@/icons/IconTime";
 import IconTranslate from "@/icons/IconTranslate";
+import IconFab from "@/icons/IconFab";
 
 export {
     IconAi,
@@ -26,4 +27,5 @@ export {
     IconSearch,
     IconTime,
     IconTranslate,
+    IconFab,
 };
