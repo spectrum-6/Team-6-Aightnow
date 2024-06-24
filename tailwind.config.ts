@@ -12,6 +12,7 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "main-image": "url('/images/main_background.jpg')",
       },
       boxShadow: {
         login: "0 0 10px 5px rgba(203, 203, 203, 0.25)",

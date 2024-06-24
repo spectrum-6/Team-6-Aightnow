@@ -6,7 +6,7 @@
   h1 {
     font-size: 3.75rem; /* 60px */
     line-height: 1.2; /* 72px */
-    letter-spacing: -1%; /* -1% */
+    letter-spacing: -0.01em; /* -1% */
   }
 
   h2 {
