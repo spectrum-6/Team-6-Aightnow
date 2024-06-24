@@ -14,7 +14,7 @@ export default function Login() {
         <div className="flex justify-between items-center py-4 text-sm">
           <p>아직 회원이 아니신가요?</p>
           <Link
-            href={"/signin"}
+            href={"/signUp/verify"}
             className="text-blue-600 font-medium underline underline-offset-4"
           >
             아잇나우 회원가입

@@ -5,6 +5,7 @@ import DuplicateCheckInput from "@/components/DuplicateCheckInput";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import SerchDropdown from "@/containers/account/signUp/SerchDropdown";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Profile() {
@@ -60,14 +61,15 @@ export default function Profile() {
 
             <SerchDropdown onTagsChange={handleTagsChange} />
           </div>
-
-          <TextButton
-            variant={isButtonEnable ? "primary" : "disable"}
-            size="lg"
-            disabled={!isButtonEnable}
-          >
-            인증링크 전송
-          </TextButton>
+          <Link href={"/signUp/completed"}>
+            <TextButton
+              variant={isButtonEnable ? "primary" : "disable"}
+              size="lg"
+              disabled={!isButtonEnable}
+            >
+              가입하기
+            </TextButton>
+          </Link>
         </form>
       </AccountFormBox>
     </>
