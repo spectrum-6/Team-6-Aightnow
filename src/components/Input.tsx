@@ -48,11 +48,14 @@ export default function Input(props: TInputProps) {
   const captionTextColor = () => {
     if (disabled) {
       return "text-grayscale-300";
-    } else if (isFocused) {
+    }
+    if (isFocused) {
       return "text-blue-300";
-    } else if (state === "warning") {
+    }
+    if (state === "warning") {
       return "text-warning-100";
-    } else if (state === "success") {
+    }
+    if (state === "success") {
       return "text-success-100";
     } else {
       return "text-grayscale-700";
