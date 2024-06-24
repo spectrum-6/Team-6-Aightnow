@@ -14,10 +14,12 @@ const PopupTitle: FC<TPopupContentProps> = ({ subTitle, content }) => {
     <div className="flex flex-col justify-start items-center gap-2">
      {/* subTitle이 있는 경우에만 렌더링*/}
      {subTitle && (
-      <div className="text-center text-black text-xl leading-7">{subTitle}</div>
+      <div className="text-center text-black text-xl leading-7 font-pretendard">
+       {subTitle}
+      </div>
      )}
      {/* content를 렌더링 */}
-     <div className="text-center text-scaleGray-900 text-base font-medium leading-normal">
+     <div className="text-center text-scaleGray-900 text-base font-medium leading-normal font-pretendard">
       {content}
      </div>
     </div>
