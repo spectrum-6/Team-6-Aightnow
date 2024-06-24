@@ -21,7 +21,7 @@ const Popup: FC<PopupProps> = ({ title, children }) => {
    {/* 둥근 모서리, 테두리, 그림자 효과가 있는 컨테이너에 팝업 내용 렌더링 */}
    <div className="rounded-3xl border bg-white shadow-lg w-auto">
     {/* 회색 배경의 둥근 상단 컨테이너에 팝업 제목 렌더링 */}
-    <div className="rounded-tl-3xl rounded-tr-3xl bg-gray-100 px-2.5 pt-6 pb-4 text-center text-xl font-bold font-['Pretendard'] leading-7 text-black">
+    <div className="rounded-tl-3xl rounded-tr-3xl bg-gray-100 px-2.5 pt-6 pb-4 text-center text-xl font-bold font-pretendard leading-7 text-black">
      {/* title prop 표시 */}
      {title}
     </div>
