@@ -28,42 +28,33 @@ const Badge: React.FC<BadgeProps> = ({
   <div
    // 뱃지의 스타일을 적용
    // 요소의 순서는 reverse 값에 따라 달라진다
-   className={`w-[55px] h-8 px-2 py-1 rounded justify-start items-center gap-1 inline-flex ${
+   className={`w-[55px] h-8 px-2 py-1 gap-1 rounded items-center flex justify-center ${
     reverse ? 'flex-row-reverse' : 'flex-row'
    } ${variantStyles[variant]}`}
   >
    {/* 아이콘이 있는 경우 렌더링 */}
    {icon && (
-    <div className="w-6 h-5 relative">
+    <div className="w-5 h-5 relative flex items-center justify-center">
      <IconAi
       // 아이콘의 색상은 variant에 따라 달라진다
-      className="absolute w-4 h-4 left-[3.75px] top-[2.50px]"
-      color={variant === 'gray' ? '#18254C' : 'white'}
+      className="w-5 h-5 flex items-center justify-center"
+      color={
+       variant === 'skyblue'
+        ? '#005A9B'
+        : variant === 'gray'
+        ? '#18254C'
+        : 'white'
+      }
      />
-     <div className="w-[13.75px] h-[13.72px] left-[3.75px] top-[2.50px] absolute" />
     </div>
    )}
    {/* 'AI' 텍스트를 렌더링*/}
-   <div className="text-center text-base font-semibold font-['Pretendard'] leading-normal">
-    AI
-   </div>
-   {/* 아이콘이 있는 경우 렌더링*/}
-   {icon && (
-    <div className="w-6 h-5 relative">
-     <IconAi
-      // 아이콘의 색상은 variant에 따라 달라진다
-      className="absolute w-4 h-4 left-[3.75px] top-[2.50px]"
-      color={variant === 'gray' ? '#18254C' : 'white'}
-     />
-     <div className="w-[13.75px] h-[13.72px] left-[3.75px] top-[2.50px] absolute" />
-    </div>
-   )}
+   <div className="text-base font-Pretendard leading-normal">AI</div>
   </div>
  );
 };
 
 // 커스텀 훅->이를 통해 Badge 컴포넌트의 Props를 쉽게 설정
-
 // reverse 옵션을 활성화
 export const useBadgeReverse = (props: BadgeProps) => ({
  ...props,
@@ -71,13 +62,22 @@ export const useBadgeReverse = (props: BadgeProps) => ({
 });
 
 // 'black' 스타일의 뱃지를 생성
-export const useBadgeBlack = () => ({ variant: 'black' });
+export const useBadgeBlack = (icon?: React.ReactNode) => ({
+ variant: 'black',
+ icon,
+});
 
 // 'gray' 스타일의 뱃지를 생성
-export const useBadgeGray = () => ({ variant: 'gray' });
+export const useBadgeGray = (icon?: React.ReactNode) => ({
+ variant: 'gray',
+ icon,
+});
 
 // 'skyblue' 스타일의 뱃지를 생성
-export const useBadgeBlue = () => ({ variant: 'skyblue' });
+export const useBadgeBlue = (icon?: React.ReactNode) => ({
+ variant: 'skyblue',
+ icon,
+});
 
 // Badge 컴포넌트를 내보내기
 export { Badge };
