@@ -12,6 +12,11 @@ import IconSearch from "@/icons/IconSearch";
 import IconTime from "@/icons/IconTime";
 import IconTranslate from "@/icons/IconTranslate";
 import IconFab from "@/icons/IconFab";
+import IconKr from "@/icons/IconKr";
+import IconCn from "@/icons/IconCn";
+import IconFr from "@/icons/IconFr";
+import IconJp from "@/icons/IconJp";
+import IconUs from "@/icons/IconUs";
 
 export {
     IconAi,
@@ -28,4 +33,9 @@ export {
     IconTime,
     IconTranslate,
     IconFab,
+    IconKr,
+    IconCn,
+    IconFr,
+    IconJp,
+    IconUs,
 };
