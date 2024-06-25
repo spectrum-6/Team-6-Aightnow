@@ -13,15 +13,14 @@ type PopupProps = {
 // 컴포넌트 props는 PopupProps 타입을 따름
 const Popup: FC<PopupProps> = ({ title, children }) => {
  // 컴포넌트 내부에서 title과 children props를 구조 분해하여 사용
-
  // 팝업 컴포넌트 렌더링
  return (
   // 전체 페이지를 덮는 고정 풀스크린 컨테이너로 팝업 감싸기
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
    {/* 둥근 모서리, 테두리, 그림자 효과가 있는 컨테이너에 팝업 내용 렌더링 */}
    <div className="rounded-3xl border bg-white shadow-lg w-auto">
-    {/* 회색 배경의 둥근 상단 컨테이너에 팝업 제목 렌더링 */}
-    <div className="rounded-tl-3xl rounded-tr-3xl bg-gray-100 px-2.5 pt-6 pb-4 text-center text-xl font-bold font-pretendard leading-7 text-black">
+    {/* 둥근 상단 컨테이너에 팝업 제목 렌더링 */}
+    <div className="rounded-tl-3xl rounded-tr-3xl bg-white px-2.5 pt-6 pb-4 text-center text-xl font-bold font-pretendard leading-7 text-black">
      {/* title prop 표시 */}
      {title}
     </div>
