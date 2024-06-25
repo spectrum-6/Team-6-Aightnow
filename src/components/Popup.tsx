@@ -13,7 +13,6 @@ type PopupProps = {
 // 컴포넌트 props는 PopupProps 타입을 따름
 const Popup: FC<PopupProps> = ({ title, children }) => {
  // 컴포넌트 내부에서 title과 children props를 구조 분해하여 사용
-
  // 팝업 컴포넌트 렌더링
  return (
   // 전체 페이지를 덮는 고정 풀스크린 컨테이너로 팝업 감싸기
