@@ -19,7 +19,7 @@ const PopupTitle: FC<TPopupContentProps> = ({ subTitle, content }) => {
       </div>
      )}
      {/* content를 렌더링 */}
-     <div className="text-center text-scaleGray-900 text-base font-medium leading-normal font-pretendard">
+     <div className="text-center text-base text-[#121212] font-medium leading-normal font-pretendard">
       {content}
      </div>
     </div>
