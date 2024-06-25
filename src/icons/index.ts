@@ -17,6 +17,8 @@ import IconCn from "@/icons/IconCn";
 import IconFr from "@/icons/IconFr";
 import IconJp from "@/icons/IconJp";
 import IconUs from "@/icons/IconUs";
+import IconApple from "./IconApple";
+import IconNewsAi from "./IconNewsAi";
 
 export {
     IconAi,
@@ -38,4 +40,6 @@ export {
     IconFr,
     IconJp,
     IconUs,
+    IconApple,
+    IconNewsAi,
 };
