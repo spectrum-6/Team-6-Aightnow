@@ -10,10 +10,12 @@ type TPopupButtonProps = {
 function PopupButton({ buttonLeft, buttonRight }: TPopupButtonProps) {
  return (
   <div className="flex justify-center items-center gap-2">
-   <button className="h-14 px-4 py-2 bg-scaleGray-200 rounded-lg flex justify-center items-center text-scaleGray-600 text-base font-medium font-pretendard leading-normal">
+   {/* 왼쪽 버튼 */}
+   <button className="h-14 px-4 py-2 bg-[#E9E9E9] rounded-lg flex justify-center items-center text-[#575757] text-base font-medium font-pretendard leading-normal">
     {buttonLeft}
    </button>
-   <button className="h-14 px-4 py-2 bg-mainNavy-900 rounded-lg flex justify-center items-center text-scaleGray-0 text-base font-medium font-['Pretendard'] leading-normal">
+   {/* 오른쪽 버튼 */}
+   <button className="h-14 px-4 py-2 bg-black rounded-lg flex justify-center items-center text-[#FFFFFF] text-base font-medium font-Pretendard leading-normal">
     {buttonRight}
    </button>
   </div>
