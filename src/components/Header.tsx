@@ -13,7 +13,7 @@ export default function Header() {
               height="64"
             />
           </h1>
-          <ul className="flex items-center font-medium text-[#18254C]">
+          <ul className="flex items-center font-medium text-navy-900">
             <li className="w-40 py-2 text-lg text-center">발견</li>
             <li className="w-40 py-2 text-lg text-center">뉴스</li>
             <li className="w-40 py-2 text-lg text-center">관심종목</li>
