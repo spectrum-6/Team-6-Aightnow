@@ -1,6 +1,3 @@
-import IconEyeHide from "@/icons/IconEyeHide";
-import IconEyeShow from "@/icons/IconEyeShow";
-import IconSearch from "@/icons/IconSearch";
 import {
   ChangeEvent,
   InputHTMLAttributes,
@@ -18,7 +15,7 @@ type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   buttonClickHandler?: () => void; // 버튼 클릭 시 실행 함수 전달
 };
 
-export default function Input(props: TInputProps) {
+export default function DuplicateCheckInput(props: TInputProps) {
   const {
     label,
     caption,
