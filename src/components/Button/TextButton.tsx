@@ -17,6 +17,26 @@ import {
     IconTranslate,
 } from "@/icons";
 
+type TSvgColor = {
+    primary: string;
+    disable: string;
+    grayscale: string;
+    warning: string;
+    success: string;
+    outline: string;
+    secondary: string;
+};
+
+const svgColor: TSvgColor = {
+    primary: "#FFFFFF",
+    disable: "#C5C5C5",
+    grayscale: "#575757",
+    warning: "#ffffff",
+    success: "#ffffff",
+    outline: "#18254C",
+    secondary: "#FFFFFF",
+};
+
 type TTextButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     children: string;
     variant?: "primary" | "disable" | "grayscale" | "warning" | "success" | "outline" | "secondary";
@@ -42,6 +62,8 @@ export default function TextButton(props: TTextButtonProps) {
     const { children, variant, size, icon, additionalClass, ...rest } = props;
 
     const getIcon = () => {
+        const iconProps = variant ? svgColor[variant] : "#9F9F9F";
+
         switch (icon) {
             case "ai":
                 return <IconAi />;
@@ -68,7 +90,7 @@ export default function TextButton(props: TTextButtonProps) {
             case "time":
                 return <IconTime />;
             case "translate":
-                return <IconTranslate />;
+                return <IconTranslate color={iconProps} />;
             default:
                 return null;
         }
