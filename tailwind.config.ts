@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -63,6 +63,9 @@ const config: Config = {
         success: {
           100: "#1FCE65",
         },
+      },
+      animation: {
+        "spin-slow": "spin 1.8s linear infinite",
       },
     },
   },
