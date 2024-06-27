@@ -8,6 +8,7 @@ import Popup from "@/components/Popup/Popup";
 import { IconApple, IconClose } from "@/icons";
 import Link from "next/link";
 import { useState } from "react";
+import RaderChart from "@/components/Chart/RadarChart";
 
 export default function LikePage() {
   const [inputValue, setInputValue] = useState("");
@@ -68,22 +69,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -120,22 +121,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -172,22 +173,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -224,22 +225,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -276,22 +277,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -328,22 +329,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -380,22 +381,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -432,22 +433,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
@@ -484,22 +485,22 @@ export default function LikePage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-6">
-                <p className="w-[136px] h-[136px] bg-blue-100">차트</p>
+                <RaderChart width={136} height={136} />
                 <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
                   <li className="flex justify-between">
                     주가<span className="text-blue-600">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    투자지수<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    수익성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    성장성<span className="text-warning-100">▲0.0%</span>
                   </li>
                   <li className="flex justify-between">
-                    주가<span className="text-warning-100">▲0.0%</span>
+                    관심도<span className="text-warning-100">▲0.0%</span>
                   </li>
                 </ul>
               </div>
