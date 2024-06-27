@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
-import RecentViews from "@/containers/account/mainPage/RecentViews";
-import StockNews from "@/containers/account/mainPage/StockNews";
-import UserAIReport from "@/containers/account/mainPage/UserAIReport";
+import RecentViews from "@/containers/account/main/RecentViews";
+import StockNews from "@/containers/account/main/StockNews";
+import UserAIReport from "@/containers/account/main/UserAIReport";
 
 export default function main() {
   return (
