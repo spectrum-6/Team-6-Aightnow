@@ -29,6 +29,7 @@ export default function LikePage() {
 
   const closeAddModal = () => {
     setIsAddModalVisible(false);
+    setInputValue("");
   };
 
   return (
