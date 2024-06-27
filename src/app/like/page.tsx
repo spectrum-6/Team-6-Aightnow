@@ -546,7 +546,7 @@ export default function LikePage() {
               관심 종목 추가
             </h3>
             <button
-              className="flex items-center justify-center absolute right-0 top-0"
+              className="w-12 h-12 flex items-center justify-center absolute right-0 -top-2"
               onClick={closeAddModal}
             >
               <IconClose />
