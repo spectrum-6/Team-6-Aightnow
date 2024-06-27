@@ -613,8 +613,8 @@ export default function LikePage() {
                   </button>
                 </div>
                 <ul className="overflow-auto flex gap-5">
-                  <li className="w-[255px] h-24 px-4 py-6 border border-navy-100 rounded-2xl flex-shrink-0">
-                    <Link href="#" className="w-full h-full block">
+                  <li className="w-[255px] h-24 border border-navy-100 rounded-2xl flex-shrink-0">
+                    <Link href="#" className="w-full h-full px-4 py-6 block">
                       <div className="flex justify-between">
                         <div className="flex gap-6">
                           <p>
@@ -635,8 +635,8 @@ export default function LikePage() {
                       </div>
                     </Link>
                   </li>
-                  <li className="w-[255px] h-24 px-4 py-6 border border-navy-100 rounded-2xl flex-shrink-0">
-                    <Link href="#" className="w-full h-full block">
+                  <li className="w-[255px] h-24 border border-navy-100 rounded-2xl flex-shrink-0">
+                    <Link href="#" className="w-full h-full px-4 py-6 block">
                       <div className="flex justify-between">
                         <div className="flex gap-6">
                           <p>
@@ -657,8 +657,8 @@ export default function LikePage() {
                       </div>
                     </Link>
                   </li>
-                  <li className="w-[255px] h-24 px-4 py-6 border border-navy-100 rounded-2xl flex-shrink-0">
-                    <Link href="#" className="w-full h-full block">
+                  <li className="w-[255px] h-24 border border-navy-100 rounded-2xl flex-shrink-0">
+                    <Link href="#" className="w-full h-full px-4 py-6 block">
                       <div className="flex justify-between">
                         <div className="flex gap-6">
                           <p>
