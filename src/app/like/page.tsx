@@ -14,6 +14,7 @@ export default function LikePage() {
   const [inputValue, setInputValue] = useState("");
   const [isDeletePopupVisible, setIsDeletePopupVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isFavoriteStock, setIsFavoriteStock] = useState(false);
 
   const openDeletePopup = () => {
     setIsDeletePopupVisible(true);
@@ -30,6 +31,11 @@ export default function LikePage() {
   const closeAddModal = () => {
     setIsAddModalVisible(false);
     setInputValue("");
+  };
+
+  const toggleFavoriteStock = () => {
+    setIsFavoriteStock((prev) => !prev);
+    console.log(isFavoriteStock);
   };
 
   return (
@@ -595,12 +601,23 @@ export default function LikePage() {
                             <span className="ml-2 text-sm">▼1.75</span>
                             <span className="ml-2 text-sm">-0.82%</span>
                           </p>
-                          <TextButton
-                            variant="primary"
-                            additionalClass="w-[120px] h-9 text-sm font-medium"
-                          >
-                            추가
-                          </TextButton>
+                          {isFavoriteStock ? (
+                            <TextButton
+                              variant="primary"
+                              additionalClass="w-[120px] h-9 text-sm font-medium"
+                              onClick={toggleFavoriteStock}
+                            >
+                              추가
+                            </TextButton>
+                          ) : (
+                            <TextButton
+                              variant="grayscale"
+                              additionalClass="w-[120px] h-9 text-sm font-medium"
+                              onClick={toggleFavoriteStock}
+                            >
+                              삭제하기
+                            </TextButton>
+                          )}
                         </div>
                       </div>
                     </Link>
