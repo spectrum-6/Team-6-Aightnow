@@ -1,13 +1,13 @@
-import FavoriteStockItem from "./FavoriteStockNewsItem";
+import FavoriteStockNewsItem from "./FavoriteStockNewsItem";
 
-type TFavoriteStockItem = {
+type TFavoriteStockNewsItem = {
   title: string;
   hour: number;
   company: string;
   image: string;
 };
 
-const data: TFavoriteStockItem[] = [
+const data: TFavoriteStockNewsItem[] = [
   {
     title: '올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"',
     hour: 1,
@@ -28,7 +28,7 @@ const data: TFavoriteStockItem[] = [
   },
 ];
 
-export default function FavoriteStockSection() {
+export default function FavoriteStockNews() {
   return (
     <>
       <section className="w-[1200px] pt-12 mx-auto">
@@ -37,7 +37,7 @@ export default function FavoriteStockSection() {
         </h2>
         <ul className="flex gap-5">
           {data.map((item, index) => (
-            <FavoriteStockItem
+            <FavoriteStockNewsItem
               key={index}
               title={item.title}
               hour={item.hour}
