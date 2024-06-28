@@ -635,7 +635,7 @@ export default function LikePage() {
                       전체삭제
                     </button>
                   </div>
-                  <ul className="overflow-auto flex gap-5">
+                  <ul className="flex gap-5 overflow-auto scrollbar-hide">
                     <li className="w-[255px] h-24 border border-navy-100 rounded-2xl flex-shrink-0">
                       <Link href="#" className="w-full h-full px-4 py-6 block">
                         <div className="flex justify-between">
