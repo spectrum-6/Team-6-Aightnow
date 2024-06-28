@@ -1,6 +1,6 @@
 import LatestNewsItem from "./LatestNewsItem";
 
-type TLatestNewsItem = {
+type TLatestNews = {
   title: string;
   hour: number;
   company: string;
@@ -8,7 +8,7 @@ type TLatestNewsItem = {
   image: string;
 };
 
-const data: TLatestNewsItem[] = [
+const data: TLatestNews[] = [
   {
     title: `"산유국 되나" 尹 한 마디에 한국석유 또 '上'…석유주 훨훨`,
     hour: 1,

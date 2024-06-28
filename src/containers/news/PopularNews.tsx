@@ -1,7 +1,7 @@
 import MainNews from "./MainNews";
 import PopularNewsItem from "./PopularNewsItem";
 
-type TRelatedNewsItem = {
+type TPopularNews = {
   title: string;
   date: string;
   content: string;
@@ -9,7 +9,7 @@ type TRelatedNewsItem = {
   image: string;
 };
 
-const data: TRelatedNewsItem[] = [
+const data: TPopularNews[] = [
   {
     title: "엔비디아 또 신고가… 시총 2위 애플과 962억달러 차이",
     date: "2024.06.05",
