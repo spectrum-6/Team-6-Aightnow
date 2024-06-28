@@ -4,6 +4,7 @@ import Checkbox from "@/components/Checkbox";
 import { useEffect, useState } from "react";
 import { policyText, termsText } from "./data";
 import TextButton from "@/components/Button/TextButton";
+import Link from "next/link";
 
 export default function AgreementForm() {
   // checkbox 상태
@@ -92,13 +93,15 @@ export default function AgreementForm() {
           </div>
         </div>
 
-        <TextButton
-          variant={isButtonEnable ? "primary" : "disable"}
-          size="lg"
-          disabled={!isButtonEnable}
-        >
-          다음
-        </TextButton>
+        <Link href={"/signUp/verify"}>
+          <TextButton
+            variant={isButtonEnable ? "primary" : "disable"}
+            size="lg"
+            disabled={!isButtonEnable}
+          >
+            다음
+          </TextButton>
+        </Link>
       </form>
     </>
   );
