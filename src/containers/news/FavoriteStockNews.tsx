@@ -1,13 +1,13 @@
 import FavoriteStockNewsItem from "./FavoriteStockNewsItem";
 
-type TFavoriteStockNewsItem = {
+type TFavoriteStockNews = {
   title: string;
   hour: number;
   company: string;
   image: string;
 };
 
-const data: TFavoriteStockNewsItem[] = [
+const data: TFavoriteStockNews[] = [
   {
     title: '올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"',
     hour: 1,
