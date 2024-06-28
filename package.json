@@ -20,10 +20,7 @@
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
-<<<<<<< HEAD
-=======
     "react-i18next": "^14.1.2",
->>>>>>> a86727ce73fb530ea31e16783f1108b3a5fd6c94
     "tailwind-merge": "^2.3.0",
     "ts-node": "^10.9.2"
   },
