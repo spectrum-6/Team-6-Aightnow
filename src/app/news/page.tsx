@@ -14,7 +14,7 @@ export default function NewsPage() {
           </h2>
           <ul className="flex gap-5">
             <li className="w-[590px] h-[420px] bg-[url('/images/news_img00.png')] rounded-2xl relative overflow-hidden">
-              <Link href="/news/news-detail" className="w-full h-full block">
+              <Link href="/news/newsDetail" className="w-full h-full block">
                 <div className="w-full h-[168px] p-6 absolute left-0 bottom-0 bg-gradient-to-t from-[#3F3F3F] to-transparent flex flex-col gap-[14px]">
                   <h3 className="text-white text-2xl font-bold truncate">
                     엔비디아 또 신고가… 시총 2위 애플과 962억달러 차이
@@ -35,7 +35,7 @@ export default function NewsPage() {
             </li>
             <li className="w-[590px] h-[420px flex flex-col gap-5">
               <div className="h-1/2 rounded-2xl bg-[url('/images/news_img01.png')] relative overflow-hidden">
-                <Link href="news/news-detail" className="w-full h-full block">
+                <Link href="news/newsDetail" className="w-full h-full block">
                   <div className="w-full h-[114px] p-6 absolute left-0 bottom-0 bg-gradient-to-t from-[#3F3F3F] to-transparent flex flex-col gap-[14px]">
                     <h3 className="text-white text-2xl font-bold truncate">
                       엔비디아 또 신고가… 시총 2위 애플과 962억달러 차이
@@ -50,7 +50,7 @@ export default function NewsPage() {
                 </Link>
               </div>
               <div className="h-1/2 rounded-2xl bg-[url('/images/news_img02.png')] relative overflow-hidden">
-                <Link href="news/news-detail" className="w-full h-full block">
+                <Link href="news/newsDetail" className="w-full h-full block">
                   <div className="w-full h-[114px] p-6 absolute left-0 bottom-0 bg-gradient-to-t from-[#3F3F3F] to-transparent flex flex-col gap-[14px]">
                     <h3 className="text-white text-2xl font-bold truncate">
                       엔비디아 또 신고가… 시총 2위 애플과 962억달러 차이
@@ -73,7 +73,7 @@ export default function NewsPage() {
           </h2>
           <ul className="flex gap-5">
             <li className="w-[388px] h-[360px] rounded-2xl bg-[url('/images/news_img03.png')] relative overflow-hidden">
-              <Link href="news/news-detail" className="w-full h-full block">
+              <Link href="news/newsDetail" className="w-full h-full block">
                 <div className="w-full h-[124px] p-6 pt-4 absolute left-0 bottom-0 bg-white flex flex-col gap-[14px]">
                   <h3 className="text-navy-900 text-lg truncate-2">
                     올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"
@@ -91,7 +91,7 @@ export default function NewsPage() {
               </Link>
             </li>
             <li className="w-[388px] h-[360px] rounded-2xl bg-[url('/images/news_img04.png')] relative overflow-hidden">
-              <Link href="news/news-detail" className="w-full h-full block">
+              <Link href="news/newsDetail" className="w-full h-full block">
                 <div className="w-full h-[124px] p-6 pt-4 absolute left-0 bottom-0 bg-white flex flex-col gap-[14px]">
                   <h3 className="text-navy-900 text-lg truncate-2">
                     올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"
@@ -109,7 +109,7 @@ export default function NewsPage() {
               </Link>
             </li>
             <li className="w-[388px] h-[360px] rounded-2xl bg-[url('/images/news_img05.png')] relative overflow-hidden">
-              <Link href="news/news-detail" className="w-full h-full block">
+              <Link href="news/newsDetail" className="w-full h-full block">
                 <div className="w-full h-[124px] p-6 pt-4 absolute left-0 bottom-0 bg-white flex flex-col gap-[14px]">
                   <h3 className="text-navy-900 text-lg truncate-2">
                     올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"
@@ -132,7 +132,7 @@ export default function NewsPage() {
           <h2 className="mb-6 text-navy-900 text-3xl font-bold">최신 뉴스</h2>
           <ul className="p-12 bg-white text-grayscale-900 rounded-lg">
             <li className="pb-8">
-              <Link href="news/news-detail" className="flex gap-5">
+              <Link href="news/newsDetail" className="flex gap-5">
                 <p>
                   <Image
                     src="/images/news_img06.png"
@@ -170,7 +170,7 @@ export default function NewsPage() {
               </Link>
             </li>
             <li className="pt-[52px] pb-8 border-t border-grayscale-400">
-              <Link href="news/news-detail" className="flex gap-5">
+              <Link href="news/newsDetail" className="flex gap-5">
                 <p>
                   <Image
                     src="/images/news_img07.png"
@@ -208,7 +208,7 @@ export default function NewsPage() {
               </Link>
             </li>
             <li className="pt-[52px] pb-8 border-t border-grayscale-400">
-              <Link href="news/news-detail" className="flex gap-5">
+              <Link href="news/newsDetail" className="flex gap-5">
                 <p>
                   <Image
                     src="/images/news_img08.png"
@@ -246,7 +246,7 @@ export default function NewsPage() {
               </Link>
             </li>
             <li className="pt-[52px] border-t border-grayscale-400">
-              <Link href="news/news-detail" className="flex gap-5">
+              <Link href="news/newsDetail" className="flex gap-5">
                 <p>
                   <Image
                     src="/images/news_img09.png"
