@@ -1,13 +1,15 @@
 import Link from "next/link";
 
-type TFavoriteStockItemProps = {
+type TFavoriteStockNewsItemProps = {
   title: string;
   hour: number;
   company: string;
   image: string;
 };
 
-export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
+export default function FavoriteStockNewsItem(
+  props: TFavoriteStockNewsItemProps,
+) {
   const { title, hour, company, image } = props;
 
   return (
