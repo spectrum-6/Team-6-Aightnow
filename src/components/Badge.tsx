@@ -5,7 +5,7 @@ import IconAi from "@/icons/IconAi";
 // reverse: 뱃지 내부의 요소 순서를 뒤집는다
 // icon: 뱃지 내부에 표시할 아이콘 컴포넌트
 interface BadgeProps {
-  variant?: "black" | "gray" | "skyblue";
+  variant?: "black" | "navy" | "skyblue" | "gray";
   reverse?: boolean;
   icon?: React.ReactNode;
 }
@@ -21,6 +21,7 @@ const Badge: React.FC<BadgeProps> = ({
     black: "bg-black text-white",
     gray: "bg-[#E6E9EF] text-navy-900",
     skyblue: "bg-blue-50 text-blue-900",
+    navy: "bg-navy-900 text-white",
   };
 
   // 뱃지 요소를 렌더링
@@ -76,6 +77,12 @@ export const useBadgeGray = (icon?: React.ReactNode) => ({
 // 'skyblue' 스타일의 뱃지를 생성
 export const useBadgeBlue = (icon?: React.ReactNode) => ({
   variant: "skyblue",
+  icon,
+});
+
+// 'navy' 스타일의 뱃지를 생성
+export const useBadgeNavy = (icon?: React.ReactNode) => ({
+  variant: "navy",
   icon,
 });
 
