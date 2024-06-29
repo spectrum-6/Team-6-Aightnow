@@ -17,6 +17,7 @@ const config: Config = {
       },
       boxShadow: {
         login: "0 0 10px 5px rgba(203, 203, 203, 0.25)",
+        chatbot: "0 8px 30px 0 rgba(0, 0, 0, 0.4)",
       },
       dropShadow: {
         fab: "0 0 20px rgba(24, 37, 76, 0.5)",
@@ -69,6 +70,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
 export default config;
