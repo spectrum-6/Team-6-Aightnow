@@ -1,5 +1,6 @@
-
+import TextButton from "@/components/Button/TextButton";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -26,9 +27,11 @@ export default function Home() {
               AI 애널리스트가 알려주는 어려운 해외주식 리포트
             </h4>
           </div>
-          <button className="w-[386px] h-16 bg-navy-800 text-white rounded-lg text-lg font-medium">
-            로그인
-          </button>
+          <Link href={"/login"}>
+            <TextButton size="lg" additionalClass="font-medium">
+              로그인
+            </TextButton>
+          </Link>
         </section>
 
         <Image

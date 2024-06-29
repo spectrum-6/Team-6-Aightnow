@@ -8,12 +8,9 @@ import IconButton from "@/components/Button/IconButton";
 export default function NewsPage() {
   return (
     <>
-      <Header />
-      <MainWrapper>
-        <PopularNews />
-        <FavoriteStockNews />
-        <LatestNews />
-      </MainWrapper>
+      <PopularNews />
+      <FavoriteStockNews />
+      <LatestNews />
       <div className="fixed bottom-[38px] right-16">
         <IconButton size="fab" icon="fab" />
       </div>
