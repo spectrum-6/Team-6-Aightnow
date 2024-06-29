@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import IconButton from "../Button/IconButton";
+import Input from "../Input";
 import Bot from "./Bot";
 import User from "./User";
-import Input from "../Input";
 
 interface ChatBotProps {
   onClose: () => void; // 모달 닫기 함수
