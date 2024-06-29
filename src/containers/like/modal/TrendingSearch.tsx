@@ -1,70 +1,59 @@
 import TrendingSearchItem from "./TrendingSearchItem";
 
-export type TTrendingSearchItem = {
+type TTrendingSearch = {
   title: string;
-  enTitle: string;
   value: string;
   rate: string;
 };
 
-const data: TTrendingSearchItem[] = [
+const data: TTrendingSearch[] = [
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
   {
     title: "애플",
-    enTitle: "AAPL",
     value: "1.75",
     rate: "0.82",
   },
@@ -78,7 +67,12 @@ export default function TrendingSearch() {
         <div className="p-6 border border-navy-100 rounded-2xl flex gap-6">
           <ul className="flex justify-between flex-wrap">
             {data.map((item, index) => (
-              <TrendingSearchItem key={index} item={item} />
+              <TrendingSearchItem
+                key={index}
+                title={item.title}
+                value={item.value}
+                rate={item.rate}
+              />
             ))}
           </ul>
         </div>

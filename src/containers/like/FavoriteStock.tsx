@@ -1,6 +1,6 @@
 import FavoriteStockItem from "./FavoriteStockItem";
 
-export type TFavoriteStockItem = {
+type TFavoriteStock = {
   title: string;
   enTitle: string;
   price: string;
@@ -15,7 +15,7 @@ export type TFavoriteStockItem = {
   };
 };
 
-const data: TFavoriteStockItem[] = [
+const data: TFavoriteStock[] = [
   {
     title: "애플",
     enTitle: "AAPL",
@@ -60,11 +60,11 @@ const data: TFavoriteStockItem[] = [
   },
 ];
 
-type TFavoriteStockListProps = {
+type TFFavoriteStockProps = {
   openDeletePopup: () => void;
 };
 
-export default function FavoriteStockList(props: TFavoriteStockListProps) {
+export default function FavoriteStock(props: TFFavoriteStockProps) {
   const { openDeletePopup } = props;
 
   return (
@@ -73,7 +73,12 @@ export default function FavoriteStockList(props: TFavoriteStockListProps) {
         {data.map((item, index) => (
           <FavoriteStockItem
             key={index}
-            item={item}
+            title={item.title}
+            enTitle={item.enTitle}
+            price={item.price}
+            value={item.value}
+            rate={item.rate}
+            total={item.total}
             openDeletePopup={openDeletePopup}
           />
         ))}
