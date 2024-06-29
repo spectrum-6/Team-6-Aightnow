@@ -36,7 +36,7 @@ const data: TPopularNews[] = [
 export default function PopularNews() {
   return (
     <>
-      <section className="w-[1200px] pt-14 mx-auto">
+      <section className="w-[1200px] mx-auto">
         <h2 className="mb-6 text-navy-900 text-3xl font-bold">
           오늘 인기있는 뉴스
         </h2>
