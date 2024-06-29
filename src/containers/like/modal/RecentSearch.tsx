@@ -1,6 +1,6 @@
 import RecentSearchItem from "./RecentSearchItem";
 
-export type TRecentSearchItem = {
+type TRecentSearch = {
   title: string;
   enTitle: string;
   price: string;
@@ -8,7 +8,7 @@ export type TRecentSearchItem = {
   rate: string;
 };
 
-const data: TRecentSearchItem[] = [
+const data: TRecentSearch[] = [
   {
     title: "애플",
     enTitle: "AAPL",
@@ -46,7 +46,14 @@ export default function RecentSearch() {
         </div>
         <ul className="flex gap-5 overflow-auto scrollbar-hide">
           {data.map((item, index) => (
-            <RecentSearchItem key={index} item={item} />
+            <RecentSearchItem
+              key={index}
+              title={item.title}
+              enTitle={item.enTitle}
+              price={item.price}
+              value={item.value}
+              rate={item.rate}
+            />
           ))}
         </ul>
       </div>

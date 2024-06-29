@@ -1,13 +1,14 @@
-import { TTrendingSearchItem } from "./TrendingSearch";
 import Link from "next/link";
 import { IconApple } from "@/icons";
 
 type TTrendingSearchItemProps = {
-  item: TTrendingSearchItem;
+  title: string;
+  value: string;
+  rate: string;
 };
 
 export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
-  const { item } = props;
+  const { title, value, rate } = props;
 
   return (
     <>
@@ -20,12 +21,12 @@ export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
                 <IconApple width={32} height={32} />
               </p>
               <strong className="ml-2 text-grayscale-600 font-medium">
-                {item.title}
+                {title}
               </strong>
             </div>
             <p className="text-blue-600 text-sm">
-              <span>▼{item.value}</span>
-              <span className="ml-2">-{item.rate}%</span>
+              <span>▼{value}</span>
+              <span className="ml-2">-{rate}%</span>
             </p>
           </div>
         </Link>

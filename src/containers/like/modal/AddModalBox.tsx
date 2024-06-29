@@ -19,7 +19,6 @@ export default function AddModalBox(props: TAddModalBoxProps) {
     isFavoriteStock,
     toggleFavoriteStock,
   } = props;
-  console.log(props);
 
   return (
     <>
