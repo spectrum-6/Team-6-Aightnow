@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import EditPersonalInfo from "./EditPersonalInfo";
 import LanguageSettings from "./LanguageSettings";
 import TermsOfService from "./TermsOfService";
