@@ -42,7 +42,10 @@ export default function Input(props: TInputProps) {
 
   // icon 종류와 위치
   const IconComponent = iconType ? iconComponentType[iconType] : null;
+  // iconPosition이 제공되면 그 값을 사용하고, 그렇지 않으면 iconType이 있을 경우 기본값을 "right"
   const iconPos = iconPosition ? iconPosition : iconType ? "right" : null;
+  // 간격을 3으로 변경 (0.75rem)
+  const iconPositionClass = iconPos ? `${iconPos}-3` : "";
 
   // caption text color
   const captionTextColor = () => {
@@ -92,12 +95,13 @@ export default function Input(props: TInputProps) {
               ? "border-warning-100 text-warning-100"
               : "border-grayscale-300 text-grayscal-900"
           } ${
+            //아이콘 위치에 따라 입력 필드의 패딩을 동적으로 조정
             iconPos === "left"
               ? "pl-11 pr-4"
               : iconPos === "right"
               ? "pl-4 pr-11"
               : "px-4"
-          }
+          } ${iconPosition === "left" ? "pl-10 pr-4" : "pl-4 pr-10"}
           disabled:bg-grayscale-100 disabled:border-grayscale-300 disabled:placeholder-grayscale-300 
           focus:border-blue-500
           `}
@@ -112,8 +116,9 @@ export default function Input(props: TInputProps) {
           <button
             type="button"
             onClick={iconClickHandler}
-            className={`absolute top-2/4 -translate-y-1/2 ${
-              iconPos ? iconPos + "-4" : ""
+            //계산된 iconPositionClass를 사용하여 아이콘의 위치를 설정
+            className={`absolute top-2/4 -translate-y-1/2 ${iconPositionClass} ${
+              iconPos ? iconPos + "-4" : "-90"
             } ${disabled ? "cursor-default" : "cursor-pointer"}`}
           >
             <IconComponent
