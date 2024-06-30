@@ -22,10 +22,10 @@ export default function Main() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-[#F1F3F8]">
-      <div>
+    <div className="min-h-[calc(100vh-81px)] flex flex-col items-center justify-start bg-[#F1F3F8]">
+      <div className="mt-[56px]">
         <h4 className="font-bold mb-5 self-start">마이페이지</h4>
-        <div className="flex flex-col lg:flex-row lg:space-x-4 w-full min-h-[720px]">
+        <div className="flex flex-col lg:flex-row lg:space-x-4 w-full min-h-[720px] mb-[62px]">
           {/* 사이드바 */}
           <aside className="w-full lg:w-[285px] bg-white rounded-2xl mb-4 lg:mb-0 flex-shrink-0 min-h-[720px]">
             <ul>
