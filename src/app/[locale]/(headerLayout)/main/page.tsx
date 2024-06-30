@@ -1,13 +1,12 @@
-import Header from "@/components/Header";
 import RecentViews from "@/containers/main/RecentViews";
 import StockNews from "@/containers/main/StockNews";
 import UserAIReport from "@/containers/main/UserAIReport";
-import ChatBotBtn from "@/components/chatbot/ChatBotBtn";
+import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 
 export default function main() {
   return (
     <>
-      <main className="flex flex-col gap-12">
+      <main className="flex flex-col gap-12 justify-center items-center">
         <UserAIReport />
         <RecentViews />
         <StockNews />
