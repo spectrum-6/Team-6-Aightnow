@@ -1,7 +1,6 @@
-///
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import EditPersonalInfo from "./EditPersonalInfo";
 import LanguageSettings from "./LanguageSettings";
 import TermsOfService from "./TermsOfService";
@@ -23,12 +22,12 @@ export default function Main() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-[#F1F3F8] fixed top-0 left-0 right-0 bottom-0">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-[#F1F3F8]">
       <div>
         <h4 className="font-bold mb-5 self-start">마이페이지</h4>
-        <div className="flex flex-col lg:flex-row space-x-0 lg:space-x-4">
+        <div className="flex flex-col lg:flex-row lg:space-x-4 w-full min-h-[720px]">
           {/* 사이드바 */}
-          <aside className="w-full lg:w-[285px] h-auto lg:h-[720px] bg-white rounded-2xl mb-4 lg:mb-0">
+          <aside className="w-full lg:w-[285px] bg-white rounded-2xl mb-4 lg:mb-0 flex-shrink-0 min-h-[720px]">
             <ul>
               <li className="mb-2 mt-6">
                 <button
@@ -70,7 +69,7 @@ export default function Main() {
           </aside>
 
           {/* 메인 콘텐츠 */}
-          <main className="w-[888px] p-8 bg-white rounded-2xl flex flex-col space-y-8">
+          <main className="flex-grow w-full lg:w-[888px] bg-white rounded-2xl p-8 flex flex-col space-y-8 min-h-[720px]">
             {renderContent()}
           </main>
         </div>

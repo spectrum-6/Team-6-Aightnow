@@ -33,12 +33,12 @@ export default function EditAccountInfo() {
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   ) => {
     event.preventDefault();
-    router.replace("/mypage/usersettings/deleteaccount");
+    router.replace("/settings/account/delete/deleteaccount");
   };
 
   const handleButtonClick = () => {
     setIsOpen(false);
-    router.push("/mypage"); // 'mypage' 경로로 이동
+    router.push("/settings"); // 'mypage' 경로로 이동
   };
 
   if (!isOpen) return null;
@@ -135,7 +135,7 @@ export default function EditAccountInfo() {
         </button>
 
         <Link
-          href="mypage/usersettings/deleteaccount"
+          href="/settings/account/delete/deleteaccount"
           className="text-warning-100 .text-sm underline"
           onClick={handleLinkClick}
         >

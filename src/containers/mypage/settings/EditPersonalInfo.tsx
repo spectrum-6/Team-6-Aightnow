@@ -18,9 +18,7 @@ export default function EditPersonalInfo() {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               <Link
-                // href="mypage/usersettings/editprofile"
-                href="settings/account/edit/editprofile"
-                // href="settings/account/deleteaccount"
+                href="/settings/account/edit/editprofile"
                 className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
               >
                 프로필 수정
@@ -54,7 +52,7 @@ export default function EditPersonalInfo() {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               <Link
-                href="mypage/usersettings/verifypassword"
+                href="/settings/account/edit/verifyPassword"
                 className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
               >
                 계정정보 수정

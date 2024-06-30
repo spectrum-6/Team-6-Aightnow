@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Dropdown from "@/components/Dropdown";
+import Link from "next/link";
 
 export default function DeleteAccount() {
   const router = useRouter();
@@ -34,9 +35,12 @@ export default function DeleteAccount() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-  const handleButtonClick = () => {
-    setIsOpen(false);
-    router.push("/mypage"); // 'mypage' 경로로 이동
+
+  const handleLinkClick = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    router.replace("/settings/deleteaccountsuccess");
   };
 
   if (!isOpen) return null;
@@ -72,12 +76,13 @@ export default function DeleteAccount() {
             />
           </div>
 
-          <button
+          <Link
+            href="/settings/deleteaccountsuccess"
             className="flex items-center justify-center w-[386px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg mb-2"
-            onClick={handleButtonClick}
+            onClick={handleLinkClick}
           >
             회원탈퇴
-          </button>
+          </Link>
         </form>
       </div>
     </div>

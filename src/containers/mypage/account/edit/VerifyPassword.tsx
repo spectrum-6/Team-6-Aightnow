@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { IconEdit } from "@/icons";
 
 import Link from "next/link";
 
@@ -27,7 +26,7 @@ export default function VerifyPassword() {
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   ) => {
     event.preventDefault();
-    router.replace("/mypage/usersettings/editaccountinfo");
+    router.replace("/settings/account/edit/editaccount");
   };
 
   return (
@@ -58,7 +57,7 @@ export default function VerifyPassword() {
         </div>
 
         <Link
-          href="mypage/usersettings/editaccountinfo"
+          href="/settings/account/edit/editaccount"
           className="flex items-center justify-center w-[386px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg"
           onClick={handleLinkClick}
         >
