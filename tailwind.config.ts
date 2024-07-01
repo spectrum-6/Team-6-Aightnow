@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+import { PluginAPI } from "tailwindcss/types/config";
+
+const plugin = require("tailwindcss/plugin");
 
 const config: Config = {
   content: [
@@ -70,6 +73,30 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwind-scrollbar-hide")],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+
+    plugin(function ({
+      matchUtilities,
+    }: {
+      matchUtilities: PluginAPI["matchUtilities"];
+    }) {
+      matchUtilities(
+        {
+          truncate: (value: string) => ({
+            "text-overflow": "ellipsis",
+            overflow: "hidden",
+            "word-break": "break-word",
+            display: "-webkit-box",
+            "-webkit-line-clamp": value,
+            "-webkit-box-orient": "vertical",
+          }),
+        },
+        {
+          values: { 2: "2", 4: "4" },
+        },
+      );
+    }),
+  ],
 };
 export default config;

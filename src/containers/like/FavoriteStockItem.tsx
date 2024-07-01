@@ -1,15 +1,25 @@
-import { TFavoriteStockItem } from "./FavoriteStock";
 import { IconApple } from "@/icons";
 import RaderChart from "@/components/Chart/RadarChart";
 import TextButton from "@/components/Button/TextButton";
 
 type TFavoriteStockItemProps = {
-  item: TFavoriteStockItem;
+  title: string;
+  enTitle: string;
+  price: string;
+  value: string;
+  rate: string;
+  total: {
+    stockPrice: string;
+    investment: string;
+    profitability: string;
+    growth: string;
+    interest: string;
+  };
   openDeletePopup: () => void;
 };
 
 export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
-  const { item, openDeletePopup } = props;
+  const { title, enTitle, price, value, rate, total, openDeletePopup } = props;
 
   return (
     <>
@@ -21,15 +31,15 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
             </p>
             <p className="flex items-center gap-2">
               <strong className="block text-grayscale-900 text-2xl font-bold">
-                {item.title}
+                {title}
               </strong>
-              <span className="text-grayscale-600 text-lg">{item.enTitle}</span>
+              <span className="text-grayscale-600 text-lg">{enTitle}</span>
             </p>
           </div>
           <p>
-            <span className="text-grayscale-900">${item.price}</span>
-            <span className="ml-2 text-warning-100">▲{item.value}</span>
-            <span className="ml-2 text-warning-100">+{item.rate}</span>
+            <span className="text-grayscale-900">${price}</span>
+            <span className="ml-2 text-warning-100">▲{value}</span>
+            <span className="ml-2 text-warning-100">+{rate}</span>
           </p>
         </div>
         <div className="mt-4 flex items-center gap-6">
@@ -37,27 +47,23 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
           <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
             <li className="flex justify-between">
               주가
-              <span className="text-blue-600">▲{item.total.stockPrice}%</span>
+              <span className="text-blue-600">▲{total.stockPrice}%</span>
             </li>
             <li className="flex justify-between">
               투자지수
-              <span className="text-warning-100">
-                ▲{item.total.investment}%
-              </span>
+              <span className="text-warning-100">▲{total.investment}%</span>
             </li>
             <li className="flex justify-between">
               수익성
-              <span className="text-warning-100">
-                ▲{item.total.profitability}%
-              </span>
+              <span className="text-warning-100">▲{total.profitability}%</span>
             </li>
             <li className="flex justify-between">
               성장성
-              <span className="text-warning-100">▲{item.total.growth}%</span>
+              <span className="text-warning-100">▲{total.growth}%</span>
             </li>
             <li className="flex justify-between">
               관심도
-              <span className="text-warning-100">▲{item.total.interest}%</span>
+              <span className="text-warning-100">▲{total.interest}%</span>
             </li>
           </ul>
         </div>

@@ -19,7 +19,6 @@ export default function AddModalBox(props: TAddModalBoxProps) {
     isFavoriteStock,
     toggleFavoriteStock,
   } = props;
-  console.log(props);
 
   return (
     <>
@@ -39,7 +38,7 @@ export default function AddModalBox(props: TAddModalBoxProps) {
             <IconClose />
           </button>
         </div>
-        <p className="mb-6">
+        <div className="mb-6">
           <Input
             inputValue={inputValue}
             setInputValue={(e) => setInputValue(e.target.value)}
@@ -47,7 +46,7 @@ export default function AddModalBox(props: TAddModalBoxProps) {
             iconPosition="right"
             placeholder="검색어를 입력해주세요."
           />
-        </p>
+        </div>
         {inputValue ? (
           <SearchResult
             isFavoriteStock={isFavoriteStock}

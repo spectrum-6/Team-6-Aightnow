@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import MainWrapper from "@/containers/news/MainWrapper";
 import PopularNews from "@/containers/news/PopularNews";
 import FavoriteStockNews from "@/containers/news/FavoriteStockNews";
 import LatestNews from "@/containers/news/LatestNews";

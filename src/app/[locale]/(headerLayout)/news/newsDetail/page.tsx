@@ -1,13 +1,7 @@
-import IconButton from "@/components/Button/IconButton";
-import TextButton from "@/components/Button/TextButton";
-import Header from "@/components/Header";
-import MainWrapper from "@/containers/news/MainWrapper";
-import Article from "@/containers/news/newsDetail/Article";
-import RelatedArticle from "@/containers/news/newsDetail/RelatedArticle";
 import RelatedStock from "@/containers/news/newsDetail/RelatedStock";
-import { IconApple, IconNewsAi } from "@/icons";
-import Image from "next/image";
-import Link from "next/link";
+import RelatedArticle from "@/containers/news/newsDetail/RelatedArticle";
+import Article from "@/containers/news/newsDetail/Article";
+import IconButton from "@/components/Button/IconButton";
 
 export default function NewsDetailPage() {
   return (

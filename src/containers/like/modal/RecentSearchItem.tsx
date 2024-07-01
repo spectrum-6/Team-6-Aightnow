@@ -1,13 +1,16 @@
-import { TRecentSearchItem } from "./RecentSearch";
 import Link from "next/link";
 import { IconApple } from "@/icons";
 
 type TRecentSearchItemProps = {
-  item: TRecentSearchItem;
+  title: string;
+  enTitle: string;
+  price: string;
+  value: string;
+  rate: string;
 };
 
 export default function RecentSearchItem(props: TRecentSearchItemProps) {
-  const { item } = props;
+  const { title, enTitle, price, value, rate } = props;
 
   return (
     <>
@@ -19,15 +22,15 @@ export default function RecentSearchItem(props: TRecentSearchItemProps) {
                 <IconApple />
               </p>
               <p>
-                <strong className="block">{item.title}</strong>
-                <span className="text-sm">{item.enTitle}</span>
+                <strong className="block">{title}</strong>
+                <span className="text-sm">{enTitle}</span>
               </p>
             </div>
             <p className="text-right">
-              <strong className="block font-medium">${item.price}</strong>
+              <strong className="block font-medium">${price}</strong>
               <span className="text-blue-600 text-sm">
-                <span>▼{item.value}</span>
-                <span className="ml-2">-{item.rate}%</span>
+                <span>▼{value}</span>
+                <span className="ml-2">-{rate}%</span>
               </span>
             </p>
           </div>

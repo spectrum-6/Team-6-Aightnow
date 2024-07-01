@@ -4,15 +4,18 @@ import { useState } from "react";
 
 type ToggleSwitchProps = {
   initialIsDollar?: boolean;
+  onToggle: () => void;
 };
 
 export default function ToggleSwitch({
   initialIsDollar = true,
+  onToggle,
 }: ToggleSwitchProps) {
   const [isDollar, setIsDollar] = useState(initialIsDollar);
 
   const handleToggle = () => {
     setIsDollar(!isDollar);
+    onToggle();
   };
 
   return (

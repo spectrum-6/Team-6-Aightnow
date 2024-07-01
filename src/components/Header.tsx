@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 
-const navList = ["search", "news", "like", "myPage"];
+const navList = ["search", "news", "like", "settings"];
 
 export default function Header() {
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
