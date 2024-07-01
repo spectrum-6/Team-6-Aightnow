@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-grayscale-100;
-}
-
 @layer base {
   * {
     scrollbar-width: inherit;
