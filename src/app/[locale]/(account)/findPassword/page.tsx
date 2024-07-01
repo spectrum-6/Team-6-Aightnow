@@ -11,9 +11,6 @@ export default function FindPassword() {
         </h3>
 
         <FindPasswordForm />
-        <Link href={"/findPassword/success"} className="block mt-10">
-          모달 오픈 버튼
-        </Link>
       </AccountFormBox>
     </>
   );

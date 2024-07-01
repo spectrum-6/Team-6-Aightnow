@@ -49,7 +49,7 @@ export default function Verify() {
               label="이메일주소"
             />
           </div>
-          <Link href={"/signUp/register"}>
+          <Link href={"/ko/signUp/verify/success"} scroll={false}>
             <TextButton
               type="button"
               variant={isButtonEnable ? "primary" : "disable"}
