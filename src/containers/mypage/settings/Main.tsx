@@ -22,8 +22,8 @@ export default function Main() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-81px)] flex flex-col items-center justify-start bg-[#F1F3F8]">
-      <div className="mt-[56px]">
+    <div className="flex flex-col items-center justify-start bg-[#F1F3F8]">
+      <div>
         <h4 className="font-bold mb-5 self-start">마이페이지</h4>
         <div className="flex flex-col lg:flex-row lg:space-x-4 w-full min-h-[720px] mb-[62px]">
           {/* 사이드바 */}

@@ -105,7 +105,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconEdit } from "@/icons";
-import Input from "@/components/DuplicateCheckInput";
+import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -116,7 +116,7 @@ export default function EditProfile() {
   const [inputValue, setInputValue] = useState("");
   const [captionText, setCaptionText] = useState("");
   const [inputState, setInputState] = useState<"warning" | "success" | null>(
-    "warning"
+    "warning",
   );
 
   useEffect(() => {
@@ -169,8 +169,8 @@ export default function EditProfile() {
             <IconEdit className="absolute w-[33.33px] h-[33.33px] left-[65%] top-[65%] bg-grayscale-400 rounded-full" />
           </button>
         </div>
-        <div>
-          <Input
+        <div className="w-[386px] mb-6">
+          <DuplicateCheckInput
             type={isPasswordShow ? "text" : "password"}
             label="아이디"
             caption={captionText}
