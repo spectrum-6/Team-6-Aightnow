@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/Header";
-import MainWrapper from "@/containers/news/MainWrapper";
 import TextButton from "@/components/Button/TextButton";
 import IconButton from "@/components/Button/IconButton";
 import FavoriteStockList from "@/containers/like/FavoriteStock";
