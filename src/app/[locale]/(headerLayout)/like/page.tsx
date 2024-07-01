@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import TextButton from "@/components/Button/TextButton";
 import IconButton from "@/components/Button/IconButton";
 import FavoriteStockList from "@/containers/like/FavoriteStock";
 import DeletePopupBox from "@/containers/like/DeletePopupBox";
-import AddModalBox from "@/containers/like/modal/AddModalBox";
 
 export default function LikePage() {
-  const [inputValue, setInputValue] = useState<string>("");
+  const router = useRouter();
+
   const [isDeletePopupVisible, setIsDeletePopupVisible] =
     useState<boolean>(false);
-  const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
-  const [isFavoriteStock, setIsFavoriteStock] = useState<boolean>(false);
 
   const openDeletePopup = (): void => {
     setIsDeletePopupVisible(true);
@@ -20,19 +19,6 @@ export default function LikePage() {
 
   const closeDeletePopup = (): void => {
     setIsDeletePopupVisible(false);
-  };
-
-  const openAddModal = (): void => {
-    setIsAddModalVisible(true);
-  };
-
-  const closeAddModal = (): void => {
-    setIsAddModalVisible(false);
-    setInputValue("");
-  };
-
-  const toggleFavoriteStock = (): void => {
-    setIsFavoriteStock((prev) => !prev);
   };
 
   return (
@@ -45,7 +31,7 @@ export default function LikePage() {
           <TextButton
             variant="primary"
             additionalClass="w-[189px] h-9 text-sm"
-            onClick={openAddModal}
+            onClick={() => router.push(`/like/addFavoriteStock`)}
           >
             관심종목 추가
           </TextButton>
@@ -57,15 +43,6 @@ export default function LikePage() {
       </div>
       {isDeletePopupVisible && (
         <DeletePopupBox closeDeletePopup={closeDeletePopup} />
-      )}
-      {isAddModalVisible && (
-        <AddModalBox
-          closeAddModal={closeAddModal}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          isFavoriteStock={isFavoriteStock}
-          toggleFavoriteStock={toggleFavoriteStock}
-        />
       )}
     </>
   );
