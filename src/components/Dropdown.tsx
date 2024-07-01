@@ -1,3 +1,5 @@
+"use client";
+
 import IconDown from "@/icons/IconDown";
 import { useEffect, useRef, useState } from "react";
 

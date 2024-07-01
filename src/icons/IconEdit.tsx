@@ -1,11 +1,12 @@
-export default function IconEdit() {
+import React from "react";
+
+export default function IconEdit({ className }: { className?: string }) {
   return (
     <svg
-      width="24"
-      height="25"
       viewBox="0 0 24 25"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
     >
       <g clipPath="url(#clip0_201_7908)">
         <circle cx="12" cy="12" r="10" fill="#9F9F9F" />
