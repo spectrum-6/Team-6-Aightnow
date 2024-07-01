@@ -33,8 +33,8 @@ export default function ChatBotIcon() {
           y2="30.2813"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#80D6F7" />
-          <stop offset="1" stop-color="white" stop-opacity="0" />
+          <stop stopColor="#80D6F7" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>
