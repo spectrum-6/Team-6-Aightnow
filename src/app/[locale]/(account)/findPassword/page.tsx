@@ -1,5 +1,6 @@
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import FindPasswordForm from "@/containers/account/findPassword/FindPasswordForm";
+import Link from "next/link";
 
 export default function FindPassword() {
   return (
