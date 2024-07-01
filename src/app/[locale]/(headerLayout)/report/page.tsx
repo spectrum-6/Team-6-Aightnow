@@ -16,10 +16,10 @@ export default function Page() {
   };
 
   return (
-    <>
-      <div>
+    <div className="flex justify-center items-center">
+      <div className="w-[1200px]">
         {/* top-box */}
-        <div>
+        <div className="">
           {/* 헤더 섹션 */}
           <div className="flex justify-between text-navy-900 mb-6">
             <div className="flex flex-row items-center">
@@ -62,6 +62,6 @@ export default function Page() {
           <News />
         </div>
       </div>
-    </>
+    </div>
   );
 }
