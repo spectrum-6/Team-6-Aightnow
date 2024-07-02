@@ -1,7 +1,6 @@
 import RecentViews from "@/containers/main/RecentViews";
 import StockNews from "@/containers/main/StockNews";
 import UserAIReport from "@/containers/main/UserAIReport";
-import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 
 export default function main() {
   return (
@@ -11,7 +10,6 @@ export default function main() {
         <RecentViews />
         <StockNews />
       </main>
-      <ChatBotBtn />
     </>
   );
 }

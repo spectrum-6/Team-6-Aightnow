@@ -1,10 +1,8 @@
 "use client";
 
-import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 import Input from "@/components/Input";
 import PopSearch from "@/containers/search/PopSearch";
 import RecentSrc from "@/containers/search/RecentSrc";
-import { IconClose, IconTime } from "@/icons";
 import { useState, ChangeEvent } from "react";
 
 export default function Search() {
@@ -32,7 +30,6 @@ export default function Search() {
         {/* 인기 검색어 */}
         <PopSearch />
       </main>
-      <ChatBotBtn />
     </>
   );
 }

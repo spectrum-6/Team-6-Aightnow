@@ -1,6 +1,5 @@
 "use client";
 
-import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 import Input from "@/components/Input";
 import News from "@/containers/search/searchAf/News";
 import Stock from "@/containers/search/searchAf/Stock";
@@ -31,7 +30,6 @@ export default function SearchAf() {
         {/* 뉴스 */}
         <News />
       </main>
-      <ChatBotBtn />
     </>
   );
 }
