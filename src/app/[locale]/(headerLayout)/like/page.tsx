@@ -38,9 +38,6 @@ export default function LikePage() {
         </div>
         <FavoriteStockList openDeletePopup={openDeletePopup} />
       </div>
-      <div className="fixed bottom-[38px] right-16">
-        <IconButton size="fab" icon="fab" />
-      </div>
       {isDeletePopupVisible && (
         <DeletePopupBox closeDeletePopup={closeDeletePopup} />
       )}

@@ -1,7 +1,6 @@
 import RelatedStock from "@/containers/news/newsDetail/RelatedStock";
 import RelatedArticle from "@/containers/news/newsDetail/RelatedArticle";
 import Article from "@/containers/news/newsDetail/Article";
-import IconButton from "@/components/Button/IconButton";
 
 export default function NewsDetailPage() {
   return (
@@ -16,9 +15,6 @@ export default function NewsDetailPage() {
           <RelatedArticle />
         </aside>
       </section>
-      <div className="fixed bottom-[38px] right-16">
-        <IconButton size="fab" icon="fab" />
-      </div>
     </>
   );
 }
