@@ -106,18 +106,23 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconEdit } from "@/icons";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
+import Image from "next/image";
+import SerchDropdown from "@/containers/account/signUp/SerchDropdown";
 
 export default function EditProfile() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
 
   // 추가
+  const [userNickname, setUserNickname] = useState("");
   const [isPasswordShow, setPasswordShow] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [captionText, setCaptionText] = useState("");
   const [inputState, setInputState] = useState<"warning" | "success" | null>(
     "warning",
   );
+
+  const [tagLength, setTagLength] = useState(0);
 
   useEffect(() => {
     if (!isOpen) {
@@ -160,28 +165,41 @@ export default function EditProfile() {
           프로필 수정
         </h3>
         <div className="relative w-[120px] h-[120px] mb-8 flex items-center justify-center">
+          {/* 이 이미지는 버튼까지 붙어있는거라서 일단 버튼 따로 되어있는걸로 적용시켜뒀습니다!
+          + 적절한걸로 골라서 쓰세요! 🍀 */}
+          {/* <Image
+            src={"/images/profile_img.png"}
+            alt="사용자 기본 프로필"
+            width={120}
+            height={120}
+          /> */}
+          {/* 프로필 이미지 */}
           <img
             src="https://i.ibb.co/3BtYXVs/Vector.png"
             alt="프로필"
             className="w-[100px] h-[100px] rounded-full"
           />
+          {/* 이미지 수정 버튼 */}
           <button>
             <IconEdit className="absolute w-[33.33px] h-[33.33px] left-[65%] top-[65%] bg-grayscale-400 rounded-full" />
           </button>
         </div>
+        {/* DuplicateCheckInput 에서 가져온 인풋 테스트 */}
         <div className="w-[386px] mb-6">
           <DuplicateCheckInput
-            type={isPasswordShow ? "text" : "password"}
-            label="아이디"
-            caption={captionText}
-            state={inputState}
-            inputValue={inputValue}
+            type="text"
+            label="닉네임"
+            // caption={captionText}
+            // state={inputState}
+            inputValue={userNickname}
             setInputValue={(e) => setInputValue(e.target.value)}
-            buttonClickHandler={() => console.log("중복확인 버튼 클릭")}
+            // buttonClickHandler={() => console.log("중복확인 버튼 클릭")}
+            placeholder="닉네임을 입력해 주세요."
           />
         </div>
 
-        <div className="w-[386px] mb-6 flex flex-col items-center">
+        {/* 닉네임 input */}
+        {/* <div className="w-[386px] mb-6 flex flex-col items-center">
           <label
             htmlFor="nickname"
             className="block text-navy-900 mb-1 text-base font-medium self-start"
@@ -198,7 +216,9 @@ export default function EditProfile() {
               중복 확인
             </button>
           </div>
-        </div>
+        </div> */}
+
+        {/* 관심종목 input */}
         <div className="w-[386px] mb-14 flex flex-col items-center">
           <label
             htmlFor="interests"
