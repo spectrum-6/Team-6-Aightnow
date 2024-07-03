@@ -1,9 +1,5 @@
-import EditProfile from "@/containers/mypage/account/edit/EditProfile";
+import { notFound } from "next/navigation";
 
-export default function Page() {
-  return (
-    <>
-      <EditProfile />
-    </>
-  );
+export default function NotFoundPage() {
+  notFound();
 }

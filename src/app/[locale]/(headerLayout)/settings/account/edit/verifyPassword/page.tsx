@@ -1,9 +1,5 @@
-import VerifyPassword from "@/containers/mypage/account/edit/VerifyPassword";
+import { notFound } from "next/navigation";
 
-export default function Page() {
-  return (
-    <>
-      <VerifyPassword />
-    </>
-  );
+export default function NotFoundPage() {
+  notFound();
 }
