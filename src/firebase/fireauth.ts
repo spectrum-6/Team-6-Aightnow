@@ -1,5 +1,19 @@
-import { getAuth } from "firebase/auth";
-import firebasedb from "./firebasedb";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import firebasedb from "./firebasebd";
 
-const fireAuth = getAuth(firebasedb);
-export default fireAuth;
+const auth = getAuth(firebasedb);
+const googleProvider = new GoogleAuthProvider();
+
+export {
+  auth,
+  googleProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+};

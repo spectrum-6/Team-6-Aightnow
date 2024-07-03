@@ -5,12 +5,27 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
+import { useRouter } from "next/navigation";
+import { auth } from "@/firebase/fireauth";
+import useStore from "@/store/useUserStore";
 
 const navList = ["search", "news", "like", "settings"];
 
 export default function Header() {
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "common");
+  const { user, clearUser } = useStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      clearUser();
+      router.push("/login");
+    } catch (error) {
+      console.error("로그아웃에 실패했습니다.", error);
+    }
+  };
 
   return (
     <>
@@ -38,6 +53,14 @@ export default function Header() {
               </li>
             ))}
           </ul>
+          {user && (
+            <button
+              className="ml-[225px] w-[102px] h-[36px] bg-white text-navy-900 rounded-lg border border-navy-900 sm:ml-auto"
+              onClick={handleLogout}
+            >
+              로그아웃
+            </button>
+          )}
         </nav>
       </header>
     </>
