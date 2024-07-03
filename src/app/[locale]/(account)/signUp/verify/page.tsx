@@ -12,7 +12,6 @@ import {
 import { useRouter } from "next/navigation"; // next/navigation 사용
 
 export default function Verify() {
-  const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [isButtonEnable, setButtonEnable] = useState(false);
@@ -20,12 +19,8 @@ export default function Verify() {
   const router = useRouter();
 
   useEffect(() => {
-    setButtonEnable(
-      userName.trim() !== "" &&
-        userEmail.trim() !== "" &&
-        userPassword.trim() !== "",
-    );
-  }, [userName, userEmail, userPassword]);
+    setButtonEnable(userEmail.trim() !== "" && userPassword.trim() !== "");
+  }, [userEmail, userPassword]);
 
   const handleVerification = async () => {
     try {
@@ -34,11 +29,11 @@ export default function Verify() {
         userEmail,
         userPassword,
       );
-      await sendEmailVerification(userCredential.user, {
-        url: `${window.location.origin}/signUp/verify/verifyEmail`,
-      });
 
-      // 인증 이메일 발송 후 리디렉션 처리
+      // Send verification email
+      await sendEmailVerification(userCredential.user);
+
+      // Redirect after sending the email
       router.push("/ko/signUp/verify/success"); // 성공 페이지로 이동
     } catch (error) {
       console.error("이메일 인증에 실패했습니다.", error);
@@ -53,14 +48,6 @@ export default function Verify() {
       </h3>
       <form>
         <div className="flex flex-col gap-4 mb-14">
-          <Input
-            type="text"
-            name="name"
-            inputValue={userName}
-            setInputValue={(e) => setUserName(e.target.value)}
-            placeholder="이름을 입력해 주세요."
-            label="이름"
-          />
           <Input
             type="text"
             name="email"
