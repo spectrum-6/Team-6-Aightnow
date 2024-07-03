@@ -1,9 +1,5 @@
-import EditAccountInfo from "@/containers/mypage/account/edit/EditAccountInfo";
+import { notFound } from "next/navigation";
 
-export default function Page() {
-  return (
-    <>
-      <EditAccountInfo />
-    </>
-  );
+export default function NotFoundPage() {
+  notFound();
 }

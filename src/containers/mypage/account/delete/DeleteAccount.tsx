@@ -16,11 +16,11 @@ export default function DeleteAccount() {
     "기타",
   ];
 
-  useEffect(() => {
-    if (!isOpen) {
-      router.back();
-    }
-  }, [isOpen, router]);
+  // useEffect(() => {
+  //   if (!isOpen) {
+  //     router.back();
+  //   }
+  // }, [isOpen, router]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -37,10 +37,11 @@ export default function DeleteAccount() {
   }, []);
 
   const handleLinkClick = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    router.replace("/settings/deleteaccountsuccess");
+    router.replace("/accountCancel");
+    setTimeout(() => setIsOpen(false), 0);
   };
 
   if (!isOpen) return null;
@@ -77,7 +78,7 @@ export default function DeleteAccount() {
           </div>
 
           <Link
-            href="/settings/deleteaccountsuccess"
+            href="/accountCancel"
             className="flex items-center justify-center w-[386px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg mb-2"
             onClick={handleLinkClick}
           >

@@ -1,9 +1,5 @@
-import DeleteAccount from "@/containers/mypage/account/delete/DeleteAccount";
+import { notFound } from "next/navigation";
 
-export default function Page() {
-  return (
-    <>
-      <DeleteAccount />
-    </>
-  );
+export default function NotFoundPage() {
+  notFound();
 }
