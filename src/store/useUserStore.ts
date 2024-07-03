@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UserState {
   user: any;
@@ -7,10 +7,18 @@ interface UserState {
   clearUser: () => void;
 }
 
-const useStore = create<UserState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-}));
+const useUserStore = create<UserState>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+    }),
+    {
+      name: "user-storage",
+      getStorage: () => sessionStorage,
+    },
+  ),
+);
 
-export default useStore;
+export default useUserStore;

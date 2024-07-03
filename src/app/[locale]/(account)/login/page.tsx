@@ -1,7 +1,6 @@
 "use client";
-
-import React from "react";
 import { useRouter } from "next/navigation";
+import React from "react";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import Image from "next/image";
@@ -12,11 +11,13 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "@/firebase/fireauth";
-import useStore from "@/store/useUserStore";
+import useUserStore from "@/store/useUserStore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import fireStore from "@/firebase/firestore";
 
-export default function Login() {
-  const router = useRouter();
-  const { setUser } = useStore();
+const Login = () => {
+  const router = useRouter(); // useRouter 사용
+  const { setUser } = useUserStore();
 
   const handleLogin = async (id: string, password: string) => {
     try {
@@ -25,21 +26,45 @@ export default function Login() {
         id,
         password,
       );
-      setUser(userCredential.user);
+      const userDoc = await getDoc(
+        doc(fireStore, "users", userCredential.user.uid),
+      );
+      if (userDoc.exists()) {
+        setUser({ ...userCredential.user, ...userDoc.data() });
+      } else {
+        console.error("사용자 정보를 찾을 수 없습니다.");
+      }
       router.push("/main");
     } catch (error) {
-      throw error;
+      console.error("로그인에 실패했습니다.", error);
+    }
+  };
+
+  const handleSocialLogin = async (provider: any) => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const userDocRef = doc(fireStore, "users", result.user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Firestore에 사용자가 없을 경우 새로 저장
+        await setDoc(userDocRef, {
+          email: result.user.email,
+          displayName: result.user.displayName,
+          phoneNumber: result.user.phoneNumber,
+          photoURL: result.user.photoURL,
+        });
+      }
+
+      setUser({ ...result.user, ...userDoc.data() });
+      router.push("/main");
+    } catch (error) {
+      console.error("소셜 로그인에 실패했습니다.", error);
     }
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      setUser(result.user);
-      router.push("/main");
-    } catch (error) {
-      console.error("Google 로그인에 실패했습니다.", error);
-    }
+    await handleSocialLogin(googleProvider);
   };
 
   const handleKakaoLogin = async () => {
@@ -96,4 +121,6 @@ export default function Login() {
       </div>
     </AccountFormBox>
   );
-}
+};
+
+export default Login;
