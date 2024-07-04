@@ -3,41 +3,82 @@
 import { useState } from "react";
 import ToggleSwitch from "@/components/Toggle";
 
-type StockPriceProps = {
-  initialPrice?: string;
-  initialTicker?: string;
-  initialPriceChange?: string;
-  initialPercentageChange?: string;
-  initialDescription?: string;
+type TRealtimeData = {
+  datas: Array<{
+    stockName: string;
+    symbolCode: string;
+    closePrice: string;
+    compareToPreviousClosePrice: string;
+    fluctuationsRatio: string;
+  }>;
 };
 
-export default function StockPrice(props: StockPriceProps) {
-  const [isDollar, setIsDollar] = useState(true);
+type TIntegrationData = {
+  corporateOverview: string;
+};
 
-  const stockPrice = {
-    priceDollar: "$00.00",
-    priceWon: "₩00.00",
-    ticker: "AAPL",
-    priceChange: "▲1.75",
-    percentageChange: "+0.82%",
-    description:
-      "애플은 스마트폰, 개인용 컴퓨터, 태블릿, 웨어러블 및 액세서리를 설계, 제조 및 판매하고 다양한 관련 서비스를 판매한다. 제품 카테고리는 iPhone, MAC, iPad, Wearables, Home 및 Accessories로 나뉜다.",
+type TStockPriceProps = {
+  reportData?: {
+    realtimeData: TRealtimeData;
+    integrationData: TIntegrationData;
   };
+};
+
+export default function StockPrice(props: TStockPriceProps) {
+  const { reportData } = props;
+
+  const [isDollar, setIsDollar] = useState<boolean>(true);
+  const data = reportData?.realtimeData.datas[0];
+
+  const formatPrice = (price: string) => (isDollar ? `$${price}` : `₩${price}`);
+
+  const changeClassName = (price: number) =>
+    price > 0
+      ? "text-warning-100"
+      : price < 0
+      ? "text-blue-600"
+      : "text-grayscale-500";
+
+  const formatComparePrice = (comparePrice: string) =>
+    Number(comparePrice) > 0
+      ? `▲${comparePrice}`
+      : Number(comparePrice) < 0
+      ? `▼${comparePrice.replace("-", "")}`
+      : `${comparePrice}`;
+
+  const formatRatio = (ratio: string) =>
+    Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
 
   return (
     <div className="w-[488px] bg-white rounded-2xl p-8">
       <div className="flex justify-between mb-8">
         <div className="flex flex-col">
           {/* 주가 */}
-          <p className="text-2xl font-bold text-navy-900">
-            {isDollar ? stockPrice.priceDollar : stockPrice.priceWon}
+          <p className="text-2xl text-navy-900">
+            {/* '원' 처리 해줘야 함 */}
+            <span className="font-bold">
+              {data && formatPrice(data.closePrice)}
+            </span>
             <span className="text-xl before:content-['_•_']">
-              {stockPrice.ticker}
+              {data?.symbolCode}
             </span>
           </p>
           {/* 주가 변동 */}
-          <p className="text-xl font-medium text-warning-100">
-            {stockPrice.priceChange} <span>{stockPrice.percentageChange}</span>
+          <p className="text-xl">
+            <span
+              className={changeClassName(
+                Number(data?.compareToPreviousClosePrice),
+              )}
+            >
+              {data && formatComparePrice(data.compareToPreviousClosePrice)}
+            </span>
+            <span className="ml-2">
+              <span
+                className={changeClassName(Number(data?.fluctuationsRatio))}
+              >
+                {data && formatRatio(data.fluctuationsRatio)}%
+              </span>
+            </span>
           </p>
         </div>
         <ToggleSwitch
@@ -45,7 +86,9 @@ export default function StockPrice(props: StockPriceProps) {
           onToggle={() => setIsDollar(!isDollar)}
         />
       </div>
-      <p className="text-base text-grayscale-900">{stockPrice.description}</p>
+      <p className="text-base text-grayscale-900 truncate-4">
+        {reportData?.integrationData.corporateOverview}
+      </p>
     </div>
   );
 }
