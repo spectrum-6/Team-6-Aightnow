@@ -2,6 +2,7 @@ import { useStockStore } from "@/stores/stockStore";
 import TrendingSearchItem from "./TrendingSearchItem";
 import { TSearchCountType, TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
+import TrendingSkeleton from "./TrendingSkeleton";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -47,7 +48,7 @@ export default function TrendingSearch() {
         <h4 className="mb-4 text-navy-900 text-lg font-medium">인기 검색어</h4>
         <div className="p-6 border border-navy-100 rounded-2xl flex gap-6">
           <ul className="w-full flex flex-col gap-4">
-            {trendingSearchList &&
+            {trendingSearchList ? (
               trendingSearchList.map((item, index) => (
                 <TrendingSearchItem
                   key={item.symbolCode}
@@ -56,7 +57,10 @@ export default function TrendingSearch() {
                   compareToPreviousClosePrice={item.compareToPreviousClosePrice}
                   fluctuationsRatio={item.fluctuationsRatio}
                 />
-              ))}
+              ))
+            ) : (
+              <TrendingSkeleton />
+            )}
           </ul>
         </div>
       </div>
