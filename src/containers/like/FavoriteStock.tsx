@@ -25,7 +25,8 @@ const getUserStockData = async (
   userUID: string,
 ): Promise<TUserStockCollection> => {
   const res = await (await fetch(`${baseUrl}/api/userStock/${userUID}`)).json();
-  return res.watchList;
+
+  return res;
 };
 
 export default function FavoriteStock() {
@@ -59,21 +60,24 @@ export default function FavoriteStock() {
   const stockList = useStockStore((state) => state.stockList);
 
   const getFilterdData = () => {
-    const watchListMap = new Map<string, any>();
-    watchList.forEach((stock) => {
-      watchListMap.set(stock.symbolCode, stock.timestamp);
-    });
+    if (watchList) {
+      const watchListMap = new Map<string, any>();
 
-    //stockList를 필터링하고 timestamp 기준으로 정렬
-    const filteredData = stockList
-      .filter((stock) => watchListMap.has(stock.symbolCode))
-      .sort(
-        (a, b) =>
-          watchListMap.get(b.symbolCode).seconds -
-          watchListMap.get(a.symbolCode).seconds,
-      );
+      watchList.forEach((stock) => {
+        watchListMap.set(stock.symbolCode, stock.timestamp);
+      });
 
-    setFavoriteStock(filteredData);
+      //stockList를 필터링하고 timestamp 기준으로 정렬
+      const filteredData = stockList
+        .filter((stock) => watchListMap.has(stock.symbolCode))
+        .sort(
+          (a, b) =>
+            watchListMap.get(b.symbolCode).seconds -
+            watchListMap.get(a.symbolCode).seconds,
+        );
+
+      setFavoriteStock(filteredData);
+    }
   };
 
   // 최초 렌더링 시 DB 조회하여 값을 세팅
