@@ -1,6 +1,5 @@
 "use client";
 
-import { IconApple } from "@/icons";
 import RaderChart from "@/components/Chart/RadarChart";
 import TextButton from "@/components/Button/TextButton";
 import { TStockType } from "@/types/stockType";
@@ -8,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import { useDeleteWatchList } from "@/stores/watchListStore";
 import { useTranslation } from "@/utils/localization/client";
+import StockIcon from "@/components/StockIcon/StockIcon";
 
 export default function FavoriteStockItem(props: TStockType) {
   const {
@@ -63,7 +63,7 @@ export default function FavoriteStockItem(props: TStockType) {
         <div>
           <div className="flex gap-2 mb-1">
             <p>
-              <IconApple width={32} height={32} />
+              <StockIcon symbolCode={symbolCode} width={32} height={32} />
             </p>
             <p className="flex items-center gap-2">
               <strong className="block text-grayscale-900 text-2xl font-bold">

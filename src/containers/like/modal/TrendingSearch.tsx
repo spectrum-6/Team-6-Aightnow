@@ -52,6 +52,7 @@ export default function TrendingSearch() {
               trendingSearchList.map((item, index) => (
                 <TrendingSearchItem
                   key={item.symbolCode}
+                  symbolCode={item.symbolCode}
                   index={index}
                   stockName={item.stockName}
                   compareToPreviousClosePrice={item.compareToPreviousClosePrice}

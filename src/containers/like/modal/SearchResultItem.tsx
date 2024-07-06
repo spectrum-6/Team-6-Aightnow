@@ -2,7 +2,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Timestamp } from "firebase/firestore";
-import { IconApple } from "@/icons";
 import TextButton from "@/components/Button/TextButton";
 import { TStockType } from "@/types/stockType";
 import { TWatchList } from "@/types/userStockType";
@@ -10,6 +9,7 @@ import { useWatchListStore } from "@/stores/watchListStore";
 import useUserStore from "@/stores/userStore";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
+import StockIcon from "@/components/StockIcon/StockIcon";
 
 type TSearchResultItemProps = TStockType & {
   inWatchList?: boolean;
@@ -108,7 +108,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <p>
-                <IconApple width={48} height={48} />
+                <StockIcon symbolCode={symbolCode} width={48} height={48} />
               </p>
               <strong className="ml-4 text-grayscale-900">
                 {t(stockName)}

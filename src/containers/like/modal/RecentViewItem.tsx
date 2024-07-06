@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { IconApple } from "@/icons";
 import { TStockType } from "@/types/stockType";
 import { useParams } from "next/navigation";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
+import StockIcon from "@/components/StockIcon/StockIcon";
 
 export default function RecentViewItem(props: TStockType) {
   const {
@@ -55,7 +55,7 @@ export default function RecentViewItem(props: TStockType) {
           <div className="flex justify-between">
             <div className="flex gap-6">
               <p>
-                <IconApple />
+                <StockIcon symbolCode={symbolCode} />
               </p>
               <p>
                 <strong className="block">{t(stockName)}</strong>
