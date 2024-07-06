@@ -5,7 +5,7 @@ import TextButton from "@/components/Button/TextButton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDeleteWatchList, useWatchListStore } from "@/stores/watchListStore";
-import { TWatchList } from "@/app/types/userStockType";
+import { TWatchList } from "@/types/userStockType";
 import useUserStore from "@/stores/userStore";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;

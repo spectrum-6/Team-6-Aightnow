@@ -3,7 +3,7 @@
 import { IconApple } from "@/icons";
 import RaderChart from "@/components/Chart/RadarChart";
 import TextButton from "@/components/Button/TextButton";
-import { TStockType } from "@/app/types/stockType";
+import { TStockType } from "@/types/stockType";
 import { useParams, useRouter } from "next/navigation";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import { useDeleteWatchList } from "@/stores/watchListStore";

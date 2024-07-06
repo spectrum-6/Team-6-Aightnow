@@ -1,4 +1,4 @@
-import { TStockType } from "@/app/types/stockType";
+import { TStockType } from "@/types/stockType";
 import { create } from "zustand";
 
 type TStockStoreState = {

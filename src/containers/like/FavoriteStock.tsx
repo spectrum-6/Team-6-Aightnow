@@ -2,9 +2,9 @@
 
 import useUserStore from "@/stores/userStore";
 import FavoriteStockItem from "./FavoriteStockItem";
-import { TStockType } from "@/app/types/stockType";
+import { TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
-import { TWatchList } from "@/app/types/userStockType";
+import { TWatchList } from "@/types/userStockType";
 import { useWatchListStore } from "@/stores/watchListStore";
 import { useStockStore } from "@/stores/stockStore";
 

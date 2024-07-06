@@ -1,4 +1,4 @@
-import { TWatchList } from "@/app/types/userStockType";
+import { TWatchList } from "@/types/userStockType";
 import { Timestamp } from "firebase/firestore";
 import { create } from "zustand";
 

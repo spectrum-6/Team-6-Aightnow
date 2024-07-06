@@ -19,14 +19,14 @@ const useUserStore = create<TUserStoreState>()(
   persist(
     (set) => ({
       // 테스트용 하드코딩
-      // user: {
-      //   userUID: "ychTesUID",
-      //   userId: "spectrum",
-      //   userName: "김스펙",
-      //   userNickname: "스펙트럼",
-      //   transLang: "en",
-      // },
-      user: null,
+      user: {
+        userUID: "ychTesUID",
+        userId: "spectrum",
+        userName: "김스펙",
+        userNickname: "스펙트럼",
+        transLang: "en",
+      },
+      // user: null,
       setUser: (userData: TUser) => set({ user: userData }),
       clearUser: () => set({ user: null }),
     }),
