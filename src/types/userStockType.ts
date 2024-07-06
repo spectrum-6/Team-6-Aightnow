@@ -1,10 +1,17 @@
 import { Timestamp } from "firebase/firestore";
 
+export type TUserStockCollection = {
+  recentSearch: string[];
+  recentViews: string[];
+  watchList: TWatchList[];
+};
+
 export type TWatchList = {
   symbolCode: string;
   timestamp: Timestamp;
 };
 
+// 추후 삭제
 type temp = {
   stockName: string;
   symbolCode: string;

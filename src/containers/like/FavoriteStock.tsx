@@ -4,42 +4,54 @@ import useUserStore from "@/stores/userStore";
 import FavoriteStockItem from "./FavoriteStockItem";
 import { TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
-import { TWatchList } from "@/types/userStockType";
+import { TUserStockCollection } from "@/types/userStockType";
 import { useWatchListStore } from "@/stores/watchListStore";
 import { useStockStore } from "@/stores/stockStore";
+import {
+  useRecentSearchStore,
+  useRecentViewStore,
+} from "@/stores/recentSearchStore";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-// 주식 리스트 조회
+// 주식 리스트 DB 조회
 const getStockList = async (): Promise<TStockType[]> => {
   const res = await (await fetch(`${baseUrl}/api/stocks`)).json();
   return res;
 };
 
-// 사용자의 관심종목 리스트 조회
-const getUserWatchList = async (userUID: string): Promise<TWatchList[]> => {
+// userStock DB 조회
+const getUserStockData = async (
+  userUID: string,
+): Promise<TUserStockCollection> => {
   const res = await (await fetch(`${baseUrl}/api/userStock/${userUID}`)).json();
   return res.watchList;
 };
 
 export default function FavoriteStock() {
   const [favoriteStock, setFavoriteStock] = useState<TStockType[]>();
-  const setWatchList = useWatchListStore((state) => state.setWatchList);
   const setStockList = useStockStore((state) => state.setStockList);
+  const setWatchList = useWatchListStore((state) => state.setWatchList);
+  const setRecentSearch = useRecentSearchStore(
+    (state) => state.setRecentSearch,
+  );
+  const setRecentViews = useRecentViewStore((state) => state.setRecentViews);
 
   // session storage 에서 user UID 값을 조회
   const userUID = useUserStore((state) => state.user?.userUID) || "";
 
   const getDataAndStoreState = async () => {
     // promise.all 로 데이터를 병렬 패칭
-    const [stockListData, watchListData] = await Promise.all([
+    const [stockListData, userStockData] = await Promise.all([
       getStockList(),
-      getUserWatchList(userUID),
+      getUserStockData(userUID),
     ]);
 
-    // zustand store에 관심종목을 저장
-    setWatchList(watchListData);
+    // zustand store에 데이터를 저장
     setStockList(stockListData);
+    setWatchList(userStockData.watchList);
+    setRecentSearch(userStockData.recentSearch);
+    setRecentViews(userStockData.recentViews);
   };
 
   // zustand 에 저장된 값을 이용해 data filter

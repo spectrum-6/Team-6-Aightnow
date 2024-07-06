@@ -1,5 +1,4 @@
 import { TWatchList } from "@/types/userStockType";
-import { Timestamp } from "firebase/firestore";
 import { create } from "zustand";
 
 // 관심종목 페이지에서 userStock 컬렉션 조회 시 조회값을 저장
