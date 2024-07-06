@@ -17,7 +17,6 @@ export default function RecentViewItem(props: TStockType) {
         <p className="text-right">
           <strong className="block font-medium">${closePrice}</strong>
           <span className="text-warning-100 text-sm">
-            <span>▲{compareToPreviousClosePrice}</span>
             <span className="ml-2">+{fluctuationsRatio}%</span>
           </span>
         </p>
@@ -27,7 +26,6 @@ export default function RecentViewItem(props: TStockType) {
         <p className="text-right">
           <strong className="block font-medium">${closePrice}</strong>
           <span className="text-blue-600 text-sm">
-            <span>▼{parseFloat(compareToPreviousClosePrice) * -1}</span>
             <span className="ml-2">{fluctuationsRatio}%</span>
           </span>
         </p>
@@ -37,7 +35,6 @@ export default function RecentViewItem(props: TStockType) {
         <p className="text-right">
           <strong className="block font-medium">${closePrice}</strong>
           <span className="text-grayscale-500 text-sm">
-            <span>{compareToPreviousClosePrice}</span>
             <span className="ml-2">{fluctuationsRatio}%</span>
           </span>
         </p>
@@ -48,7 +45,7 @@ export default function RecentViewItem(props: TStockType) {
   return (
     <>
       <li className="w-[255px] h-24 border border-navy-100 rounded-2xl flex-shrink-0">
-        <Link href="#" className="w-full h-full px-4 py-6 block">
+        <Link href="dd" className="w-full h-full px-4 py-6 block">
           <div className="flex justify-between">
             <div className="flex gap-6">
               <p>

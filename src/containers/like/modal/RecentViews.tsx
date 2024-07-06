@@ -5,7 +5,7 @@ import { TStockType } from "@/types/stockType";
 import { useRecentViewStore } from "@/stores/recentSearchStore";
 import { useStockStore } from "@/stores/stockStore";
 import useUserStore from "@/stores/userStore";
-import RecentViewItem from "./RecentViewItem";
+import RecentViewList from "./RecentViewList";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -66,18 +66,7 @@ export default function RecentViews() {
               전체삭제
             </button>
           </div>
-          <ul className="flex gap-5 overflow-auto scrollbar-hide">
-            {data.map((item, index) => (
-              <RecentViewItem
-                key={index}
-                stockName={item.stockName}
-                symbolCode={item.symbolCode}
-                closePrice={item.closePrice}
-                compareToPreviousClosePrice={item.compareToPreviousClosePrice}
-                fluctuationsRatio={item.fluctuationsRatio}
-              />
-            ))}
-          </ul>
+          <RecentViewList data={data} />
         </div>
       )}
     </>
