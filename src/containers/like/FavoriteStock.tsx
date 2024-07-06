@@ -102,7 +102,6 @@ export default function FavoriteStock() {
               closePrice={item.closePrice}
               compareToPreviousClosePrice={item.compareToPreviousClosePrice}
               fluctuationsRatio={item.fluctuationsRatio}
-              // total={item.total}
             />
           ))}
       </ul>

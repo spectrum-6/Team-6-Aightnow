@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { IconApple } from "@/icons";
+import { useParams } from "next/navigation";
+import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
+import { useTranslation } from "@/utils/localization/client";
 
 type TTrendingSearchItemProps = {
   stockName: string;
@@ -11,6 +14,9 @@ type TTrendingSearchItemProps = {
 export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
   const { stockName, compareToPreviousClosePrice, fluctuationsRatio, index } =
     props;
+
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+  const { t } = useTranslation(locale, "stock");
 
   const getStyleOfPrice = () => {
     if (parseFloat(fluctuationsRatio) > 0) {
@@ -48,7 +54,7 @@ export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
                 <IconApple width={32} height={32} />
               </p>
               <strong className="ml-2 text-grayscale-600 font-medium">
-                {stockName}
+                {t(stockName)}
               </strong>
             </div>
             {getStyleOfPrice()}

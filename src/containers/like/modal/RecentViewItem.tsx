@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { IconApple } from "@/icons";
 import { TStockType } from "@/types/stockType";
+import { useParams } from "next/navigation";
+import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
+import { useTranslation } from "@/utils/localization/client";
 
 export default function RecentViewItem(props: TStockType) {
   const {
@@ -10,6 +13,9 @@ export default function RecentViewItem(props: TStockType) {
     compareToPreviousClosePrice,
     fluctuationsRatio,
   } = props;
+
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+  const { t } = useTranslation(locale, "stock");
 
   const getStyleOfPrice = () => {
     if (parseFloat(fluctuationsRatio) > 0) {
@@ -52,7 +58,7 @@ export default function RecentViewItem(props: TStockType) {
                 <IconApple />
               </p>
               <p>
-                <strong className="block">{stockName}</strong>
+                <strong className="block">{t(stockName)}</strong>
                 <span className="text-sm">{symbolCode}</span>
               </p>
             </div>

@@ -20,7 +20,7 @@ export default function PageHead() {
       <TextButton
         variant="primary"
         additionalClass="w-[189px] h-9 text-sm"
-        onClick={() => router.push(`${locale}/like/addFavoriteStock`)}
+        onClick={() => router.push(`/like/addFavoriteStock`)}
       >
         관심종목 추가
       </TextButton>

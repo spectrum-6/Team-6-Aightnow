@@ -7,29 +7,20 @@ import { TStockType } from "@/types/stockType";
 import { useParams, useRouter } from "next/navigation";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import { useDeleteWatchList } from "@/stores/watchListStore";
+import { useTranslation } from "@/utils/localization/client";
 
-type TFavoriteStockItemProps = TStockType & {
-  // total: {
-  //   stockPrice: string;
-  //   investment: string;
-  //   profitability: string;
-  //   growth: string;
-  //   interest: string;
-  // };
-};
-
-export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
+export default function FavoriteStockItem(props: TStockType) {
   const {
     stockName,
     symbolCode,
     closePrice,
     compareToPreviousClosePrice,
     fluctuationsRatio,
-    // total,
   } = props;
 
   const router = useRouter();
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+  const { t } = useTranslation(locale, "stock");
   const setSymbolCode = useDeleteWatchList((state) => state.setSymbolCode);
 
   const getStyleOfPrice = () => {
@@ -68,26 +59,19 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
 
   return (
     <>
-      <li className="w-[392px] h-[360px] p-8 pb-4 mt-6 rounded-2xl bg-white">
+      <li className="w-[392px] h-auto p-8 pb-4 mt-6 rounded-2xl bg-white">
         <div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-1">
             <p>
               <IconApple width={32} height={32} />
             </p>
             <p className="flex items-center gap-2">
               <strong className="block text-grayscale-900 text-2xl font-bold">
-                {stockName}
+                {t(stockName)}
               </strong>
               <span className="text-grayscale-600 text-lg">{symbolCode}</span>
             </p>
           </div>
-          {/* <div className="flex gap-2">
-            <span className="text-grayscale-900">${closePrice}</span>
-            <span className="text-warning-100">
-              ▲{compareToPreviousClosePrice}
-            </span>
-            <span className="text-warning-100">+{fluctuationsRatio}</span>
-          </div> */}
           {getStyleOfPrice()}
         </div>
         <div className="mt-4 flex items-center gap-6">
