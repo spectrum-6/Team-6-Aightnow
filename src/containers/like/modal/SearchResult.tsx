@@ -1,48 +1,67 @@
+import { useStockStore } from "@/stores/stockStore";
 import SearchResultItem from "./SearchResultItem";
-
-type TSearchResult = {
-  title: string;
-  enTitle: string;
-  price: string;
-  value: string;
-  rate: string;
-};
-
-const data: TSearchResult[] = [
-  {
-    title: "애플",
-    enTitle: "AAPL",
-    price: "10.00",
-    value: "1.75",
-    rate: "0.82",
-  },
-];
+import { useEffect, useState } from "react";
+import { TStockType } from "@/types/stockType";
+import { useWatchListStore } from "@/stores/watchListStore";
 
 type TSearchResultProps = {
-  isFavoriteStock: boolean;
-  toggleFavoriteStock: () => void;
+  inputValue: string;
+};
+
+type TResultList = TStockType & {
+  inWatchList?: boolean;
 };
 
 export default function SearchResult(props: TSearchResultProps) {
-  const { isFavoriteStock, toggleFavoriteStock } = props;
+  const { inputValue } = props;
+
+  // 모든 주식 리스트 조회
+  const stockList = useStockStore((state) => state.stockList);
+  // 관심 주식 리스트 조회
+  const watchList = useWatchListStore((state) => state.watchList);
+  const watchListMap = new Map<string, any>();
+  watchList.forEach((stock) => {
+    watchListMap.set(stock.symbolCode, stock.timestamp);
+  });
+  // 필터링된 데이터 상태 추가
+  const [filteredData, setFilteredData] = useState<TResultList[]>([]);
+
+  useEffect(() => {
+    const filtered: TResultList[] = stockList.filter(
+      (item) =>
+        item.stockName.toLowerCase().includes(inputValue.toLowerCase()) ||
+        item.symbolCode.toLowerCase().includes(inputValue.toLowerCase()),
+    );
+
+    filtered.map((item) => {
+      if (watchListMap.has(item.symbolCode)) {
+        item.inWatchList = true;
+      } else {
+        item.inWatchList = false;
+      }
+    });
+
+    setFilteredData(filtered);
+  }, [inputValue]);
 
   return (
     <>
       <div>
         <h4 className="mb-4 text-navy-900 text-lg font-medium">검색 결과</h4>
         <ul className="flex flex-col gap-2">
-          {data.map((item, index) => (
-            <SearchResultItem
-              key={index}
-              title={item.title}
-              enTitle={item.enTitle}
-              price={item.price}
-              value={item.value}
-              rate={item.rate}
-              isFavoriteStock={isFavoriteStock}
-              toggleFavoriteStock={toggleFavoriteStock}
-            />
-          ))}
+          {filteredData &&
+            filteredData.map((item, index) => (
+              <SearchResultItem
+                key={index}
+                stockName={item.stockName}
+                symbolCode={item.symbolCode}
+                closePrice={item.closePrice}
+                compareToPreviousClosePrice={item.compareToPreviousClosePrice}
+                fluctuationsRatio={item.fluctuationsRatio}
+                inWatchList={item.inWatchList}
+                // toggleFavoriteStock={toggleFavoriteStock}
+              />
+            ))}
         </ul>
       </div>
     </>
