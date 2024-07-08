@@ -84,7 +84,7 @@ export default function AiAnalyst(props: TAiAnalystProps) {
             </span>
             {/* 주가 */}
             <span className="text-base font-medium text-grayscale-900 mr-2">
-              {data?.closePrice}
+              ${data?.closePrice}
             </span>
             {/* 주가 변동 */}
             <span

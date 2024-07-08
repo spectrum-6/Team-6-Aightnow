@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import AreaChart from "@/components/Chart/AreaChart";
 
 export default function StockChart() {
   // 기간 버튼 state
@@ -13,13 +15,7 @@ export default function StockChart() {
       <div className="flex flex-row gap-2">
         <div className="flex flex-col">
           <p className="text-2xl font-bold text-navy-900">주가 차트</p>
-
-          {/* 주가차트 임시 이미지 */}
-          <img
-            src="https://i.ibb.co/YfykHRg/Frame-1437260607.png"
-            alt="Frame-1437260607"
-            className="w-[556px] h-[152px]"
-          />
+          <AreaChart width={556} height={152} />
         </div>
 
         {/* 기간 선택 버튼들 */}

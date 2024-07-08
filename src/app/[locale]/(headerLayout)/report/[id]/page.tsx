@@ -22,7 +22,6 @@ const codes: TCodes = {
 };
 
 const fetchData = async (code: string) => {
-  console.log(codes[code]);
   try {
     const responses = await Promise.all([
       fetch(
@@ -52,6 +51,7 @@ type TParams = {
     id: string;
   };
 };
+
 export default async function Page({ params }: TParams) {
   const { id } = params;
 
