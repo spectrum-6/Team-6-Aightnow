@@ -16,9 +16,7 @@ export async function PATCH(
         item.timestamp.seconds,
         item.timestamp.nanoseconds,
       );
-      const date = firebaseTimestamp.toDate();
-
-      item.timestamp = Timestamp.fromDate(date);
+      item.timestamp = firebaseTimestamp;
     });
 
     const docRef = doc(fireStore, "userStock", params.id);
