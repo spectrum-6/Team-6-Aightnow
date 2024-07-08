@@ -23,7 +23,7 @@ type TRadarChartProps = {
   height?: number;
 };
 
-const RadarChart = (props: TRadarChartProps) => {
+export default function RadarChart(props: TRadarChartProps) {
   const { width, height } = props;
 
   const options = {
@@ -77,6 +77,4 @@ const RadarChart = (props: TRadarChartProps) => {
       <Radar data={data} options={options} width={width} height={height} />
     </div>
   );
-};
-
-export default RadarChart;
+}
