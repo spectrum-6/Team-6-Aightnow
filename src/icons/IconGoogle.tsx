@@ -31,7 +31,7 @@ export default function IconGoogle(props: TIconGoogleProps) {
         d="M20 13.38C21.62 13.38 23.06 13.94 24.21 15.02L27.36 11.87C25.45 10.09 22.97 9 20 9C15.7 9 11.99 11.47 10.18 15.07L13.84 17.91C14.71 15.31 17.14 13.38 20 13.38Z"
         fill="#EA4335"
       />
-      <circle cx="20" cy="20" r="19.5" stroke="black" stroke-opacity="0.05" />
+      <circle cx="20" cy="20" r="19.5" stroke="black" strokeOpacity="0.05" />
     </svg>
   );
 }

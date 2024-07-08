@@ -25,7 +25,7 @@ export default function IconNvidia(props: TIconNvidiaProps) {
           fill="white"
         />
       </g>
-      <circle cx="20" cy="20" r="19.5" stroke="black" stroke-opacity="0.05" />
+      <circle cx="20" cy="20" r="19.5" stroke="black" strokeOpacity="0.05" />
       <defs>
         <clipPath id="clip0_14382_21997">
           <rect width="40" height="40" fill="white" />

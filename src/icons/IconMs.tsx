@@ -34,7 +34,7 @@ export default function IconMs(props: TIconMsProps) {
           fill="#FFBA08"
         />
       </g>
-      <circle cx="20" cy="20" r="19.5" stroke="black" stroke-opacity="0.05" />
+      <circle cx="20" cy="20" r="19.5" stroke="black" strokeOpacity="0.05" />
       <defs>
         <clipPath id="clip0_14382_21987">
           <rect
