@@ -13,8 +13,8 @@ export default function PageHead() {
   const user = useUserStore((state) => state.user);
 
   return (
-    <div className="flex justify-between">
-      <h2 className="mb-6 text-navy-900 text-3xl font-bold">
+    <div className="flex justify-between mb-6">
+      <h2 className="text-navy-900 text-3xl font-bold">
         {user?.userNickname} 님의 관심종목
       </h2>
       <Link href={`/${locale}/like/addFavoriteStock`} scroll={false}>

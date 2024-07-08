@@ -59,7 +59,7 @@ export default function FavoriteStockItem(props: TStockType) {
 
   return (
     <>
-      <li className="w-[392px] h-auto p-8 pb-4 mt-6 rounded-2xl bg-white">
+      <li className="w-[392px] h-auto p-8 pb-4 rounded-2xl bg-white">
         <div>
           <div className="flex gap-2 mb-1">
             <p>
