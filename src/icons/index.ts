@@ -18,28 +18,40 @@ import IconFr from "@/icons/IconFr";
 import IconJp from "@/icons/IconJp";
 import IconUs from "@/icons/IconUs";
 import IconApple from "./IconApple";
+import IconTsla from "./IconTsla";
+import IconAmazon from "./IconAmazon";
+import IconMs from "./IconMs";
+import IconGoogle from "./IconGoogle";
+import IconUnity from "./IconUnity";
+import IconNvidia from "./IconNvidia";
 import IconNewsAi from "./IconNewsAi";
 
 export {
-    IconAi,
-    IconArrow,
-    IconCalender,
-    IconClose,
-    IconDown,
-    IconEdit,
-    IconEyeHide,
-    IconEyeShow,
-    IconPlus,
-    IconRefresh,
-    IconSearch,
-    IconTime,
-    IconTranslate,
-    IconFab,
-    IconKr,
-    IconCn,
-    IconFr,
-    IconJp,
-    IconUs,
-    IconApple,
-    IconNewsAi,
+  IconAi,
+  IconArrow,
+  IconCalender,
+  IconClose,
+  IconDown,
+  IconEdit,
+  IconEyeHide,
+  IconEyeShow,
+  IconPlus,
+  IconRefresh,
+  IconSearch,
+  IconTime,
+  IconTranslate,
+  IconFab,
+  IconKr,
+  IconCn,
+  IconFr,
+  IconJp,
+  IconUs,
+  IconApple,
+  IconTsla,
+  IconAmazon,
+  IconMs,
+  IconGoogle,
+  IconUnity,
+  IconNvidia,
+  IconNewsAi,
 };

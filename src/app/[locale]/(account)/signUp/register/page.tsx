@@ -1,79 +1,71 @@
-// src/app/[locale]/(account)/signUp/register/page.tsx
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import TextButton from "@/components/Button/TextButton";
 import Input from "@/components/Input";
 import AccountFormBox from "@/containers/account/AccountFormBox";
-import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 import useUserStore from "@/store/useUserStore";
-import { auth, createUserWithEmailAndPassword } from "@/firebase/fireauth";
-import { doc, setDoc } from "firebase/firestore";
-import fireStore from "@/firebase/firestore";
+import { useRouter } from "next/navigation";
+import { updateUserInfo, getUserInfo } from "@/firebase/firestore";
 
-interface FormFields {
-  id: string;
-  password: string;
-  passwordConfirm: string;
-  phoneNumber: string;
-  birthDate: string;
-}
-
-const RegisterPage = () => {
-  const [formFields, setFormFields] = useState<FormFields>({
-    id: "",
-    password: "",
-    passwordConfirm: "",
-    phoneNumber: "",
-    birthDate: "",
-  });
-
-  const { id, password, passwordConfirm, phoneNumber, birthDate } = formFields;
-  const [isPasswordConfirmError, setPasswordConfirmError] = useState(false);
-  const [isButtonEnable, setButtonEnable] = useState(false);
-  const { setUser } = useUserStore();
+const Register: React.FC = () => {
   const router = useRouter();
+  const { userInfo, setUserInfo } = useUserStore();
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  // 상태 정의
+  const [id, setId] = useState(""); // 아이디
+  const [password, setPassword] = useState(""); // 비밀번호
+  const [phoneNumber, setPhoneNumber] = useState(""); // 전화번호
+  const [birthDate, setBirthDate] = useState(""); // 생년월일
+  const [isButtonEnable, setButtonEnable] = useState(false); // 버튼 활성화 여부
+  const [message, setMessage] = useState(""); // 오류 메시지
 
-    if (name === "passwordConfirm" && value !== password) {
-      setPasswordConfirmError(true);
-    } else if (name === "passwordConfirm" && value === password) {
-      setPasswordConfirmError(false);
+  // 입력값이 유효할 때 버튼 활성화
+  useEffect(() => {
+    setButtonEnable(
+      id.trim() !== "" &&
+        password.trim() !== "" &&
+        phoneNumber.trim() !== "" &&
+        birthDate.trim() !== "",
+    );
+  }, [id, password, phoneNumber, birthDate]);
+
+  // 회원가입 처리 함수
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!userInfo || !userInfo.uid) {
+      setMessage("사용자 정보가 없습니다. 다시 시도해주세요.");
+      return;
     }
 
-    setFormFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    const isFormValid = Object.values(formFields).every(
-      (field) => field.trim() !== "",
-    );
-    setButtonEnable(isFormValid);
-  }, [formFields]);
-
-  const handleRegister = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // 이미 존재하는 사용자인지 확인
+      const existingUser = await getUserInfo(userInfo.uid);
+
+      // 회원가입 정보 추가
+      const updatedUserInfo = {
+        ...(existingUser || {}), // 기존 정보가 있으면 유지
         id,
-        password,
-      );
-      await setDoc(doc(fireStore, "users", userCredential.user.uid), {
-        id,
+        password, // 주의: 실제 앱에서는 비밀번호를 평문으로 저장하면 개인정보 털린다~~
         phoneNumber,
         birthDate,
-        email: userCredential.user.email,
-      });
-      setUser(userCredential.user);
+        uid: userInfo.uid,
+        email: userInfo.email,
+        username: userInfo.username,
+      };
+
+      // Firestore 사용자 정보 업데이트 또는 생성
+      await updateUserInfo(userInfo.uid, updatedUserInfo);
+
+      // Zustand 상태 업데이트
+      setUserInfo(updatedUserInfo);
+
+      // 회원가입 후 프로필 페이지로 이동
       router.push("/signUp/profile");
     } catch (error) {
-      console.error("회원가입에 실패했습니다.", error);
+      console.error("Registration failed:", error);
+      setMessage("회원가입에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -82,69 +74,53 @@ const RegisterPage = () => {
       <h3 className="text-navy-900 font-extrabold text-center mb-10">
         회원가입
       </h3>
-      <form>
+      <form onSubmit={handleRegister}>
         <div className="flex flex-col gap-4 mb-14">
-          <DuplicateCheckInput
+          <Input
             type="text"
             name="id"
             inputValue={id}
-            setInputValue={handleInputChange}
+            setInputValue={(e) => setId(e.target.value)}
             placeholder="아이디를 입력해 주세요."
             label="아이디"
-            caption="*  6~12자의 영문, 숫자, ,_을 이용한 조합"
           />
           <Input
             type="password"
             name="password"
             inputValue={password}
-            setInputValue={handleInputChange}
+            setInputValue={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
-            label="비밀번호 입력"
-            caption="*  8-20자 이내 숫자, 특수문자, 영문자 중 2가지 이상을 조합"
+            label="비밀번호"
           />
           <Input
-            type="password"
-            name="passwordConfirm"
-            inputValue={passwordConfirm}
-            setInputValue={handleInputChange}
-            placeholder="비밀번호를 다시 입력해 주세요."
-            label="비밀번호 확인"
-            state={isPasswordConfirmError ? "warning" : null}
-            caption={
-              isPasswordConfirmError
-                ? "동일한 비밀번호가 아닙니다. 다시 확인 후 입력해 주세요."
-                : ""
-            }
-          />
-          <Input
-            type="number"
+            type="text"
             name="phoneNumber"
             inputValue={phoneNumber}
-            setInputValue={handleInputChange}
-            placeholder="-를 제외한 휴대폰 번호를 입력해 주세요."
-            label="휴대폰 번호"
+            setInputValue={(e) => setPhoneNumber(e.target.value)}
+            placeholder="전화번호를 입력해 주세요."
+            label="전화번호"
           />
           <Input
-            type="number"
+            type="text"
             name="birthDate"
             inputValue={birthDate}
-            setInputValue={handleInputChange}
-            placeholder="생년월일 6자리를 입력해주세요. (예시 : 991231)"
+            setInputValue={(e) => setBirthDate(e.target.value)}
+            placeholder="생년월일을 입력해 주세요."
             label="생년월일"
           />
         </div>
         <TextButton
-          type="button"
+          type="submit"
           variant={isButtonEnable ? "primary" : "disable"}
           size="lg"
           disabled={!isButtonEnable}
-          onClick={handleRegister}
         >
           다음
         </TextButton>
+        {message && <p className="text-red-500 mt-4">{message}</p>}
       </form>
     </AccountFormBox>
   );
 };
 
-export default RegisterPage;
+export default Register;
