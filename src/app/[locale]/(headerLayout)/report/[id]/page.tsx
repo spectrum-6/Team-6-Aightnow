@@ -28,9 +28,12 @@ const fetchData = async (code: string) => {
         `https://polling.finance.naver.com/api/realtime/worldstock/stock/${codes[code]}`,
       ),
       fetch(`https://api.stock.naver.com/stock/${codes[code]}/integration`),
+      fetch(
+        `https://m.stock.naver.com/front-api/marketIndex/productDetail?category=exchange&reutersCode=FX_USDKRW`,
+      ),
     ]);
 
-    const [realtimeData, integrationData] = await Promise.all(
+    const [realtimeData, integrationData, calcPriceData] = await Promise.all(
       responses.map((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -39,7 +42,7 @@ const fetchData = async (code: string) => {
       }),
     );
 
-    return { realtimeData, integrationData };
+    return { realtimeData, integrationData, calcPriceData };
   } catch (error) {
     console.error("error: ", error);
   }

@@ -30,10 +30,17 @@ type TIntegrationData = {
   corporateOverview: string;
 };
 
+type TcalcPriceData = {
+  result: {
+    calcPrice: string;
+  };
+};
+
 type TReportContainer = {
   reportData?: {
     realtimeData: TRealtimeData;
     integrationData: TIntegrationData;
+    calcPriceData: TcalcPriceData;
   };
   id: string;
 };
