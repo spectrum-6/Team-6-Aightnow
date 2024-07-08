@@ -1,12 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditPersonalInfo from "./EditPersonalInfo";
 import LanguageSettings from "./LanguageSettings";
 import TermsOfService from "./TermsOfService";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+// 서비스 이용약관 DB 조회
+type TContent = {
+  termsText: string;
+  policyText: string;
+};
+const getServiceInfoContent = async (): Promise<TContent> => {
+  const res = await (await fetch(`${baseUrl}/api/system`)).json();
+  return res;
+};
+
 export default function Main() {
+  // Side bar
   const [selectedSection, setSelectedSection] = useState("personalinfo");
+
+  // 서비스 이용약관 텍스트
+  const [serviceInfoContent, setServiceInfoContent] = useState("");
+  const [userInfoContent, setUserInfoContent] = useState("");
+
+  // 서비스 이용약관 DB 조회
+  const getContent = async () => {
+    const content = await getServiceInfoContent();
+
+    setServiceInfoContent(content.termsText);
+    setUserInfoContent(content.policyText);
+  };
+
+  useEffect(() => {
+    getContent();
+  }, []);
 
   const renderContent = () => {
     switch (selectedSection) {
@@ -15,7 +44,12 @@ export default function Main() {
       case "languagesettings":
         return <LanguageSettings />;
       case "termsofservice":
-        return <TermsOfService />;
+        return (
+          <TermsOfService
+            serviceInfoContent={serviceInfoContent}
+            userInfoContent={userInfoContent}
+          />
+        );
       default:
         return <EditPersonalInfo />;
     }
