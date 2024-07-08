@@ -1,7 +1,7 @@
 import fireStore from "@/firebase/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 
-// 최근검색어 update
+// 최근 조회 종목 update
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } },

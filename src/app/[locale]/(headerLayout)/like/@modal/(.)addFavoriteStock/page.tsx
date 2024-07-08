@@ -11,12 +11,6 @@ export default function AddFavoriteStock() {
   const router = useRouter();
 
   const [inputValue, setInputValue] = useState<string>("");
-  // const [isFavoriteStock, setIsFavoriteStock] = useState<boolean>(false);
-
-  // const toggleFavoriteStock = (): void => {
-  //   setIsFavoriteStock((prev) => !prev);
-  // };
-
   const closeModal = () => {
     router.back();
     setInputValue("");
@@ -54,11 +48,7 @@ export default function AddFavoriteStock() {
             />
           </div>
           {inputValue ? (
-            <SearchResult
-              // isFavoriteStock={isFavoriteStock}
-              // toggleFavoriteStock={toggleFavoriteStock}
-              inputValue={inputValue}
-            />
+            <SearchResult inputValue={inputValue} />
           ) : (
             <SearchContainer />
           )}

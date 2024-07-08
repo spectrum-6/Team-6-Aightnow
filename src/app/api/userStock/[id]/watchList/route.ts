@@ -2,7 +2,7 @@ import { TWatchList } from "@/types/userStockType";
 import fireStore from "@/firebase/firestore";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 
-// watch list update
+// 관심종목 update
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } },
