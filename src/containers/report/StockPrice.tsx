@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ToggleSwitch from "@/components/Toggle";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 type TRealtimeData = {
   datas: Array<{
@@ -17,10 +18,17 @@ type TIntegrationData = {
   corporateOverview: string;
 };
 
+type TcalcPriceData = {
+  result: {
+    calcPrice: string;
+  };
+};
+
 type TStockPriceProps = {
   reportData?: {
     realtimeData: TRealtimeData;
     integrationData: TIntegrationData;
+    calcPriceData: TcalcPriceData;
   };
 };
 
@@ -28,9 +36,18 @@ export default function StockPrice(props: TStockPriceProps) {
   const { reportData } = props;
 
   const [isDollar, setIsDollar] = useState<boolean>(true);
+
   const data = reportData?.realtimeData.datas[0];
 
-  const formatPrice = (price: string) => (isDollar ? `$${price}` : `₩${price}`);
+  const priceWon = () => {
+    let won =
+      Number(data?.closePrice) *
+      Number(reportData?.calcPriceData.result.calcPrice);
+    return formatCurrency(won);
+  };
+
+  const formatPrice = (price: string) =>
+    isDollar ? `$${price}` : `${priceWon()}`;
 
   const changeClassName = (price: number) =>
     price > 0
@@ -55,7 +72,6 @@ export default function StockPrice(props: TStockPriceProps) {
         <div className="flex flex-col">
           {/* 주가 */}
           <p className="text-2xl text-navy-900">
-            {/* '원' 처리 해줘야 함 */}
             <span className="font-bold">
               {data && formatPrice(data.closePrice)}
             </span>
