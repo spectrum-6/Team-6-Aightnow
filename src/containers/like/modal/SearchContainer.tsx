@@ -1,10 +1,10 @@
-import RecentSearch from "./RecentSearch";
+import RecentViews from "./RecentViews";
 import TrendingSearch from "./TrendingSearch";
 
 export default function SearchContainer() {
   return (
     <>
-      <RecentSearch />
+      <RecentViews />
       <TrendingSearch />
     </>
   );

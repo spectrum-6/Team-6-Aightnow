@@ -1,33 +1,69 @@
 import Link from "next/link";
-import { IconApple } from "@/icons";
+import { useParams } from "next/navigation";
+import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
+import { useTranslation } from "@/utils/localization/client";
+import StockIcon from "@/components/StockIcon/StockIcon";
 
 type TTrendingSearchItemProps = {
-  title: string;
-  value: string;
-  rate: string;
+  stockName: string;
+  symbolCode: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
+  index: number;
 };
 
 export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
-  const { title, value, rate } = props;
+  const {
+    stockName,
+    symbolCode,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+    index,
+  } = props;
+
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+  const { t } = useTranslation(locale, "stock");
+
+  const getStyleOfPrice = () => {
+    if (parseFloat(fluctuationsRatio) > 0) {
+      return (
+        <p className="text-warning-100">
+          <span>▲ {compareToPreviousClosePrice}</span>
+          <span className="ml-4">{fluctuationsRatio}%</span>
+        </p>
+      );
+    } else if (parseFloat(fluctuationsRatio) < 0) {
+      return (
+        <p className="text-blue-600">
+          <span>▼ {parseFloat(compareToPreviousClosePrice) * -1}</span>
+          <span className="ml-4">{fluctuationsRatio}%</span>
+        </p>
+      );
+    } else if (parseFloat(fluctuationsRatio) === 0) {
+      return (
+        <p className="text-grayscale-500">
+          <span>{compareToPreviousClosePrice}</span>
+          <span className="ml-4">{fluctuationsRatio}%</span>
+        </p>
+      );
+    }
+  };
 
   return (
     <>
-      <li className="w-[321px] h-12 py-2">
+      <li className="h-12 py-2">
         <Link href="#" className="w-full h-full block">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <span className="text-navy-900 font-medium">1</span>
+              <span className="text-navy-900 font-medium">{index + 1}</span>
               <p className="ml-4">
-                <IconApple width={32} height={32} />
+                <StockIcon symbolCode={symbolCode} width={32} height={32} />
               </p>
               <strong className="ml-2 text-grayscale-600 font-medium">
-                {title}
+                {t(stockName)}
               </strong>
             </div>
-            <p className="text-blue-600 text-sm">
-              <span>▼{value}</span>
-              <span className="ml-2">-{rate}%</span>
-            </p>
+            {getStyleOfPrice()}
           </div>
         </Link>
       </li>
