@@ -6,31 +6,31 @@ import Input from "@/components/Input";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import useUserStore from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
-import { updateUserInfo, getUserInfo } from "@/firebase/firestore";
+import { getUserInfo, updateUserInfo } from "@/firebase/firestore";
+import { getAuth, updatePassword } from "firebase/auth";
 
 const Register: React.FC = () => {
   const router = useRouter();
   const { userInfo, setUserInfo } = useUserStore();
 
-  // 상태 정의
-  const [id, setId] = useState(""); // 아이디
-  const [password, setPassword] = useState(""); // 비밀번호
-  const [phoneNumber, setPhoneNumber] = useState(""); // 전화번호
-  const [birthDate, setBirthDate] = useState(""); // 생년월일
-  const [isButtonEnable, setButtonEnable] = useState(false); // 버튼 활성화 여부
-  const [message, setMessage] = useState(""); // 오류 메시지
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [isButtonEnable, setButtonEnable] = useState(false);
+  const [message, setMessage] = useState("");
 
-  // 입력값이 유효할 때 버튼 활성화
   useEffect(() => {
     setButtonEnable(
       id.trim() !== "" &&
         password.trim() !== "" &&
+        password === confirmPassword &&
         phoneNumber.trim() !== "" &&
         birthDate.trim() !== "",
     );
-  }, [id, password, phoneNumber, birthDate]);
+  }, [id, password, confirmPassword, phoneNumber, birthDate]);
 
-  // 회원가입 처리 함수
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -38,22 +38,36 @@ const Register: React.FC = () => {
       setMessage("사용자 정보가 없습니다. 다시 시도해주세요.");
       return;
     }
-
+    if (password !== confirmPassword) {
+      setMessage("비밀번호가 일치하지 않습니다.");
+      return;
+    }
     try {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        setMessage("사용자 인증 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
+        return;
+      }
+
       // 이미 존재하는 사용자인지 확인
       const existingUser = await getUserInfo(userInfo.uid);
 
       // 회원가입 정보 추가
       const updatedUserInfo = {
-        ...(existingUser || {}), // 기존 정보가 있으면 유지
+        ...(existingUser || {}),
         id,
-        password, // 주의: 실제 앱에서는 비밀번호를 평문으로 저장하면 개인정보 털린다~~
+        password, //실제로 저장하면 털린다
         phoneNumber,
         birthDate,
         uid: userInfo.uid,
         email: userInfo.email,
         username: userInfo.username,
       };
+
+      // Firebase Authentication 비밀번호 업데이트
+      await updatePassword(currentUser, password);
 
       // Firestore 사용자 정보 업데이트 또는 생성
       await updateUserInfo(userInfo.uid, updatedUserInfo);
@@ -91,6 +105,14 @@ const Register: React.FC = () => {
             setInputValue={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
             label="비밀번호"
+          />
+          <Input
+            type="password"
+            name="confirmPassword"
+            inputValue={confirmPassword}
+            setInputValue={(e) => setConfirmPassword(e.target.value)}
+            placeholder="비밀번호를 다시 입력해 주세요."
+            label="비밀번호 확인"
           />
           <Input
             type="text"

@@ -10,8 +10,8 @@ import {
 import { UserInfo } from "@/types/UserInfo";
 
 export async function POST(req: NextRequest) {
-  const { action, id, password, provider, email, username, image } =
-    await req.json();
+  // 요청 본문에서 action, id, password 등의 정보를 추출
+  const { action, id, password, provider, email, userInfo } = await req.json();
 
   try {
     // 요청 속도 제한 적용
@@ -26,13 +26,16 @@ export async function POST(req: NextRequest) {
     let result;
     switch (action) {
       case "login":
+        // 일반 로그인 처리
         result = await handleLogin(id, password);
         break;
       case "register":
-        result = await handleRegister(id, password, email);
+        // 회원가입 처리
+        result = await handleRegister(id, password, email, userInfo);
         break;
       case "socialLogin":
-        result = await handleSocialLogin(provider, email, username, image);
+        // 소셜 로그인 처리
+        result = await handleSocialLogin(provider, email, userInfo);
         break;
       default:
         return NextResponse.json(
@@ -48,13 +51,16 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// 일반 로그인 처리 함수
 async function handleLogin(id: string, password: string) {
   try {
+    // 사용자 정보 조회
     const userInfo = await getUserInfo(id);
     if (!userInfo || !userInfo.email) {
       throw new Error("사용자를 찾을 수 없습니다.");
     }
 
+    // Firebase Authentication을 사용한 로그인
     const userCredential = await signInWithEmailAndPassword(
       auth,
       userInfo.email,
@@ -62,9 +68,12 @@ async function handleLogin(id: string, password: string) {
     );
     const user = userCredential.user;
 
+    // 로그인 시간 업데이트
     await updateUserInfo(user.uid, { lastLoginAt: new Date().toISOString() });
 
+    // 민감한 정보 제거
     const { password: _, ...safeUserInfo } = userInfo;
+
     return {
       user: { uid: user.uid, email: user.email },
       userInfo: safeUserInfo,
@@ -75,13 +84,21 @@ async function handleLogin(id: string, password: string) {
   }
 }
 
-async function handleRegister(id: string, password: string, email: string) {
+// 회원가입 처리 함수
+async function handleRegister(
+  id: string,
+  password: string,
+  email: string,
+  userInfo: Partial<UserInfo>,
+) {
   try {
+    // 이미 존재하는 사용자인지 확인
     const existingUser = await getUserInfo(id);
     if (existingUser) {
       throw new Error("이미 존재하는 사용자입니다.");
     }
 
+    // Firebase Authentication을 사용한 사용자 생성
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -89,7 +106,9 @@ async function handleRegister(id: string, password: string, email: string) {
     );
     const user = userCredential.user;
 
+    // Firestore에 사용자 정보 저장
     const newUserInfo: UserInfo = {
+      ...userInfo,
       id,
       email,
       uid: user.uid,
@@ -99,7 +118,9 @@ async function handleRegister(id: string, password: string, email: string) {
     };
     await createUserInfo(user.uid, newUserInfo);
 
+    // 민감한 정보 제거
     const { password: _, ...safeUserInfo } = newUserInfo;
+
     return {
       user: { uid: user.uid, email: user.email },
       userInfo: safeUserInfo,
@@ -110,42 +131,38 @@ async function handleRegister(id: string, password: string, email: string) {
   }
 }
 
+// 소셜 로그인 처리 함수
 async function handleSocialLogin(
   provider: string,
   email: string,
-  username?: string,
-  image?: string,
+  userInfo: Partial<UserInfo>,
 ) {
   try {
-    let userInfo = await getUserInfo(email);
+    // 기존 사용자 정보 조회
+    let existingUser = await getUserInfo(email);
 
-    if (!userInfo) {
-      // 신규 소셜 로그인 사용자
+    if (!existingUser) {
+      // 신규 사용자인 경우, 사용자 정보 생성
       const newUserInfo: UserInfo = {
+        ...userInfo,
         email,
         socialProvider: provider,
-        username,
-        profileImgUrl: image,
         createdAt: new Date().toISOString(),
         lastLoginAt: new Date().toISOString(),
         registrationCompleted: false, // 추가 정보 입력 필요
       };
       await createUserInfo(email, newUserInfo);
-      userInfo = newUserInfo;
+      existingUser = newUserInfo;
     } else {
-      // 기존 사용자 정보 업데이트
-      const updatedInfo: Partial<UserInfo> = {
+      // 기존 사용자인 경우, 로그인 시간 업데이트
+      await updateUserInfo(existingUser.uid!, {
         lastLoginAt: new Date().toISOString(),
-        username: username || userInfo.username,
-        profileImgUrl: image || userInfo.profileImgUrl,
-      };
-      await updateUserInfo(userInfo.uid!, updatedInfo);
-      userInfo = { ...userInfo, ...updatedInfo };
+      });
     }
 
-    return { userInfo };
+    return { userInfo: existingUser };
   } catch (error: any) {
     console.error("소셜 로그인 오류:", error);
-    throw new Error("소셜 로그인 처리에 실패했습니다. 다시 시도해주세요.");
+    throw new Error("소셜 로그인에 실패했습니다. 다시 시도해주세요.");
   }
 }

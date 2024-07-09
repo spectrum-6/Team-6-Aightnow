@@ -9,7 +9,12 @@ export interface UserInfo {
   profileImgUrl?: string;
   nickname?: string;
   interests?: string[];
-  emailVerified?: boolean; // 이메일 인증 여부
-  createdAt?: string; // 계정 생성 시간
-  lastLoginAt?: string; // 마지막 로그인 시간
+  emailVerified?: boolean;
+  createdAt?: string;
+  lastLoginAt?: string;
+  transLang?: string;
+  socialProvider?: string;
+  socialId?: string;
+  registrationCompleted?: boolean;
+  isNewUser?: boolean;
 }

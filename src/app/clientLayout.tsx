@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { SessionProvider } from "next-auth/react";
 import { initializeAuthListener } from "@/store/useUserStore";
 
 export default function ClientLayout({
@@ -9,8 +10,13 @@ export default function ClientLayout({
   children: React.ReactNode;
 }>) {
   useEffect(() => {
-    initializeAuthListener();
+    const unsubscribe = initializeAuthListener();
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
   }, []);
 
-  return <>{children}</>;
+  return <SessionProvider>{children}</SessionProvider>;
 }
