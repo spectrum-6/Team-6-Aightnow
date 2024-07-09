@@ -11,7 +11,7 @@ const OAuthType = {
 type TFindIdResultProps = {
   userId: string;
   registDate: string;
-  authType?: "kakao" | "naver" | "google";
+  authType?: "kakao" | "naver" | "google" | null;
 };
 
 export default function FindIdResult(props: TFindIdResultProps) {
@@ -35,7 +35,6 @@ export default function FindIdResult(props: TFindIdResultProps) {
                 className="mr-1"
               />
             )}
-
             {userId}
           </div>
           <p>
