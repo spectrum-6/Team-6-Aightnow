@@ -16,9 +16,10 @@ export default function SearchResult(props: TSearchResultProps) {
   const { inputValue } = props;
 
   // 모든 주식 리스트 조회
-  const stockList = useStockStore((state) => state.stockList);
+  const { stockList } = useStockStore();
   // 관심 주식 리스트 조회
-  const watchList = useWatchListStore((state) => state.watchList);
+  const { watchList } = useWatchListStore();
+
   const watchListMap = new Map<string, any>();
   watchList.forEach((stock) => {
     watchListMap.set(stock.symbolCode, stock.timestamp);

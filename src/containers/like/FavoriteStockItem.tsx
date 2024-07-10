@@ -8,6 +8,7 @@ import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import { useDeleteWatchList } from "@/stores/watchListStore";
 import { useTranslation } from "@/utils/localization/client";
 import StockIcon from "@/components/StockIcon/StockIcon";
+import Link from "next/link";
 
 export default function FavoriteStockItem(props: TStockType) {
   const {
@@ -21,7 +22,7 @@ export default function FavoriteStockItem(props: TStockType) {
   const router = useRouter();
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "stock");
-  const setSymbolCode = useDeleteWatchList((state) => state.setSymbolCode);
+  const { setSymbolCode } = useDeleteWatchList();
 
   const getStyleOfPrice = () => {
     if (parseFloat(fluctuationsRatio) > 0) {
@@ -100,16 +101,17 @@ export default function FavoriteStockItem(props: TStockType) {
           </ul>
         </div>
         <div className="mt-4 flex justify-center gap-2">
-          <TextButton
-            variant="grayscale"
-            additionalClass="w-40 h-14"
-            onClick={() => {
-              setSymbolCode(symbolCode);
-              router.push(`/${locale}/like/deleteFavoriteStock`);
-            }}
-          >
-            삭제하기
-          </TextButton>
+          <Link href={`/${locale}/like/deleteFavoriteStock`} scroll={false}>
+            <TextButton
+              variant="grayscale"
+              additionalClass="w-40 h-14"
+              onClick={() => {
+                setSymbolCode(symbolCode);
+              }}
+            >
+              삭제하기
+            </TextButton>
+          </Link>
           <TextButton variant="primary" additionalClass="w-40 h-14">
             자세히 보기
           </TextButton>

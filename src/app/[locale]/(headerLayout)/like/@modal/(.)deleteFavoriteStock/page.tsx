@@ -51,26 +51,18 @@ export default function DeleteFavoriteStock() {
 
   // zustand store에 저장된 정보
   const userUID = useUserStore((state) => state.userInfo?.uid) || "";
-  const watchList = useWatchListStore((state) => state.watchList);
-  const setWatchList = useWatchListStore((state) => state.setWatchList);
-  const symbolCode = useDeleteWatchList((state) => state.symbolCode);
+  const { watchList, setWatchList } = useWatchListStore();
+  const { symbolCode } = useDeleteWatchList();
 
   // 삭제 버튼 클릭 시
   const handleDeleteButton = async () => {
-    const itemIndex = watchList.findIndex(
-      (item) => item.symbolCode === symbolCode,
-    );
-
-    if (itemIndex === -1) {
-      console.log("리스트에 저장되어 있지 않음");
-      return false;
+    const newList = watchList.filter((item) => item.symbolCode !== symbolCode);
+    if (newList.length <= 0) {
+      alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
+    } else {
+      setWatchList([...newList]);
+      await patchUserWatchList(userUID, [...newList]);
     }
-    // zustand store에서 삭제
-    watchList.splice(itemIndex, 1);
-    setWatchList([...watchList]);
-
-    // patch api call
-    await patchUserWatchList(userUID, watchList);
 
     router.back(); // 모달 닫기
   };
