@@ -63,8 +63,8 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
     } else {
       // 추가 로직
       const newList = [
-        ...watchList,
         { symbolCode: symbolCode, timestamp: Timestamp.fromDate(new Date()) },
+        ...watchList,
       ];
 
       setWatchList([...newList]);
