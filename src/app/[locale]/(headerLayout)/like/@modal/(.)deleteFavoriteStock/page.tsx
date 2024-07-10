@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDeleteWatchList, useWatchListStore } from "@/stores/watchListStore";
 import { TWatchList } from "@/types/userStockType";
-import useUserStore from "@/stores/userStore";
+import useUserStore from "@/stores/useUserStore";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -50,7 +50,7 @@ export default function DeleteFavoriteStock() {
   };
 
   // zustand store에 저장된 정보
-  const userUID = useUserStore((state) => state.user?.userUID) || "";
+  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
   const watchList = useWatchListStore((state) => state.watchList);
   const setWatchList = useWatchListStore((state) => state.setWatchList);
   const symbolCode = useDeleteWatchList((state) => state.symbolCode);

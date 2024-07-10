@@ -7,7 +7,7 @@ import {
   getUserInfo,
   updateUserInfo,
 } from "@/firebase/firestore";
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import { useRouter } from "next/navigation";
 import { UserInfo } from "@/types/UserInfo";
 import { fireStorage } from "@/firebase/firestorage";

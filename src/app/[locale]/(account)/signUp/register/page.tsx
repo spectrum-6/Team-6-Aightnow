@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import TextButton from "@/components/Button/TextButton";
 import Input from "@/components/Input";
 import AccountFormBox from "@/containers/account/AccountFormBox";
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import { useRouter } from "next/navigation";
 import { getUserInfo, updateUserInfo } from "@/firebase/firestore";
 import { getAuth, updatePassword } from "firebase/auth";

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { SessionProvider } from "next-auth/react";
-import { initializeAuthListener } from "@/store/useUserStore";
+import { initializeAuthListener } from "@/stores/useUserStore";
 
 export default function ClientLayout({
   children,

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { TStockType } from "@/types/stockType";
 import { useRecentViewStore } from "@/stores/recentSearchStore";
 import { useStockStore } from "@/stores/stockStore";
-import useUserStore from "@/stores/userStore";
+import useUserStore from "@/stores/useUserStore";
 import RecentViewList from "./RecentViewList";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -30,7 +30,7 @@ export default function RecentViews() {
   const recentViewsList = useRecentViewStore((state) => state.recentViews);
   const setRecentViews = useRecentViewStore((state) => state.setRecentViews);
 
-  const userUID = useUserStore((state) => state.user?.userUID) || "";
+  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
   // 전체 삭제 버튼 클릭
   const clickDeleteAll = async () => {
     // zustand store 초기화

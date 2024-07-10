@@ -6,7 +6,7 @@ import TextButton from "@/components/Button/TextButton";
 import { TStockType } from "@/types/stockType";
 import { TWatchList } from "@/types/userStockType";
 import { useWatchListStore } from "@/stores/watchListStore";
-import useUserStore from "@/stores/userStore";
+import useUserStore from "@/stores/useUserStore";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 import StockIcon from "@/components/StockIcon/StockIcon";
@@ -46,7 +46,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
 
   const [isFavoriteStock, setFavoriteStock] = useState(inWatchList);
   // session storage 에서 user UID 값을 조회
-  const userUID = useUserStore((state) => state.user?.userUID) || "";
+  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
   // 관심 주식 리스트 조회
   const watchList = useWatchListStore((state) => state.watchList);
   const setWatchList = useWatchListStore((state) => state.setWatchList);
