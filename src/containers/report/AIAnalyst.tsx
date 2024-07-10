@@ -1,5 +1,3 @@
-"use client";
-
 import {
   IconApple,
   IconTsla,
@@ -11,22 +9,23 @@ import {
 } from "@/icons";
 
 type TAiAnalystProps = {
-  realtimeData?: {
-    datas: Array<{
-      stockName: string;
-      symbolCode: string;
-      closePrice: string;
-      compareToPreviousClosePrice: string;
-      fluctuationsRatio: string;
-    }>;
-  };
+  stockName: string;
+  symbolCode: string;
+  closePrice: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
   id: string;
 };
 
 export default function AiAnalyst(props: TAiAnalystProps) {
-  const { realtimeData, id } = props;
-
-  const data = realtimeData?.datas[0];
+  const {
+    stockName,
+    symbolCode,
+    closePrice,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+    id,
+  } = props;
 
   const getStockLogo = (id: string) => {
     switch (id) {
@@ -76,29 +75,27 @@ export default function AiAnalyst(props: TAiAnalystProps) {
           <div className="flex items-center ml-2">
             {/* 주식명 */}
             <p className="text-lg text-grayscale-900 font-medium mr-2">
-              {data?.stockName}
+              {stockName}
             </p>
             {/* 주식 코드 */}
             <span className="text-lg text-grayscale-900 mr-2 before:content-['_•_']">
-              {data?.symbolCode}
+              {symbolCode}
             </span>
             {/* 주가 */}
             <span className="text-base font-medium text-grayscale-900 mr-2">
-              ${data?.closePrice}
+              ${closePrice}
             </span>
             {/* 주가 변동 */}
             <span
               className={`${changeClassName(
-                Number(data?.compareToPreviousClosePrice),
+                Number(compareToPreviousClosePrice),
               )} mr-2`}
             >
-              {data && formatComparePrice(data.compareToPreviousClosePrice)}
+              {formatComparePrice(compareToPreviousClosePrice)}
             </span>
             {/* 변동률 */}
-            <span
-              className={`${changeClassName(Number(data?.fluctuationsRatio))}`}
-            >
-              {data && formatRatio(data.fluctuationsRatio)}%
+            <span className={`${changeClassName(Number(fluctuationsRatio))}`}>
+              {formatRatio(fluctuationsRatio)}%
             </span>
           </div>
         </div>
