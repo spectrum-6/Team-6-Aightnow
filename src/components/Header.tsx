@@ -7,7 +7,7 @@ import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 import { useRouter } from "next/navigation";
 
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import { useEffect, useState } from "react";
 import { auth } from "@/firebase/firebasedb";
 

@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn } from "@/firebase/fireauth";
 
 const LoginClient: React.FC = () => {

@@ -1,21 +1,17 @@
 "use client";
 
 import TextButton from "@/components/Button/TextButton";
-import useUserStore from "@/stores/userStore";
+import { UserInfo } from "@/types/UserInfo";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function PageHead() {
+export default function PageHead({ userInfo }: { userInfo: UserInfo }) {
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
-
-  // session storage 에 저장된 user 정보
-  const user = useUserStore((state) => state.user);
-
   return (
     <div className="flex justify-between mb-6">
       <h2 className="text-navy-900 text-3xl font-bold">
-        {user?.userNickname} 님의 관심종목
+        {userInfo?.nickname} 님의 관심종목
       </h2>
       <Link href={`/${locale}/like/addFavoriteStock`} scroll={false}>
         <TextButton variant="primary" additionalClass="w-[189px] h-9 text-sm">

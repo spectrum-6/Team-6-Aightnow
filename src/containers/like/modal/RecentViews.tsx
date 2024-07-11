@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { TStockType } from "@/types/stockType";
 import { useRecentViewStore } from "@/stores/recentSearchStore";
 import { useStockStore } from "@/stores/stockStore";
-import useUserStore from "@/stores/userStore";
+import useUserStore from "@/stores/useUserStore";
 import RecentViewList from "./RecentViewList";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -26,11 +26,10 @@ const patchRecentViews = async (userUID: string, recentViews: string[]) => {
 export default function RecentViews() {
   const [data, setData] = useState<TStockType[]>([]);
 
-  const stockList = useStockStore((state) => state.stockList);
-  const recentViewsList = useRecentViewStore((state) => state.recentViews);
-  const setRecentViews = useRecentViewStore((state) => state.setRecentViews);
+  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
+  const { stockList } = useStockStore();
+  const { recentViews, setRecentViews } = useRecentViewStore();
 
-  const userUID = useUserStore((state) => state.user?.userUID) || "";
   // 전체 삭제 버튼 클릭
   const clickDeleteAll = async () => {
     // zustand store 초기화
@@ -43,13 +42,13 @@ export default function RecentViews() {
   };
 
   useEffect(() => {
-    if (recentViewsList.length > 0) {
+    if (recentViews && recentViews.length > 0) {
       const filtered = stockList.filter((item) =>
-        recentViewsList.includes(item.symbolCode),
+        recentViews.includes(item.symbolCode),
       );
       setData(filtered);
     }
-  }, [recentViewsList]);
+  }, [recentViews]);
 
   return (
     <>

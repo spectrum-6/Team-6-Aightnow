@@ -1,4 +1,4 @@
-import fireStore from "@/firebase/firestore";
+import { firestore } from "@/firebase/firebasedb";
 import { doc, updateDoc } from "firebase/firestore";
 
 // 최근 조회 종목 update
@@ -9,7 +9,7 @@ export async function PATCH(
   try {
     const { recentViews }: { recentViews: string[] } = await request.json();
 
-    const docRef = doc(fireStore, "userStock", params.id);
+    const docRef = doc(firestore, "userStock", params.id);
     await updateDoc(docRef, {
       recentViews: recentViews,
     });
