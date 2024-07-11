@@ -2,35 +2,36 @@
 
 import { useState } from "react";
 import ToggleSwitch from "@/components/Toggle";
-
-type TRealtimeData = {
-  datas: Array<{
-    stockName: string;
-    symbolCode: string;
-    closePrice: string;
-    compareToPreviousClosePrice: string;
-    fluctuationsRatio: string;
-  }>;
-};
-
-type TIntegrationData = {
-  corporateOverview: string;
-};
+import { formatCurrency } from "@/utils/formatCurrency";
 
 type TStockPriceProps = {
-  reportData?: {
-    realtimeData: TRealtimeData;
-    integrationData: TIntegrationData;
-  };
+  symbolCode: string;
+  closePrice: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
+  corporateOverview: string;
+  calcPrice: string;
 };
 
 export default function StockPrice(props: TStockPriceProps) {
-  const { reportData } = props;
+  const {
+    symbolCode,
+    closePrice,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+    corporateOverview,
+    calcPrice,
+  } = props;
 
   const [isDollar, setIsDollar] = useState<boolean>(true);
-  const data = reportData?.realtimeData.datas[0];
 
-  const formatPrice = (price: string) => (isDollar ? `$${price}` : `₩${price}`);
+  const priceWon = () => {
+    let won = Number(closePrice) * Number(calcPrice);
+    return formatCurrency(won);
+  };
+
+  const formatPrice = (price: string) =>
+    isDollar ? `$${price}` : `${priceWon()}`;
 
   const changeClassName = (price: number) =>
     price > 0
@@ -55,28 +56,19 @@ export default function StockPrice(props: TStockPriceProps) {
         <div className="flex flex-col">
           {/* 주가 */}
           <p className="text-2xl text-navy-900">
-            {/* '원' 처리 해줘야 함 */}
-            <span className="font-bold">
-              {data && formatPrice(data.closePrice)}
-            </span>
-            <span className="text-xl before:content-['_•_']">
-              {data?.symbolCode}
-            </span>
+            <span className="font-bold">{formatPrice(closePrice)}</span>
+            <span className="text-xl before:content-['_•_']">{symbolCode}</span>
           </p>
           {/* 주가 변동 */}
           <p className="text-xl">
             <span
-              className={changeClassName(
-                Number(data?.compareToPreviousClosePrice),
-              )}
+              className={changeClassName(Number(compareToPreviousClosePrice))}
             >
-              {data && formatComparePrice(data.compareToPreviousClosePrice)}
+              {formatComparePrice(compareToPreviousClosePrice)}
             </span>
             <span className="ml-2">
-              <span
-                className={changeClassName(Number(data?.fluctuationsRatio))}
-              >
-                {data && formatRatio(data.fluctuationsRatio)}%
+              <span className={changeClassName(Number(fluctuationsRatio))}>
+                {formatRatio(fluctuationsRatio)}%
               </span>
             </span>
           </p>
@@ -87,7 +79,7 @@ export default function StockPrice(props: TStockPriceProps) {
         />
       </div>
       <p className="text-base text-grayscale-900 truncate-4">
-        {reportData?.integrationData.corporateOverview}
+        {corporateOverview}
       </p>
     </div>
   );

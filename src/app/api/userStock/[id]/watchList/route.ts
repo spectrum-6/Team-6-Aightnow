@@ -1,5 +1,5 @@
 import { TWatchList } from "@/types/userStockType";
-import fireStore from "@/firebase/firestore";
+import { firestore } from "@/firebase/firebasedb";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 
 // 관심종목 update
@@ -19,7 +19,7 @@ export async function PATCH(
       item.timestamp = firebaseTimestamp;
     });
 
-    const docRef = doc(fireStore, "userStock", params.id);
+    const docRef = doc(firestore, "userStock", params.id);
     await updateDoc(docRef, {
       watchList: watchList,
     });

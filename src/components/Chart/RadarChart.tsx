@@ -21,10 +21,11 @@ ChartJS.register(
 type TRadarChartProps = {
   width?: number;
   height?: number;
+  labels?: boolean;
 };
 
-const RadarChart = (props: TRadarChartProps) => {
-  const { width, height } = props;
+export default function RadarChart(props: TRadarChartProps) {
+  const { width, height, labels } = props;
 
   const options = {
     responsive: true,
@@ -60,7 +61,9 @@ const RadarChart = (props: TRadarChartProps) => {
   };
 
   const data = {
-    labels: ["", "", "", "", ""],
+    labels: labels
+      ? ["주가", "투자지수", "관심도", "성장성", "수익성"]
+      : ["", "", "", "", ""],
     datasets: [
       {
         label: "AI 리포트",
@@ -77,6 +80,4 @@ const RadarChart = (props: TRadarChartProps) => {
       <Radar data={data} options={options} width={width} height={height} />
     </div>
   );
-};
-
-export default RadarChart;
+}

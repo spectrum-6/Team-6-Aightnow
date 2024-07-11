@@ -16,30 +16,34 @@ import {
   IconNvidia,
 } from "@/icons";
 
-type TRealtimeData = {
-  datas: Array<{
-    stockName: string;
-    symbolCode: string;
-    closePrice: string;
-    compareToPreviousClosePrice: string;
-    fluctuationsRatio: string;
-  }>;
-};
-
-type TIntegrationData = {
-  corporateOverview: string;
-};
-
 type TReportContainer = {
-  reportData?: {
-    realtimeData: TRealtimeData;
-    integrationData: TIntegrationData;
-  };
+  stockName: string;
+  symbolCode: string;
+  closePrice: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
+
+  corporateOverview: string;
+  calcPrice: string;
+  stockExchangeName: string;
   id: string;
+  code: string;
 };
 
 export default function ReportContainer(props: TReportContainer) {
-  const { reportData, id } = props;
+  // ...rest
+  const {
+    stockName,
+    symbolCode,
+    closePrice,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+    corporateOverview,
+    calcPrice,
+    stockExchangeName,
+    id,
+    code,
+  } = props;
 
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
@@ -77,9 +81,9 @@ export default function ReportContainer(props: TReportContainer) {
               <div className="flex flex-row items-center">
                 {getStockLogo(id)}
                 <h4 className="font-bold ml-3 flex items-center gap-2">
-                  {reportData?.realtimeData.datas[0].stockName}
+                  {stockName}
                   <span className="text-xl font-medium before:content-['_•_']">
-                    {reportData?.realtimeData.datas[0].symbolCode}
+                    {symbolCode}
                   </span>
                 </h4>
               </div>
@@ -96,12 +100,26 @@ export default function ReportContainer(props: TReportContainer) {
             </div>
             <div>
               <div className="flex flex-row w-[1200px] h-[256px] gap-[20px] mb-6">
-                <StockPrice reportData={reportData} />
-                <StockChart />
+                <StockPrice
+                  symbolCode={symbolCode}
+                  closePrice={closePrice}
+                  compareToPreviousClosePrice={compareToPreviousClosePrice}
+                  fluctuationsRatio={fluctuationsRatio}
+                  corporateOverview={corporateOverview}
+                  calcPrice={calcPrice}
+                />
+                <StockChart code={code} stockExchangeName={stockExchangeName} />
               </div>
               <div className="flex flex-row w-[1200px] h-[297px] gap-[20px] mb-10">
                 <AIStockList />
-                <AiAnalyst realtimeData={reportData?.realtimeData} id={id} />
+                <AiAnalyst
+                  stockName={stockName}
+                  symbolCode={symbolCode}
+                  closePrice={closePrice}
+                  compareToPreviousClosePrice={compareToPreviousClosePrice}
+                  fluctuationsRatio={fluctuationsRatio}
+                  id={id}
+                />
               </div>
             </div>
           </div>

@@ -37,13 +37,13 @@ export default function AIStockList(props: TStockMetricsProps) {
       {/* 본문 섹션 */}
       <div className="flex justify-between">
         {/* 주식 차트 */}
-        <RaderChart width={120} height={120} />
+        <RaderChart width={176} height={176} labels={true} />
 
         {/* 주식 데이터 */}
         <div className="flex flex-col justify-center p-6 gap-1 w-[176px] h-[176px] bg-grayscale-100 rounded-3xl font-medium">
           <p className="text-base text-grayscale-600 flex justify-between items-center">
-            증가
-            <span className="text-sm text-warning-100 after:content-['%']">
+            주가
+            <span className="text-sm text-blue-600 after:content-['%']">
               ▲{stockData.stockPrice}
             </span>
           </p>

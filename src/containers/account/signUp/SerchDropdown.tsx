@@ -52,7 +52,7 @@ export default function SerchDropdown({
 
     // 입력값에 따라 데이터 필터링
     const filtered = tempData.filter((item) =>
-      item.toLowerCase().includes(value.toLowerCase())
+      item.toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredData(filtered);
     setFocused(true); // 드롭다운 열기
@@ -76,14 +76,15 @@ export default function SerchDropdown({
   };
 
   return (
-    <div ref={dropdownRef} className="relative min-w-40">
+    <div ref={dropdownRef} className="relative min-w-40 flex flex-col gap-1">
+      <span className="text-base font-medium text-navy-900">관심 종목</span>
       <input
         type="text"
         value={inputValue}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={() => setFocused(true)}
-        placeholder="관심 종목을 추가해 주세요."
-        className="w-full py-4 border rounded-lg bg-white placeholder-grayscale-400 outline-0 pl-4 pr-11 text-grayscale-900
+        placeholder="#관심 종목을 추가해 주세요."
+        className="w-full py-4 border rounded-lg bg-white placeholder-grayscale-400 outline-0 pl-4 pr-11 text-grayscale-900 border-grayscale-300
         disabled:bg-grayscale-100 disabled:border-grayscale-300 disabled:placeholder-grayscale-300 text-left focus:border-blue-500"
       />
 
