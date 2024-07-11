@@ -1,4 +1,4 @@
-import fireStore from "@/firebase/firestore";
+import { firestore } from "@/firebase/firebasedb";
 import { doc, updateDoc } from "firebase/firestore";
 
 // 마이페이지 번역 언어 설정 업데이트
@@ -9,7 +9,7 @@ export async function PATCH(
   try {
     const { transLang }: { transLang: string } = await request.json();
 
-    const docRef = doc(fireStore, "users", params.id);
+    const docRef = doc(firestore, "users", params.id);
     await updateDoc(docRef, {
       transLang: transLang,
     });

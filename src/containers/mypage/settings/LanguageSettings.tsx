@@ -1,5 +1,6 @@
 import LanguageButton from "@/components/Button/LanguageButton";
-import useUserStore from "@/stores/userStore";
+import useUserStore from "@/stores/useUserStore";
+import { UserInfo } from "@/types/UserInfo";
 
 type lang = "ko" | "en" | "zh" | "ja" | "fr";
 const langList: lang[] = ["ko", "en", "zh", "ja", "fr"];
@@ -19,8 +20,8 @@ const patchUserTransLang = async (userUID: string, changeLang: lang) => {
   }
 };
 
-export default function LanguageSettings() {
-  const { userInfo, setUserInfo } = useUserStore();
+export default function LanguageSettings({ userInfo }: { userInfo: UserInfo }) {
+  const { setUserInfo } = useUserStore();
 
   // zustand user 정보에 저장된 번역언어
   const uid = userInfo?.uid;

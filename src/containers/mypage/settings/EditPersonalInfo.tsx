@@ -1,6 +1,7 @@
+import { UserInfo } from "@/types/UserInfo";
 import Link from "next/link";
 
-export default function EditPersonalInfo() {
+export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
   return (
     <div>
       <form>
@@ -36,7 +37,9 @@ export default function EditPersonalInfo() {
                 alt="프로필"
                 className="w-14 h-14 rounded-full mr-4"
               />
-              <span className="text-[16px] text-black font-medium">김스팩</span>
+              <span className="text-[16px] text-black font-medium">
+                {userInfo.nickname}
+              </span>
             </div>
           </div>
 
@@ -66,7 +69,7 @@ export default function EditPersonalInfo() {
                 아이디
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                sfacspaceid
+                {userInfo.id}
               </span>
             </div>
             <div className="flex mb-2 items-center">
@@ -74,7 +77,7 @@ export default function EditPersonalInfo() {
                 이름
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                김스팩
+                {userInfo.username}
               </span>
             </div>
             <div className="flex mb-2 items-center">
@@ -82,7 +85,7 @@ export default function EditPersonalInfo() {
                 생년월일
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                989898
+                {userInfo.birthDate}
               </span>
             </div>
           </div>

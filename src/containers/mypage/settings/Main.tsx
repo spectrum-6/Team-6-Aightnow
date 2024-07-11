@@ -4,20 +4,24 @@ import { useEffect, useState } from "react";
 import EditPersonalInfo from "./EditPersonalInfo";
 import LanguageSettings from "./LanguageSettings";
 import TermsOfService from "./TermsOfService";
+import useUserStore from "@/stores/useUserStore";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // 서비스 이용약관 DB 조회
-type TContent = {
+type TServiceInfoContent = {
   termsText: string;
   policyText: string;
 };
-const getServiceInfoContent = async (): Promise<TContent> => {
+const getServiceInfoContent = async (): Promise<TServiceInfoContent> => {
   const res = await (await fetch(`${baseUrl}/api/system`)).json();
   return res;
 };
 
 export default function Main() {
+  // Session에 저장된 User 정보
+  const { userInfo } = useUserStore();
+
   // Side bar
   const [selectedSection, setSelectedSection] = useState("personalinfo");
 
@@ -38,11 +42,15 @@ export default function Main() {
   }, []);
 
   const renderContent = () => {
+    if (!userInfo) {
+      return null;
+    }
+
     switch (selectedSection) {
       case "personalinfo":
-        return <EditPersonalInfo />;
+        return <EditPersonalInfo userInfo={userInfo} />;
       case "languagesettings":
-        return <LanguageSettings />;
+        return <LanguageSettings userInfo={userInfo} />;
       case "termsofservice":
         return (
           <TermsOfService
@@ -51,7 +59,7 @@ export default function Main() {
           />
         );
       default:
-        return <EditPersonalInfo />;
+        return <EditPersonalInfo userInfo={userInfo} />;
     }
   };
 
