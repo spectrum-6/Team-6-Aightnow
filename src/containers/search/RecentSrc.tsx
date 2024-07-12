@@ -9,10 +9,17 @@ import useUserStore from "@/stores/useUserStore";
 import { arrayRemove, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import RcSrcList from "./RcSrcList";
+import { useRouter } from "next/navigation";
+
+type TRecentSearch = {
+  term: string;
+  date: string;
+};
 
 export default function RecentSrc() {
   const { user } = useUserStore(); // 유저 정보 가져오기
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [recentSearches, setRecentSearches] = useState<TRecentSearch[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     // firestore에서 최근 검색어 불러오기
@@ -22,9 +29,17 @@ export default function RecentSrc() {
         const userSnap = await getDoc(userDoc);
         if (userSnap.exists()) {
           const data = userSnap.data();
-          setRecentSearches(
-            data.userStockCollection?.recentSearch?.reverse() || [],
-          );
+          const recentSearches =
+            data.userStockCollection?.recentSearch?.map(
+              (search: TRecentSearch) => ({
+                ...search,
+                date: new Date(search.date).toLocaleDateString("ko-KR", {
+                  month: "2-digit",
+                  day: "2-digit",
+                }),
+              }),
+            ) || [];
+          setRecentSearches(recentSearches.reverse());
         }
       }
     };
@@ -39,7 +54,9 @@ export default function RecentSrc() {
       await updateDoc(userDoc, {
         "userStockCollection.recentSearch": arrayRemove(searchTerm),
       });
-      setRecentSearches((prev) => prev.filter((term) => term !== searchTerm));
+      setRecentSearches((prev) =>
+        prev.filter((term) => term.term !== searchTerm),
+      );
     }
   };
 
@@ -54,6 +71,11 @@ export default function RecentSrc() {
     }
   };
 
+  const handleSearchClick = (term: string) => {
+    // 검색 기록 항목 클릭 시 페이지 이동
+    router.push(`/search/searchAf`);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center">
@@ -66,8 +88,13 @@ export default function RecentSrc() {
         </span>
       </div>
       <div className="flex flex-col bg-white p-6 rounded-xl">
-        {recentSearches.slice(0, 10).map((term) => (
-          <RcSrcList key={term} term={term} onDelete={handleDelete} />
+        {recentSearches.slice(0, 10).map((search) => (
+          <RcSrcList
+            key={search.term}
+            search={search}
+            onDelete={handleDelete}
+            onSearchClick={handleSearchClick}
+          />
         ))}
       </div>
     </div>

@@ -39,7 +39,10 @@ export default function Search() {
       if (user) {
         const userDoc = doc(firestore, "users", user.uid);
         await updateDoc(userDoc, {
-          "userStockCollection.recentSearch": arrayUnion(query),
+          "userStockCollection.recentSearch": arrayUnion({
+            term: query,
+            date: new Date().toISOString().split("T")[0], // 날짜만 저장
+          }),
         });
       }
 
