@@ -29,16 +29,6 @@ export default function RecentSrc() {
         const userSnap = await getDoc(userDoc);
         if (userSnap.exists()) {
           const data = userSnap.data();
-          // const recentSearches =
-          //   data.userStockCollection?.recentSearch?.map(
-          //     (search: TRecentSearch) => ({
-          //       ...search,
-          //       date: new Date(search.date).toLocaleDateString("ko-KR", {
-          //         month: "2-digit",
-          //         day: "2-digit",
-          //       }),
-          //     }),
-          //   )
           const recentSearches = data.userStockCollection?.recentSearch || [];
           setRecentSearches(recentSearches.reverse());
         }
@@ -86,7 +76,7 @@ export default function RecentSrc() {
       <div className="flex justify-between items-center">
         <span className="text-navy-900 font-bold text-2xl">최근 검색어</span>
         <span
-          className="text-grayscale-600 font-medium border-b border-gray-600 cursor-pointer"
+          className="text-grayscale-600 font-medium border-b border-gray-600 cursor-pointer hover:text-warning-100"
           onClick={handleDeleteAll}
         >
           전체삭제

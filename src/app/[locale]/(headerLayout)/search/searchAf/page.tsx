@@ -1,3 +1,5 @@
+// 바꾸기 전!!!!!!!!!!!!!!!
+
 "use client";
 
 import Input from "@/components/Input";
@@ -48,6 +50,8 @@ export default function SearchAf() {
   const query = searchParams.get("query") || "";
   const [inputValue, setInputValue] = useState<string>(query);
   const [stockName, setStockName] = useState<string | null>(null); // 주식 이름 상태
+  const [stockCode, setStockCode] = useState<string | null>(null); // 주식 코드 상태
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태
   const { user } = useUserStore(); // 유저 정보 가져오기
   const { recentViews, setRecentViews } = useRecentViewStore(); // 최근 조회 종목 스토어 가져오기
 
@@ -57,12 +61,13 @@ export default function SearchAf() {
       const stockSnap = await getDoc(stockDoc);
       if (stockSnap.exists()) {
         setStockName(stockSnap.data().stockName); // 주식 이름 설정
-        console.log(
-          "stocks 컬렉션에서 가져온 데이터",
-          stockSnap.data().stockName,
-        );
+        setStockCode(stockCode); // 주식 코드 설정
+        setErrorMessage(null); // 에러 메시지 초기화
       } else {
         console.log("stocks 컬렉션이 존재하지 않습니다.");
+        setStockName(null); // 주식 이름 초기화
+        setStockCode(null); // 주식 코드 초기화
+        setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
       }
     };
 
@@ -72,6 +77,9 @@ export default function SearchAf() {
         fetchStockData(stockCode);
       } else {
         console.log("검색어와 일치하는 주식 코드가 없습니다.", query);
+        setStockName(null); // 주식 이름 초기화
+        setStockCode(null); // 주식 코드 초기화
+        setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
       }
     }
   }, [query, user]);
@@ -80,14 +88,15 @@ export default function SearchAf() {
     setInputValue(e.target.value); // 입력된 값을 문자열로 설정
   };
 
+  const handleSearch = () => {
+    if (inputValue.trim() !== "") {
+      const newQuery = inputValue; // 검색어로 사용
+      router.push(`/search/searchAf?query=${newQuery}`);
+    }
+  };
+
   const handleItemClick = async (itemCode: string) => {
     if (user) {
-      // 'searchCount' 컬렉션에 해당 종목 코드의 카운트를 +1
-      const countDoc = doc(firestore, "searchCount", itemCode);
-      await updateDoc(countDoc, {
-        count: increment(1),
-      });
-
       // 'users' 컬렉션의 'userStockCollection' 맵의 'recentView' 배열에 해당 종목 코드를 추가/업데이트
       const userDoc = doc(firestore, "users", user.uid);
       await updateDoc(userDoc, {
@@ -98,7 +107,7 @@ export default function SearchAf() {
       const newRecentViews = [
         itemCode,
         ...recentViews.filter((code) => code !== itemCode),
-      ].slice(0, 10);
+      ];
       setRecentViews(newRecentViews);
     }
 
@@ -119,10 +128,15 @@ export default function SearchAf() {
         />
       </div>
       {/* 주식 */}
-      {/* <Stock query={query} onItemClick={handleItemClick} /> */}
       {stockName && (
-        <Stock stockName={stockName} onItemClick={handleItemClick} />
+        <Stock
+          stockName={stockName}
+          stockCode={stockCode}
+          onItemClick={handleItemClick}
+        />
       )}
+      {/* 에러 메시지 */}
+      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
       {/* 뉴스 */}
       <p>뉴스지롱</p>
       {/* <News query={query} onItemClick={handleItemClick} /> */}

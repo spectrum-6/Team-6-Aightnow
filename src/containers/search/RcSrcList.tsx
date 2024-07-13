@@ -30,7 +30,7 @@ export default function RcSrcList({
       <div className="flex gap-2 items-center">
         <IconTime />
         <span
-          className="font-medium text-grayscale-600 text-base cursor-pointer"
+          className="font-medium text-grayscale-600 text-base cursor-pointer hover:text-blue-900"
           onClick={() => onSearchClick(search.term)}
         >
           {search.term}
