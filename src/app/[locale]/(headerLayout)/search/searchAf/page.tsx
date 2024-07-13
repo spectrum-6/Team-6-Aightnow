@@ -1,5 +1,3 @@
-// 바꾸기 전!!!!!!!!!!!!!!!
-
 "use client";
 
 import Input from "@/components/Input";
@@ -22,26 +20,28 @@ import { useRecentViewStore } from "@/stores/recentSearchStore"; // 최근 조�
 const mapSearchTermToStock = (term: string) => {
   const mapping: { [key: string]: string } = {
     애플: "AAPL",
-    Apple: "AAPL",
+    apple: "AAPL",
     AAPL: "AAPL",
     아마존: "AMZN",
+    amazon: "AMZN",
     AMZN: "AMZN",
     구글: "GOOGL",
+    google: "GOOGL",
     GOOGL: "GOOGL",
     마이크로소프트: "MSFT",
-    Microsoft: "MSFT",
+    microsoft: "MSFT",
     MSFT: "MSFT",
     엔비디아: "NVDA",
-    Nvidia: "NVDA",
+    nvidia: "NVDA",
     NVDA: "NVDA",
     테슬라: "TSLA",
-    Tesla: "TSLA",
+    tesla: "TSLA",
     TSLA: "TSLA",
     유니티: "U",
-    Unity: "U",
+    unity: "U",
     U: "U",
   };
-  return mapping[term.toLowerCase()] || null;
+  return mapping[term] || mapping[term.toLowerCase()] || null;
 };
 
 export default function SearchAf() {
