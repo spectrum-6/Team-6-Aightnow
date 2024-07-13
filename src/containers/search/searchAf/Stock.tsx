@@ -1,6 +1,12 @@
 import SrcStockList from "./SrcStockList";
 
-export default function Stock() {
+type TStockProps = {
+  stockName: string;
+  onItemClick: (itemCode: string) => Promise<void>;
+  // handleItemClick: () => void;
+};
+
+export default function Stock({ stockName, onItemClick }: TStockProps) {
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -15,14 +21,15 @@ export default function Stock() {
             <div className="flex gap-4">
               <div className=" flex flex-col gap-2 w-[263px] h-[208px">
                 {/* 아이템 */}
-                <SrcStockList />
-                <SrcStockList />
-                <SrcStockList />
+                {stockName}
+                {/* <SrcStockList stockName={data.stockName} /> */}
+                {/* <SrcStockList /> */}
+                {/* <SrcStockList /> */}
               </div>
               <div className="flex flex-col gap-2 w-[263px] h-[208px]">
+                {/* <SrcStockList />
                 <SrcStockList />
-                <SrcStockList />
-                <SrcStockList />
+                <SrcStockList /> */}
               </div>
             </div>
           </div>

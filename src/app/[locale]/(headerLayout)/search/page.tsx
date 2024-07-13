@@ -1,8 +1,3 @@
-/*
- * 1.
- * 2.
- * 3.
- */
 "use client";
 
 import Input from "@/components/Input";
@@ -46,8 +41,10 @@ export default function Search() {
         });
       }
 
+      // 검색 결과 페이지로 이동
       // router.push(`/search/results?query=${query}`);
-      router.push(`/search/searchAf`);
+      router.push(`/search/searchAf?query=${query}`);
+      // router.push(`/search/searchAf`);
     }
   };
 
