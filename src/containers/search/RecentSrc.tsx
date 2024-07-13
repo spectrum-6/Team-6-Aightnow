@@ -29,16 +29,17 @@ export default function RecentSrc() {
         const userSnap = await getDoc(userDoc);
         if (userSnap.exists()) {
           const data = userSnap.data();
-          const recentSearches =
-            data.userStockCollection?.recentSearch?.map(
-              (search: TRecentSearch) => ({
-                ...search,
-                date: new Date(search.date).toLocaleDateString("ko-KR", {
-                  month: "2-digit",
-                  day: "2-digit",
-                }),
-              }),
-            ) || [];
+          // const recentSearches =
+          //   data.userStockCollection?.recentSearch?.map(
+          //     (search: TRecentSearch) => ({
+          //       ...search,
+          //       date: new Date(search.date).toLocaleDateString("ko-KR", {
+          //         month: "2-digit",
+          //         day: "2-digit",
+          //       }),
+          //     }),
+          //   )
+          const recentSearches = data.userStockCollection?.recentSearch || [];
           setRecentSearches(recentSearches.reverse());
         }
       }
@@ -47,15 +48,19 @@ export default function RecentSrc() {
     fetchRecentSearches();
   }, [user]);
 
-  const handleDelete = async (searchTerm: string) => {
+  const handleDelete = async (searchTerm: string, searchDate: string) => {
     // 개별 검색어 삭제
     if (user) {
       const userDoc = doc(firestore, "users", user.uid);
+      const itemToRemove = { term: searchTerm, date: searchDate };
       await updateDoc(userDoc, {
-        "userStockCollection.recentSearch": arrayRemove(searchTerm),
+        "userStockCollection.recentSearch": arrayRemove(itemToRemove),
       });
+      console.log(searchTerm, searchDate);
       setRecentSearches((prev) =>
-        prev.filter((term) => term.term !== searchTerm),
+        prev.filter(
+          (term) => term.term !== searchTerm || term.date !== searchDate,
+        ),
       );
     }
   };
@@ -92,7 +97,7 @@ export default function RecentSrc() {
           <RcSrcList
             key={search.term}
             search={search}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(search.term, search.date)}
             onSearchClick={handleSearchClick}
           />
         ))}
