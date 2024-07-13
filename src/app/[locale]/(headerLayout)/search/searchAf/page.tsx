@@ -49,7 +49,7 @@ export default function SearchAf() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [inputValue, setInputValue] = useState<string>(query);
-  const [stockName, setStockName] = useState<string | null>(null); // 주식 이름 상태
+  const [stockNames, setStockName] = useState<string[]>([]); // 주식 이름 상태
   const [stockCode, setStockCode] = useState<string | null>(null); // 주식 코드 상태
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태
   const { user } = useUserStore(); // 유저 정보 가져오기
@@ -60,12 +60,12 @@ export default function SearchAf() {
       const stockDoc = doc(firestore, "stocks", stockCode);
       const stockSnap = await getDoc(stockDoc);
       if (stockSnap.exists()) {
-        setStockName(stockSnap.data().stockName); // 주식 이름 설정
+        setStockName([stockSnap.data().stockName]); // 주식 이름 설정
         setStockCode(stockCode); // 주식 코드 설정
         setErrorMessage(null); // 에러 메시지 초기화
       } else {
         console.log("stocks 컬렉션이 존재하지 않습니다.");
-        setStockName(null); // 주식 이름 초기화
+        setStockName([]); // 주식 이름 초기화
         setStockCode(null); // 주식 코드 초기화
         setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
       }
@@ -77,7 +77,7 @@ export default function SearchAf() {
         fetchStockData(stockCode);
       } else {
         console.log("검색어와 일치하는 주식 코드가 없습니다.", query);
-        setStockName(null); // 주식 이름 초기화
+        setStockName([]); // 주식 이름 초기화
         setStockCode(null); // 주식 코드 초기화
         setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
       }
@@ -134,9 +134,9 @@ export default function SearchAf() {
         />
       </div>
       {/* 주식 */}
-      {stockName && (
+      {stockNames.length > 0 && (
         <Stock
-          stockName={stockName}
+          stockNames={stockNames}
           stockCode={stockCode}
           onItemClick={handleItemClick}
         />
@@ -144,7 +144,6 @@ export default function SearchAf() {
       {/* 에러 메시지 */}
       {errorMessage && <div className="text-red-500">{errorMessage}</div>}
       {/* 뉴스 */}
-      <p>뉴스지롱</p>
       {/* <News query={query} onItemClick={handleItemClick} /> */}
     </main>
   );
