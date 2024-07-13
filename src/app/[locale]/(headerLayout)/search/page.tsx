@@ -10,14 +10,37 @@ import useUserStore from "@/stores/useUserStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/firebasedb";
 
+// const suggestions = [
+//   "애플",
+//   "아마존",
+//   "구글",
+//   "마이크로소프트",
+//   "엔비디아",
+//   "테슬라",
+//   "유니티",
+// ]; // 추천 검색어 목록
 const suggestions = [
   "애플",
+  "apple",
+  "aapl",
   "아마존",
+  "amazon",
+  "amzn",
   "구글",
+  "google",
+  "googl",
   "마이크로소프트",
+  "microsoft",
+  "msft",
   "엔비디아",
+  "nvidia",
+  "nvda",
   "테슬라",
+  "tesla",
+  "tsla",
   "유니티",
+  "unity",
+  "u",
 ]; // 추천 검색어 목록
 
 export default function Search() {
