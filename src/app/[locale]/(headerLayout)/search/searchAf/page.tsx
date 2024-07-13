@@ -103,6 +103,12 @@ export default function SearchAf() {
         "userStockCollection.recentView": arrayUnion(itemCode),
       });
 
+      // 'searchCount' 컬렉션에 해당 종목 코드의 카운트를 +1
+      const countDoc = doc(firestore, "searchCount", itemCode);
+      await updateDoc(countDoc, {
+        count: increment(1),
+      });
+
       // 최근 조회 종목 업데이트
       const newRecentViews = [
         itemCode,
