@@ -81,3 +81,21 @@ export async function getStockPriceApi() {
     throw error;
   }
 }
+
+// db에서 stocks 컬렉션의 특정 doc 데이터 가져오기
+export async function getStockInfoApi(id: string) {
+  try {
+    const response = await fetch(`${BASE_URL}/api/stocks/${id}`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "failed");
+    }
+
+    const stockInfo = await response.json();
+    return stockInfo;
+  } catch (error: unknown) {
+    console.error("error: ", error);
+    throw error;
+  }
+}

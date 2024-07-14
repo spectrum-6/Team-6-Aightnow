@@ -1,7 +1,13 @@
-import IconExclam from "@/icons/IconExclam";
+"use client";
+
 import InterestList from "./InterestList";
+import useUserStore from "@/stores/useUserStore";
+import IconExclam from "@/icons/IconExclam";
 
 export default function RecentViews({ className }: { className?: string }) {
+  const { userInfo } = useUserStore();
+  const watchList = userInfo?.userStockCollection?.watchList;
+
   return (
     <>
       <div className="flex justify-start items-start gap-5">
@@ -21,10 +27,9 @@ export default function RecentViews({ className }: { className?: string }) {
           <div className="flex flex-col items-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
             {/* list */}
             <ul className="flex flex-col w-[494px]">
-              <InterestList />
-              <InterestList />
-              <InterestList />
-              <InterestList />
+              {watchList?.map((item, index) => {
+                return <InterestList key={index} item={item} />;
+              })}
             </ul>
           </div>
         </div>
