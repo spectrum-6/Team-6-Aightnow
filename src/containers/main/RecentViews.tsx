@@ -17,8 +17,8 @@ export default function RecentViews({ className }: { className?: string }) {
         </div>
         {/* 관심종목 */}
         <div className="flex flex-col gap-6">
-          <h4 className="font-bold text-navy-900">관심 조회</h4>
-          <div className="flex flex-col items-center justify-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
+          <h4 className="font-bold text-navy-900">관심 종목</h4>
+          <div className="flex flex-col items-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
             {/* list */}
             <ul className="flex flex-col w-[494px]">
               <InterestList />
