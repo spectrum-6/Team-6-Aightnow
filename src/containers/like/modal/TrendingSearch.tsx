@@ -16,7 +16,7 @@ export default function TrendingSearch() {
   const [trendingSearchList, setTrendingSearchList] = useState<TStockType[]>();
 
   // 주식 정보 조회
-  const stockList = useStockStore((state) => state.stockList);
+  const { stockList } = useStockStore();
 
   const getData = async () => {
     const trendingSearchList = await getTrendingSearchList();

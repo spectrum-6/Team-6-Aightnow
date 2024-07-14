@@ -10,7 +10,7 @@ import { doc, setDoc } from "firebase/firestore";
 import TextButton from "@/components/Button/TextButton";
 import Input from "@/components/Input";
 import AccountFormBox from "@/containers/account/AccountFormBox";
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import VerifySuccess from "./@modal/(.)success/page";
 import { firestore } from "@/firebase/firebasedb";
 

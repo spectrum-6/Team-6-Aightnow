@@ -7,9 +7,10 @@ import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 import { useRouter } from "next/navigation";
 
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/stores/useUserStore";
 import { useEffect, useState } from "react";
 import { auth } from "@/firebase/firebasedb";
+import { signOut } from "next-auth/react";
 
 const navList = ["search", "news", "like", "settings"];
 
@@ -27,6 +28,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await auth.signOut();
+      await signOut({ redirect: false });
       clearUserInfo(); // Clear the user from Zustand state
       router.push("/login");
     } catch (error) {

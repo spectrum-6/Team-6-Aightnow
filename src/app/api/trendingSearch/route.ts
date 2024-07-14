@@ -1,4 +1,4 @@
-import fireStore from "@/firebase/firestore";
+import { firestore } from "@/firebase/firebasedb";
 import {
   collection,
   getDocs,
@@ -12,7 +12,7 @@ import {
 // searchCount 컬렉션의 모든 데이터를 조회
 // count 필드로 정렬하되, 최대 5개만 가져옴
 export async function GET(request: Request) {
-  const col = collection(fireStore, "searchCount");
+  const col = collection(firestore, "searchCount");
   const q = query(
     col,
     // where("count", ">", 0),
