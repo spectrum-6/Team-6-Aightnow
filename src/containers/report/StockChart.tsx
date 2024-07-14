@@ -4,13 +4,12 @@ import { useState } from "react";
 import AreaChart from "@/components/Chart/AreaChart";
 
 type TStockChartProps = {
-  code: string;
-  stockExchangeName: string;
+  reutersCode: string;
+  stockExchangeType: string;
 };
 
 export default function StockChart(props: TStockChartProps) {
-  const { code, stockExchangeName } = props;
-  const stockExchangeType = stockExchangeName;
+  const { reutersCode, stockExchangeType } = props;
 
   // 기간 버튼 state
   const [selected, setSelected] = useState<string>("1일");
@@ -28,22 +27,21 @@ export default function StockChart(props: TStockChartProps) {
 
         {/* 기간 선택 버튼들 */}
         <div className="flex flex-col gap-2 text-sm font-medium">
-          {buttons.map((button, index) => (
+          {buttons.map((item, index) => (
             <button
               key={index}
               // 버튼 클릭 시 선택된 버튼 상태를 업데이트
               onClick={() => {
-                setSelected(button);
-                // stockPriceApi({ code, button, stockExchangeType });
+                setSelected(item);
               }}
               // 선택된 버튼과 선택되지 않은 버튼의 스타일 적용
               className={
-                selected === button
+                selected === item
                   ? "w-16 h-8 bg-navy-50 rounded-lg text-navy-900"
                   : "w-16 h-8 bg-white rounded-lg text-grayscale-400"
               }
             >
-              {button /* 차트의 기간 옵션 */}
+              {item /* 차트의 기간 옵션 */}
             </button>
           ))}
         </div>
