@@ -71,7 +71,6 @@ export const onAuthStateChanged = (callback: (user: User | null) => void) => {
 // 사용자의 비밀번호 재인증
 export const reauthenticateUser = async (currentPassword: string) => {
   const user = auth.currentUser;
-
   if (user && user.email) {
     const credential = EmailAuthProvider.credential(
       user.email,
@@ -90,10 +89,23 @@ export const reauthenticateUser = async (currentPassword: string) => {
 // 사용자의 비밀번호 재설정
 export const changePassword = async (newPassword: string) => {
   const user = auth.currentUser;
-
   if (user) {
     try {
       await updatePassword(user, newPassword);
+      return { result: true };
+    } catch (error) {
+      return { error: error };
+    }
+  }
+};
+
+// 사용자 탈퇴
+export const authDeleteUser = async () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    try {
+      await user.delete();
       return { result: true };
     } catch (error) {
       return { error: error };

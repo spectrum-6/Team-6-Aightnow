@@ -1,15 +1,16 @@
 "use client";
 
 import IconDown from "@/icons/IconDown";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 type TDropdownProps = {
   list: string[];
   placeholder: string;
+  onChangeEvent?: Dispatch<SetStateAction<string>>;
 };
 
 export default function Dropdown(props: TDropdownProps) {
-  const { list, placeholder } = props;
+  const { list, placeholder, onChangeEvent } = props;
   const [inputValue, setInputValue] = useState(placeholder);
   const [isFocused, setFocused] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,7 @@ export default function Dropdown(props: TDropdownProps) {
         </button>
 
         {isFocused && (
-          <ul className="absolute top-16 w-full flex flex-col border border-grayscale-300 bg-white rounded-lg text-grayscale-900 text-base overflow-hidden">
+          <ul className="absolute z-10 top-16 w-full flex flex-col border border-grayscale-300 bg-white rounded-lg text-grayscale-900 text-base overflow-hidden">
             {list &&
               list.map((item, index) => (
                 <li
@@ -58,6 +59,9 @@ export default function Dropdown(props: TDropdownProps) {
                   className="p-4 cursor-pointer text-left hover:bg-blue-50/50"
                   onClick={() => {
                     setInputValue(item);
+                    if (onChangeEvent) {
+                      onChangeEvent(item);
+                    }
                     setFocused(false); // Close dropdown on item click
                   }}
                 >

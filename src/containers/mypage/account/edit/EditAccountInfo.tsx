@@ -105,7 +105,7 @@ export default function EditAccountInfo() {
       <div className="bg-white rounded-[32px] w-[590px] h-[892px] p-10 flex flex-col items-center justify-center">
         <h3 className="font-bold text-navy-900 text-center mb-10">정보 수정</h3>
 
-        <form action="" className="mb-14">
+        <form action="" className="mb-10">
           <div className="w-[386px] mb-4 flex flex-col items-center">
             <label
               htmlFor=""
@@ -207,7 +207,7 @@ export default function EditAccountInfo() {
 
         <Link
           href="/settings/account/delete/deleteaccount"
-          className="text-warning-100 .text-sm underline"
+          className="text-warning-100 text-sm underline mt-2"
           onClick={handleLinkClick}
         >
           회원탈퇴
