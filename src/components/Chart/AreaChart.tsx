@@ -26,10 +26,13 @@ ChartJS.register(
 type TAreaChartProps = {
   width?: number;
   height?: number;
+  stockPriceArray: number[];
+  stockDateArray: string[];
+  selected: string;
 };
 
 export default function AreaChart(props: TAreaChartProps) {
-  const { width, height } = props;
+  const { width, height, stockPriceArray, stockDateArray, selected } = props;
 
   const options = {
     responsive: true,
@@ -44,6 +47,8 @@ export default function AreaChart(props: TAreaChartProps) {
         },
         ticks: {
           color: "#9F9F9F",
+          maxTicksLimit: selected === "1년" || selected === "10년" ? 4 : 3,
+          align: "start" as "start",
         },
       },
       y: {
@@ -63,9 +68,9 @@ export default function AreaChart(props: TAreaChartProps) {
     },
   };
 
-  const labels = ["", "2024/04", "", "2024/05", "", "2024/06", ""];
+  const labels = stockDateArray;
 
-  const datas = [15, 45, 27, 56, 80, 70, 90];
+  const datas = stockPriceArray;
 
   const data = {
     labels,

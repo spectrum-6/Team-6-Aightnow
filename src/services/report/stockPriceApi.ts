@@ -1,9 +1,12 @@
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 type TStockPriceApiProps = {
   code: string;
   stockExchangeType: string;
 };
 
-export default async function stockPriceApi(props: TStockPriceApiProps) {
+// 주가 차트 데이터
+export async function stockPriceApi(props: TStockPriceApiProps) {
   const { code, stockExchangeType } = props;
 
   const period = [
@@ -36,5 +39,45 @@ export default async function stockPriceApi(props: TStockPriceApiProps) {
     return stockPrice;
   } catch (error) {
     console.error("error: ", error);
+  }
+}
+
+// db에 stockPrice 데이터 업데이트
+export async function patchStockPriceApi(stockPriceData: any, id: string) {
+  try {
+    const response = await fetch(`${BASE_URL}/api/stocks`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stockPriceData, id }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "failed");
+    }
+
+    const stockInfo = await response.json();
+    return stockInfo;
+  } catch (error: unknown) {
+    console.error("error: ", error);
+    throw error;
+  }
+}
+
+// db에서 stockPrice 데이터 가져오기
+export async function getStockPriceApi() {
+  try {
+    const response = await fetch(`${BASE_URL}/api/stocks`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "failed");
+    }
+
+    const stockInfo = await response.json();
+    return stockInfo;
+  } catch (error: unknown) {
+    console.error("error: ", error);
+    throw error;
   }
 }
