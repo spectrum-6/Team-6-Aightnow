@@ -36,8 +36,9 @@ const useUserStore = create<UserState>((set) => ({
           id: session.user.id,
           email: session.user.email || "",
           username: session.user.name || "",
+          phoneNumber: session.user.phoneNumber || "",
           profileImgUrl: session.user.image || "",
-          // socialProvider: session.user.provider,
+          socialProvider: session.provider, //소셜 로그인
           createdAt: session.user.createdAt,
           lastLoginAt: session.user.lastLoginAt,
         } as UserInfo,

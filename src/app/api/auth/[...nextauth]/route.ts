@@ -37,7 +37,9 @@ const handler = NextAuth({
           lastLoginAt: new Date().toISOString(),
           transLang: "en",
           socialProvider: account.provider,
-          registrationCompleted: false,
+          registrationCompleted: userSnapshot.exists()
+            ? userSnapshot.data()?.registrationCompleted || false
+            : false,
           isNewUser: !userSnapshot.exists(),
           watchlist: [],
           userStockCollection: {
@@ -45,7 +47,13 @@ const handler = NextAuth({
             recentViews: [],
             watchList: [],
           } as IUserStockCollection,
+          phoneNumber: null, // 전화번호 필드 추가 (초기값은 null)
         };
+
+        // 카카오와 네이버 사용자의 경우 username을 null로 설정
+        if (account.provider === "kakao" || account.provider === "naver") {
+          userData.username = null;
+        }
 
         if (!userSnapshot.exists()) {
           // 새 사용자인 경우, Firestore에 사용자 정보 저장

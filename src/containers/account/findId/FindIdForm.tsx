@@ -4,13 +4,14 @@ import TextButton from "@/components/Button/TextButton";
 import Input from "@/components/Input";
 import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import fireStore from "@/firebase/firestore";
+import { firestore } from "@/firebase/firebasedb";
 
 type FindIdFormProps = {
   onFindId: (
     id: string,
     date: string,
     auth: "kakao" | "naver" | "google" | null,
+    email: string,
   ) => void;
 };
 
@@ -21,19 +22,15 @@ export default function FindIdForm({ onFindId }: FindIdFormProps) {
   const [isError, setError] = useState(false);
 
   useEffect(() => {
-    if (userName.trim() !== "" && userPhoneNumber.trim() !== "") {
-      setButtonEnable(true);
-    } else {
-      setButtonEnable(false);
-    }
+    setButtonEnable(userName.trim() !== "" && userPhoneNumber.trim() !== "");
   }, [userName, userPhoneNumber]);
 
   const handleFindId = async () => {
     try {
-      const usersRef = collection(fireStore, "users");
+      const usersRef = collection(firestore, "users");
       const q = query(
         usersRef,
-        where("name", "==", userName),
+        where("username", "==", userName),
         where("phoneNumber", "==", userPhoneNumber),
       );
       const querySnapshot = await getDocs(q);
@@ -41,7 +38,14 @@ export default function FindIdForm({ onFindId }: FindIdFormProps) {
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           const userData = doc.data();
-          onFindId(userData.id, userData.registDate, userData.authType);
+          // socialProvider 확인하여 auth 값 설정
+          const auth = userData.socialProvider || null;
+          onFindId(
+            userData.id,
+            userData.createdAt,
+            auth as "kakao" | "naver" | "google" | null,
+            userData.email, // 이메일
+          );
         });
         setError(false);
       } else {
