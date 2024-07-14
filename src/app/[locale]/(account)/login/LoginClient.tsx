@@ -38,7 +38,8 @@ const LoginClient: React.FC = () => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { callbackUrl: `/${locale}/signUp/profile` });
+    signIn(provider);
+    console.log("공급자 인증 중");
   };
 
   return (

@@ -12,15 +12,18 @@ export default function FindId() {
   const [authType, setAuthType] = useState<"kakao" | "naver" | "google" | null>(
     null,
   );
+  const [userEmail, setUserEmail] = useState("");
 
   const handleFindId = (
     id: string,
     date: string,
     auth: "kakao" | "naver" | "google" | null,
+    email: string,
   ) => {
     setUserId(id);
     setRegistDate(date);
     setAuthType(auth);
+    setUserEmail(email);
     setIsGetId(true);
   };
 
@@ -33,6 +36,7 @@ export default function FindId() {
           userId={userId}
           registDate={registDate}
           authType={authType}
+          email={userEmail} // 이메일 정보 추가
         />
       )}
     </AccountFormBox>

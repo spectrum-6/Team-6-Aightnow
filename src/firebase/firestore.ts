@@ -89,6 +89,8 @@ export const createUserInfo = async (
         recentViews: [],
         watchList: [],
       },
+      phoneNumber: userInfo.phoneNumber || null, // 전화번호 필드(아이디 찾기 떄문에)
+      username: userInfo.username || null, // 사용자이름 필드(kakao)
     });
     // userStock 컬렉션에 빈 watchList 생성
     await createUserStock(userId);

@@ -101,6 +101,8 @@ async function handleRegister(id: string, password: string, email: string) {
         recentViews: [],
         watchList: [],
       },
+      phoneNumber: null,
+      username: null,
     };
     await createUserInfo(user.uid, newUserInfo);
 
