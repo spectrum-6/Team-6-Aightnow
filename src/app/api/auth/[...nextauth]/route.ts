@@ -1,10 +1,12 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import NaverProvider from "next-auth/providers/naver";
 import KakaoProvider from "next-auth/providers/kakao";
-import { JWT } from "next-auth/jwt";
+import { firestore } from "@/firebase/firebasedb";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { UserInfo, IUserStockCollection } from "@/types/UserInfo";
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -20,44 +22,70 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: any }) {
+    async signIn({ user, account }) {
+      if (account && user) {
+        const userRef = doc(firestore, "users", user.id);
+        const userSnapshot = await getDoc(userRef);
+
+        let userData: UserInfo = {
+          id: user.id,
+          uid: user.id,
+          email: user.email || null,
+          username: user.name || null,
+          profileImgUrl: user.image || null,
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date().toISOString(),
+          transLang: "en",
+          socialProvider: account.provider,
+          registrationCompleted: false,
+          isNewUser: !userSnapshot.exists(),
+          watchlist: [],
+          userStockCollection: {
+            recentSearch: [],
+            recentViews: [],
+            watchList: [],
+          } as IUserStockCollection,
+        };
+
+        if (!userSnapshot.exists()) {
+          // 새 사용자인 경우, Firestore에 사용자 정보 저장
+          await setDoc(userRef, userData);
+        } else {
+          // 기존 사용자인 경우, 마지막 로그인 시간 업데이트
+          await setDoc(
+            userRef,
+            { lastLoginAt: new Date().toISOString() },
+            { merge: true },
+          );
+        }
+      }
+      return true;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub!;
+        // Firestore에서 추가 사용자 정보 가져오기
+        const userRef = doc(firestore, "users", token.sub!);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data() as UserInfo;
+          session.user = { ...session.user, ...userData };
+        }
+        session.provider = token.provider as string;
+      }
+      return session;
+    },
+    async jwt({ token, account }) {
       if (account) {
         token.provider = account.provider;
-        // 여기에서 사용자 정보를 확인하고 isNewUser와 registrationCompleted를 설정
       }
       return token;
-    },
-    async session({ session, token }: { session: any; token: JWT }) {
-      session.provider = token.provider;
-      (session as any).isNewUser = token.isNewUser;
-      (session as any).registrationCompleted = token.registrationCompleted;
-      return session;
-    }, // 소셜 로그인 성공 후 추가 정보 처리를 위해 커스텀 라우트 호출
-    async signIn({ user, account }) {
-      const response = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "socialLogin",
-          provider: account?.provider,
-          email: user.email,
-          username: user.name,
-          image: user.image,
-        }),
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      return true;
     },
   },
   pages: {
     signIn: "/login",
+    error: "/auth/error",
   },
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };

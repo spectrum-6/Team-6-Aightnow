@@ -2,8 +2,12 @@ import { NextResponse, NextRequest } from "next/server";
 import { fallbackLng, locales } from "@/utils/localization/settings";
 
 export function middleware(request: NextRequest) {
-  // ---i18n---
   const pathname = request.nextUrl.pathname;
+
+  // NextAuth 관련 경로는 그대로 통과
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
 
   // 기본 언어가 경로명에 포함되어 있는지 확인
   if (
@@ -31,7 +35,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(
       new URL(`/${fallbackLng}${pathname}`, request.url),
     );
-  } // 만약 et/login 요청이 온다면 ko/login 으로 변경
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

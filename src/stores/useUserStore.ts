@@ -1,60 +1,52 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 import { UserInfo } from "@/types/UserInfo";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { Session } from "next-auth";
 import { auth } from "@/firebase/firebasedb";
 import { getUserInfo, updateLastLoginAt } from "@/firebase/firestore";
+import { Session } from "next-auth";
 
 export interface UserState {
   user: User | null;
   userInfo: UserInfo | null;
-  session: Session | null;
+  registrationStep: string | null;
+  isInitialized: boolean;
   setUser: (user: User | null) => void;
   setUserInfo: (userInfo: UserInfo | null) => void;
-  setSession: (session: Session | null) => void;
+  setRegistrationStep: (step: string | null) => void;
   clearUserInfo: () => void;
-  syncNextAuthSession: (session: Session) => void;
+  setIsInitialized: (isInitialized: boolean) => void;
+  syncSessionUser: (session: Session | null) => void;
 }
 
-const useUserStore = create<UserState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      userInfo: null,
-      session: null,
-      setUser: (user) => set({ user }),
-      setUserInfo: (userInfo) => set({ userInfo }),
-      setSession: (session) => set({ session }),
-      clearUserInfo: () => set({ user: null, userInfo: null, session: null }),
-      syncNextAuthSession: (session) => {
-        set({ session });
-        if (session?.user) {
-          set({
-            userInfo: {
-              ...get().userInfo,
-              email: session.user.email!,
-              username: session.user.name || undefined,
-              socialProvider: (session as any).provider,
-            } as UserInfo,
-          });
-        }
-      },
-    }),
-    {
-      name: "user-storage",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined"
-          ? window.localStorage
-          : {
-              getItem: () => null,
-              setItem: () => {},
-              removeItem: () => {},
-            },
-      ),
-    },
-  ),
-);
+const useUserStore = create<UserState>((set) => ({
+  user: null,
+  userInfo: null,
+  registrationStep: null,
+  isInitialized: false,
+  setUser: (user) => set({ user }),
+  setUserInfo: (userInfo) => set({ userInfo }),
+  setRegistrationStep: (step) => set({ registrationStep: step }),
+  clearUserInfo: () =>
+    set({ user: null, userInfo: null, registrationStep: null }),
+  setIsInitialized: (isInitialized) => set({ isInitialized }),
+  syncSessionUser: (session) => {
+    if (session?.user) {
+      set({
+        userInfo: {
+          id: session.user.id,
+          email: session.user.email || "",
+          username: session.user.name || "",
+          profileImgUrl: session.user.image || "",
+          // socialProvider: session.user.provider,
+          createdAt: session.user.createdAt,
+          lastLoginAt: session.user.lastLoginAt,
+        } as UserInfo,
+      });
+    } else {
+      set({ user: null, userInfo: null });
+    }
+  },
+}));
 
 export default useUserStore;
 
@@ -69,7 +61,7 @@ export const initializeAuthListener = () => {
 
     if (user) {
       // 사용자가 로그인한 경우
-      console.log("User is signed in:", user.uid);
+      console.log("사용자가 로그인하였습니다.", user.uid);
 
       try {
         // Firestore에서 사용자 정보 가져오기
@@ -85,10 +77,13 @@ export const initializeAuthListener = () => {
         console.error("Error fetching user info:", error);
       }
     } else {
-      // 사용자가 로그아웃한 경우
-      console.log("User is signed out");
+      // 사용자가 로그인하지 않은 상태
       store.clearUserInfo();
+      console.log("사용자가 로그아웃했습니다.");
     }
+
+    // 초기화 완료 표시
+    store.setIsInitialized(true);
   });
 
   // 클린업 함수 반환
