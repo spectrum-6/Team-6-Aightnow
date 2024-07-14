@@ -8,7 +8,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { UserInfo } from "@/types/UserInfo";
+import { IUserStockCollection, UserInfo } from "@/types/UserInfo";
 import { firestore } from "./firebasedb";
 
 // ID로 사용자 정보 가져오기
@@ -44,29 +44,28 @@ export const getUserInfo = async (userId: string): Promise<UserInfo | null> => {
   }
 };
 
-// 사용자 정보 업데이트
+// 사용자 정보 업데이트 또는 생성
 export const updateUserInfo = async (
-  uid: string,
+  userId: string,
   userInfo: Partial<UserInfo>,
 ): Promise<void> => {
   try {
-    const userDocRef = doc(firestore, "users", uid);
-
-    // undefined 값을 필터링
-    const filteredUserInfo = Object.entries(userInfo).reduce(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
-
-    await updateDoc(userDocRef, {
-      ...filteredUserInfo,
-      updatedAt: new Date().toISOString(),
-    });
+    const userDocRef = doc(firestore, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      // 문서가 존재하면 업데이트
+      await updateDoc(userDocRef, {
+        ...userInfo,
+        updatedAt: new Date().toISOString(),
+      });
+    } else {
+      // 문서가 존재하지 않으면 새로 생성
+      await setDoc(userDocRef, {
+        ...userInfo,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
   } catch (error: any) {
     console.error("Error updating user info:", error.message);
     throw error;
@@ -84,7 +83,15 @@ export const createUserInfo = async (
       ...userInfo,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      watchlist: userInfo.watchlist || [],
+      userStockCollection: userInfo.userStockCollection || {
+        recentSearch: [],
+        recentViews: [],
+        watchList: [],
+      },
     });
+    // userStock 컬렉션에 빈 watchList 생성
+    await createUserStock(userId);
   } catch (error: any) {
     console.error("Error creating user info:", error.message);
     throw error;
@@ -115,6 +122,58 @@ export const getUserInfoBySocialIdAndProvider = async (
       "Error getting user info by social ID and provider:",
       error.message,
     );
+    throw error;
+  }
+};
+
+export const createUserStock = async (
+  userId: string,
+  watchList: string[] = [],
+): Promise<void> => {
+  try {
+    const userStockDocRef = doc(firestore, "userStock", userId);
+    const userStockData: IUserStockCollection = {
+      recentSearch: [],
+      recentViews: [],
+      watchList: watchList,
+    };
+    await setDoc(userStockDocRef, userStockData);
+  } catch (error: any) {
+    console.error("Error creating user stock:", error.message);
+    throw error;
+  }
+};
+
+//관심종목 리스트
+export const updateUserWatchList = async (
+  userUID: string,
+  watchList: string[],
+): Promise<void> => {
+  try {
+    await fetch(`/api/userStock/${userUID}/watchList`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ watchList: watchList }),
+    });
+  } catch (error: any) {
+    console.error("Error updating user watch list:", error.message);
+    throw error;
+  }
+};
+
+export const getUserWatchList = async (userId: string): Promise<string[]> => {
+  try {
+    const userStockDocRef = doc(firestore, "userStock", userId);
+    const userStockDoc = await getDoc(userStockDocRef);
+    if (userStockDoc.exists()) {
+      const userData = userStockDoc.data() as IUserStockCollection;
+      return userData.watchList;
+    }
+    return [];
+  } catch (error: any) {
+    console.error("Error getting user watch list:", error.message);
     throw error;
   }
 };

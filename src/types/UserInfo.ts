@@ -1,18 +1,17 @@
 export interface UserInfo {
   id?: string;
   uid?: string;
-  password?: string;
+  password?: string | null;
   email?: string | null;
   username?: string | null;
-  phoneNumber?: string;
-  birthDate?: string;
-  profileImgUrl?: string;
+  phoneNumber?: string | null;
+  birthDate?: string | null;
+  profileImgUrl?: string | null;
   nickname?: string;
-  emailVerified?: boolean;
   createdAt?: string;
   lastLoginAt?: string;
   transLang?: string;
-  socialProvider?: string;
+  socialProvider?: string | null;
   registrationCompleted?: boolean;
   isNewUser?: boolean;
   watchlist?: string[]; // 회원가입 시 symbolCode만 저장
