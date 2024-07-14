@@ -23,7 +23,7 @@ type TStockIconProps = TIconProps & {
 
 // symbolCode로 Icon Component 찾기
 const iconComponentType: TIconComponentType = {
-  APPL: IconApple,
+  AAPL: IconApple,
   AMZN: IconAmazon,
   GOOGL: IconGoogle,
   MSFT: IconMs,
