@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import MainNews from "@/containers/news/MainNews";
 import PopularNewsItem from "@/containers/news/PopularNewsItem";
-import { fetchPopularNews, NewsData } from "@/app/api/news/route";
+import { fetchPopularNews, TNewsData } from "@/app/api/news/route";
 
 export default function PopularNews() {
-  const [data, setData] = useState<NewsData[]>([]);
+  const [data, setData] = useState<TNewsData[]>([]);
 
   useEffect(() => {
     const getPopularNews = async () => {
@@ -17,7 +17,7 @@ export default function PopularNews() {
     getPopularNews();
   }, []);
 
-  const placeholderData: NewsData = {
+  const placeholderData: TNewsData = {
     id: "placeholder",
     title: "",
     date: "",
