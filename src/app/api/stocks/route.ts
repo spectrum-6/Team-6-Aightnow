@@ -9,8 +9,6 @@ export async function GET(request: Request) {
   return Response.json(data);
 }
 
-// stocks 컬렉션의 특정 doc을 조회
-
 // stocks 컬렉션의 해당 doc의 stockPrice 필드에 데이터 저장
 export async function PATCH(request: Request) {
   try {
