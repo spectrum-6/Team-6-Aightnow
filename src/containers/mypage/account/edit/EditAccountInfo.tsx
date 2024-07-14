@@ -1,24 +1,30 @@
-// 동작 테스트 1 코드
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useUserStore from "@/stores/useUserStore";
+import Input from "@/components/Input";
+import TextButton from "@/components/Button/TextButton";
+import { changePassword } from "@/firebase/fireauth";
+import { updateUserInfo } from "@/firebase/firestore";
 
 export default function EditAccountInfo() {
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(true);
+  const { userInfo, setUserInfo } = useUserStore();
 
-  useEffect(() => {
-    if (!isOpen) {
-      router.back();
-    }
-  }, [isOpen, router]);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordConfirmError, setPasswordConfirmError] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(userInfo?.phoneNumber || "");
+  const [birthDate, setBirthDate] = useState(userInfo?.birthDate || "");
+  const [isButtonEnable, setButtonEnable] = useState(false);
+  // 모달 닫기
+  const router = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
+        router.back();
       }
     };
 
@@ -27,35 +33,79 @@ export default function EditAccountInfo() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [router]);
+
+  useEffect(() => {
+    // 비밀번호 확인
+    if (confirmPassword.trim() !== "" && password !== confirmPassword) {
+      setPasswordConfirmError(true);
+      setButtonEnable(false);
+      return;
+    } else {
+      setPasswordConfirmError(false);
+    }
+
+    if (
+      password.trim() !== "" &&
+      confirmPassword.trim() !== "" &&
+      phoneNumber.trim() !== "" &&
+      birthDate.trim() !== ""
+    ) {
+      setButtonEnable(true);
+    } else {
+      setButtonEnable(false);
+    }
+  }, [password, confirmPassword, phoneNumber, birthDate]);
+
+  const handleButtonClick = async () => {
+    // 비밀번호 재설정
+    const res = await changePassword(password);
+
+    if (res?.result) {
+      // DB에 회원정보 업데이트
+      if (
+        userInfo?.uid &&
+        (phoneNumber !== userInfo?.phoneNumber ||
+          birthDate !== userInfo?.birthDate)
+      ) {
+        const updatedUserInfo = {
+          ...userInfo,
+          password,
+          phoneNumber,
+          birthDate,
+        };
+
+        await updateUserInfo(userInfo?.uid, updatedUserInfo);
+        setUserInfo(updatedUserInfo);
+        alert("계정 정보가 수정되었습니다.");
+      }
+    } else {
+      alert("계정 정보 수정에 실패하였습니다.");
+    }
+
+    router.back(); // 'mypage' 경로로 이동
+  };
 
   const handleLinkClick = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     event.preventDefault();
     router.replace("/settings/account/delete/deleteaccount");
   };
-
-  const handleButtonClick = () => {
-    setIsOpen(false);
-    router.push("/settings"); // 'mypage' 경로로 이동
-  };
-
-  if (!isOpen) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       onClick={(event) => {
         if (event.target === event.currentTarget) {
-          setIsOpen(false);
+          router.back();
         }
       }}
     >
       <div className="bg-white rounded-[32px] w-[590px] h-[892px] p-10 flex flex-col items-center justify-center">
         <h3 className="font-bold text-navy-900 text-center mb-10">정보 수정</h3>
 
-        <form action="" className="mb-14">
+        <form action="" className="mb-10">
           <div className="w-[386px] mb-4 flex flex-col items-center">
             <label
               htmlFor=""
@@ -63,9 +113,12 @@ export default function EditAccountInfo() {
             >
               아이디
             </label>
-            <input
+            <Input
               type="text"
-              className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 focus:outline-none"
+              name="id"
+              inputValue={userInfo?.id || ""}
+              disabled={true}
+              setInputValue={(e) => e.preventDefault()}
             />
           </div>
 
@@ -76,14 +129,15 @@ export default function EditAccountInfo() {
             >
               새 비밀번호 입력
             </label>
-            <input
+
+            <Input
               type="password"
-              placeholder="새로운 비밀번호를 입력해주세요."
-              className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 mb-1 focus:outline-none"
+              name="password"
+              inputValue={password}
+              setInputValue={(e) => setPassword(e.target.value)}
+              placeholder="새로운 비밀번호를 입력해 주세요."
+              caption="*  8-20자 이내 숫자, 특수문자, 영문자 중 2가지 이상을 조합"
             />
-            <span className="text-grayscale-700 font-medium text-xs self-start">
-              * 8-20자 이내 숫자, 특수문자, 영문자 중 2가지 이상을 조합
-            </span>
           </div>
 
           <div className="w-[386px] mb-4 flex flex-col items-center">
@@ -93,11 +147,18 @@ export default function EditAccountInfo() {
             >
               새 비밀번호 확인
             </label>
-            <input
-              id="password-confirmation"
+            <Input
               type="password"
-              placeholder="새로운 비밀번호를 확인해주세요."
-              className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 focus:outline-none"
+              name="confirmPassword"
+              inputValue={confirmPassword}
+              setInputValue={(e) => setConfirmPassword(e.target.value)}
+              placeholder="새로운 비밀번호를 확인해 주세요."
+              state={isPasswordConfirmError ? "warning" : null}
+              caption={
+                isPasswordConfirmError
+                  ? "동일한 비밀번호가 아닙니다. 다시 확인 후 입력해 주세요."
+                  : ""
+              }
             />
           </div>
 
@@ -108,9 +169,12 @@ export default function EditAccountInfo() {
             >
               휴대폰번호
             </label>
-            <input
-              type="number"
-              className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 focus:outline-none"
+            <Input
+              type="text"
+              name="phoneNumber"
+              inputValue={phoneNumber}
+              setInputValue={(e) => setPhoneNumber(e.target.value)}
+              placeholder=" - 를 제외한 휴대폰 번호를 입력해 주세요."
             />
           </div>
 
@@ -121,22 +185,29 @@ export default function EditAccountInfo() {
             >
               생년월일
             </label>
-            <input
-              type="number"
-              className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 focus:outline-none"
+            <Input
+              type="text"
+              name="birthDate"
+              inputValue={birthDate}
+              setInputValue={(e) => setBirthDate(e.target.value)}
+              placeholder="생년월일 6자리를 입력해주세요. (예시 : 991231)"
             />
           </div>
         </form>
-        <button
-          className="flex items-center justify-center w-[386px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg mb-2"
+
+        <TextButton
+          type="button"
+          variant={isButtonEnable ? "primary" : "disable"}
+          size="lg"
+          disabled={!isButtonEnable}
           onClick={handleButtonClick}
         >
           수정하기
-        </button>
+        </TextButton>
 
         <Link
           href="/settings/account/delete/deleteaccount"
-          className="text-warning-100 .text-sm underline"
+          className="text-warning-100 text-sm underline mt-2"
           onClick={handleLinkClick}
         >
           회원탈퇴

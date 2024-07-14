@@ -1,31 +1,14 @@
 import ReportContainer from "@/containers/report/ReportContainer";
 import {
-  basicApi,
-  calcPriceApi,
-  integrationApi,
   realtimeApi,
-} from "@/app/api/report/stockApi";
-
-export type TCodes = {
-  [key: string]: string; // index signature
-  aapl: string;
-  tsla: string;
-  amzn: string;
-  msft: string;
-  googl: string;
-  u: string;
-  nvda: string;
-};
-
-export const codes: TCodes = {
-  aapl: "AAPL.O",
-  tsla: "TSLA.O",
-  amzn: "AMZN.O",
-  msft: "MSFT.O",
-  googl: "GOOGL.O",
-  u: "U",
-  nvda: "NVDA.O",
-};
+  integrationApi,
+  calcPriceApi,
+} from "@/services/report/stockApi";
+import {
+  stockPriceApi,
+  getStockPriceApi,
+  patchStockPriceApi,
+} from "@/services/report/stockPriceApi";
 
 type TParams = {
   params: {
@@ -37,24 +20,45 @@ type TParams = {
 export default async function Page({ params }: TParams) {
   const { id } = params;
 
-  const realtimeData = await realtimeApi(id);
-  const integrationData = await integrationApi(id);
-  const calcPriceData = await calcPriceApi();
-  const basicData = await basicApi(id);
+  const {
+    reutersCode,
+    stockName,
+    symbolCode,
+    closePrice,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+    stockExchangeType,
+  }: any = await realtimeApi(id);
+
+  const corporateOverview = await integrationApi(id);
+
+  const calcPrice = await calcPriceApi();
+
+  const stockPriceData = await stockPriceApi({
+    code: reutersCode,
+    stockExchangeType,
+  });
+
+  const stockPriceResult = await patchStockPriceApi(
+    stockPriceData,
+    id.toUpperCase(),
+  );
+
+  const stockPriceInfo = await getStockPriceApi();
 
   return (
     <>
       <ReportContainer
-        stockName={realtimeData.stockName}
-        symbolCode={realtimeData.symbolCode}
-        closePrice={realtimeData.closePrice}
-        compareToPreviousClosePrice={realtimeData.compareToPreviousClosePrice}
-        fluctuationsRatio={realtimeData.fluctuationsRatio}
-        corporateOverview={integrationData}
-        calcPrice={calcPriceData}
-        stockExchangeName={basicData}
-        id={id}
-        code={codes[id]}
+        reutersCode={reutersCode}
+        stockName={stockName}
+        symbolCode={symbolCode}
+        closePrice={closePrice}
+        compareToPreviousClosePrice={compareToPreviousClosePrice}
+        fluctuationsRatio={fluctuationsRatio}
+        stockExchangeType={stockExchangeType}
+        corporateOverview={corporateOverview}
+        calcPrice={calcPrice}
+        stockPriceInfo={stockPriceInfo}
       />
     </>
   );

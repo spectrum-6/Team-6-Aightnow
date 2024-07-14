@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-import Link from "next/link";
+import TextButton from "@/components/Button/TextButton";
+import Input from "@/components/Input";
+import { reauthenticateUser } from "@/firebase/fireauth";
 
 export default function VerifyPassword() {
   const router = useRouter();
+
+  const [password, setPassword] = useState("");
+  const [isConfirmError, setConfirmError] = useState(false);
+  const [isButtonEnable, setButtonEnable] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -22,11 +27,21 @@ export default function VerifyPassword() {
     };
   }, [router]);
 
-  const handleLinkClick = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    router.replace("/settings/account/edit/editaccount");
+  useEffect(() => {
+    setButtonEnable(password.trim() !== "");
+    if (password.trim() !== "") {
+      setConfirmError(false);
+    }
+  }, [password]);
+
+  const handleVerification = async () => {
+    const res = await reauthenticateUser(password);
+
+    if (res?.result) {
+      router.replace("/settings/account/edit/editaccount");
+    } else {
+      setConfirmError(true);
+    }
   };
 
   return (
@@ -44,25 +59,31 @@ export default function VerifyPassword() {
         </h3>
 
         <div className="w-[386px] mb-14 flex flex-col items-center">
-          <label
-            htmlFor=""
-            className="block text-navy-900 mb-1 .text-base font-medium self-start"
-          >
-            현재 비밀번호 입력
-          </label>
-          <input
+          <Input
             type="password"
-            className="w-[386px] h-[56px] border border-gray-300 rounded-lg px-4 focus:outline-none"
+            name="password"
+            inputValue={password}
+            setInputValue={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호를 입력해 주세요."
+            label="현재 비밀번호 입력"
+            caption={
+              isConfirmError
+                ? "비밀번호가 일치하지 않습니다. 확인 후 다시 입력해 주세요."
+                : ""
+            }
+            state={isConfirmError ? "warning" : null}
           />
         </div>
 
-        <Link
-          href="/settings/account/edit/editaccount"
-          className="flex items-center justify-center w-[386px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg"
-          onClick={handleLinkClick}
+        <TextButton
+          type="button"
+          variant={isButtonEnable ? "primary" : "disable"}
+          size="lg"
+          disabled={!isButtonEnable}
+          onClick={handleVerification}
         >
-          수정하기
-        </Link>
+          확인하기
+        </TextButton>
       </div>
     </div>
   );

@@ -1,6 +1,9 @@
+import { UserInfo } from "@/types/UserInfo";
 import Link from "next/link";
 
-export default function EditPersonalInfo() {
+export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
+  const isSocialProvider = userInfo.socialProvider ? true : false;
+
   return (
     <div>
       <form>
@@ -18,6 +21,7 @@ export default function EditPersonalInfo() {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               <Link
+                scroll={false}
                 href="/settings/account/edit/editProfile"
                 className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
               >
@@ -36,7 +40,9 @@ export default function EditPersonalInfo() {
                 alt="프로필"
                 className="w-14 h-14 rounded-full mr-4"
               />
-              <span className="text-[16px] text-black font-medium">김스팩</span>
+              <span className="text-[16px] text-black font-medium">
+                {userInfo.nickname}
+              </span>
             </div>
           </div>
 
@@ -51,12 +57,16 @@ export default function EditPersonalInfo() {
               </p>
             </div>
             <div className="flex lg:items-center lg:ml-4">
-              <Link
-                href="/settings/account/edit/verifyPassword"
-                className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
-              >
-                계정정보 수정
-              </Link>
+              {/* 소셜연동 가입 사용자가 아닐 경우에만 계정 정보 수정 버튼 노출 */}
+              {!isSocialProvider && (
+                <Link
+                  scroll={false}
+                  href="/settings/account/edit/verifyPassword"
+                  className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
+                >
+                  계정정보 수정
+                </Link>
+              )}
             </div>
           </section>
 
@@ -66,7 +76,7 @@ export default function EditPersonalInfo() {
                 아이디
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                sfacspaceid
+                {userInfo.id}
               </span>
             </div>
             <div className="flex mb-2 items-center">
@@ -74,7 +84,7 @@ export default function EditPersonalInfo() {
                 이름
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                김스팩
+                {userInfo.username}
               </span>
             </div>
             <div className="flex mb-2 items-center">
@@ -82,7 +92,7 @@ export default function EditPersonalInfo() {
                 생년월일
               </p>
               <span className="text-[16px] font-medium text-[#575757]">
-                989898
+                {userInfo.birthDate}
               </span>
             </div>
           </div>

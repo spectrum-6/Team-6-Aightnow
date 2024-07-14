@@ -9,26 +9,28 @@ import {
 } from "@/icons";
 
 type TAiAnalystProps = {
+  reutersCode: string;
   stockName: string;
   symbolCode: string;
   closePrice: string;
   compareToPreviousClosePrice: string;
   fluctuationsRatio: string;
-  id: string;
+  // id: string;
 };
 
 export default function AiAnalyst(props: TAiAnalystProps) {
   const {
+    reutersCode,
     stockName,
     symbolCode,
     closePrice,
     compareToPreviousClosePrice,
     fluctuationsRatio,
-    id,
+    // id,
   } = props;
 
-  const getStockLogo = (id: string) => {
-    switch (id) {
+  const getStockLogo = (reutersCode: string) => {
+    switch (reutersCode) {
       case "aapl":
         return <IconApple width={33} height={33} />;
       case "tsla":
@@ -71,7 +73,7 @@ export default function AiAnalyst(props: TAiAnalystProps) {
       </h3>
       <div className="flex items-center mb-4">
         <div className="flex flex-row">
-          {getStockLogo(id)}
+          {getStockLogo(reutersCode)}
           <div className="flex items-center ml-2">
             {/* 주식명 */}
             <p className="text-lg text-grayscale-900 font-medium mr-2">

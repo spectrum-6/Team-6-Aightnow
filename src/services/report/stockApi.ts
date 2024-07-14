@@ -1,6 +1,18 @@
-import { codes } from "@/app/[locale]/(headerLayout)/report/[id]/page";
+type TCodes = {
+  [key: string]: string; // index signature
+};
 
-// Real-time(실시간) 기반 데이터
+export const codes: TCodes = {
+  aapl: "AAPL.O",
+  tsla: "TSLA.O",
+  amzn: "AMZN.O",
+  msft: "MSFT.O",
+  googl: "GOOGL.O",
+  u: "U",
+  nvda: "NVDA.O",
+};
+
+// 실시간 기반 데이터
 export async function realtimeApi(code: string) {
   try {
     const response = await fetch(
@@ -12,7 +24,25 @@ export async function realtimeApi(code: string) {
     }
 
     const data = await response.json();
-    return data.datas[0];
+    const {
+      reutersCode,
+      stockName,
+      symbolCode,
+      closePrice,
+      compareToPreviousClosePrice,
+      fluctuationsRatio,
+      stockExchangeType,
+    } = data.datas[0];
+
+    return {
+      reutersCode,
+      stockName,
+      symbolCode,
+      closePrice,
+      compareToPreviousClosePrice,
+      fluctuationsRatio,
+      stockExchangeType: stockExchangeType.name,
+    };
   } catch (error) {
     console.error("error:", error);
   }
@@ -31,24 +61,6 @@ export async function integrationApi(code: string) {
 
     const data = await response.json();
     return data.corporateOverview;
-  } catch (error) {
-    console.error("error:", error);
-  }
-}
-
-// 기업 정보 및 종목 정보 (차트 이미지 포함)
-export async function basicApi(code: string) {
-  try {
-    const response = await fetch(
-      `https://api.stock.naver.com/stock/${codes[code]}/basic`,
-    );
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    const data = await response.json();
-    return data.stockExchangeName;
   } catch (error) {
     console.error("error:", error);
   }
