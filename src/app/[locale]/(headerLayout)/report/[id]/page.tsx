@@ -1,11 +1,14 @@
 import ReportContainer from "@/containers/report/ReportContainer";
 import {
-  calcPriceApi,
-  integrationApi,
   realtimeApi,
+  integrationApi,
+  calcPriceApi,
 } from "@/services/report/stockApi";
-import stockPriceApi from "@/services/report/stockPriceApi";
-import { stockPriceUpdateApi } from "@/services/report/stockPriceUpdateApi";
+import {
+  stockPriceApi,
+  getStockPriceApi,
+  patchStockPriceApi,
+} from "@/services/report/stockPriceApi";
 
 type TParams = {
   params: {
@@ -36,7 +39,12 @@ export default async function Page({ params }: TParams) {
     stockExchangeType,
   });
 
-  await stockPriceUpdateApi(stockPriceData, id.toUpperCase());
+  const stockPriceResult = await patchStockPriceApi(
+    stockPriceData,
+    id.toUpperCase(),
+  );
+
+  const stockPriceInfo = await getStockPriceApi();
 
   return (
     <>
@@ -50,6 +58,7 @@ export default async function Page({ params }: TParams) {
         stockExchangeType={stockExchangeType}
         corporateOverview={corporateOverview}
         calcPrice={calcPrice}
+        stockPriceInfo={stockPriceInfo}
       />
     </>
   );

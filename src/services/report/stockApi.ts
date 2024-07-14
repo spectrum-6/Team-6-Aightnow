@@ -1,4 +1,4 @@
-export type TCodes = {
+type TCodes = {
   [key: string]: string; // index signature
 };
 
