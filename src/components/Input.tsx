@@ -73,7 +73,7 @@ export default function Input(props: TInputProps) {
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="w-full flex flex-col gap-1">
       {label && (
         <label
           htmlFor={inputId}
