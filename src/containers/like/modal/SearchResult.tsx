@@ -2,7 +2,8 @@ import { useStockStore } from "@/stores/stockStore";
 import SearchResultItem from "./SearchResultItem";
 import { useEffect, useState } from "react";
 import { TStockType } from "@/types/stockType";
-import { useWatchListStore } from "@/stores/watchListStore";
+import useUserStore from "@/stores/useUserStore";
+import { useTranslation } from "@/utils/localization/client";
 
 type TSearchResultProps = {
   inputValue: string;
@@ -18,31 +19,39 @@ export default function SearchResult(props: TSearchResultProps) {
   // 모든 주식 리스트 조회
   const { stockList } = useStockStore();
   // 관심 주식 리스트 조회
-  const { watchList } = useWatchListStore();
+  const { userInfo } = useUserStore();
+  const watchList = userInfo?.userStockCollection?.watchList;
 
-  const watchListMap = new Map<string, any>();
-  watchList.forEach((stock) => {
-    watchListMap.set(stock.symbolCode, stock.timestamp);
-  });
+  // filter를 위해 stock name을 영어로 변환
+  const { t } = useTranslation("en", "stock");
+
   // 필터링된 데이터 상태 추가
   const [filteredData, setFilteredData] = useState<TResultList[]>([]);
 
-  useEffect(() => {
-    const filtered: TResultList[] = stockList.filter(
+  const getFilterdData = () => {
+    // 검색어가 stockName 혹은 symbolCode와 일치하는 stock filter
+    const searchResultList: TResultList[] = stockList.filter(
       (item) =>
         item.stockName.toLowerCase().includes(inputValue.toLowerCase()) ||
         item.symbolCode.toLowerCase().includes(inputValue.toLowerCase()),
     );
 
-    filtered.map((item) => {
-      if (watchListMap.has(item.symbolCode)) {
-        item.inWatchList = true;
-      } else {
-        item.inWatchList = false;
-      }
-    });
+    if (watchList) {
+      const lowerCaseArr = watchList.map((item) => t(item).toLowerCase());
+      searchResultList.map((stock) => {
+        if (lowerCaseArr.includes(t(stock.stockName).toLowerCase())) {
+          stock.inWatchList = true;
+        } else {
+          stock.inWatchList = false;
+        }
+      });
 
-    setFilteredData(filtered);
+      setFilteredData(searchResultList);
+    }
+  };
+
+  useEffect(() => {
+    getFilterdData();
   }, [inputValue]);
 
   return (
@@ -60,6 +69,7 @@ export default function SearchResult(props: TSearchResultProps) {
                 compareToPreviousClosePrice={item.compareToPreviousClosePrice}
                 fluctuationsRatio={item.fluctuationsRatio}
                 inWatchList={item.inWatchList}
+                watchList={watchList}
                 // toggleFavoriteStock={toggleFavoriteStock}
               />
             ))}

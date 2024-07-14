@@ -4,25 +4,11 @@ import Popup from "@/components/Popup/Popup";
 import TextButton from "@/components/Button/TextButton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useDeleteWatchList, useWatchListStore } from "@/stores/watchListStore";
-import { TWatchList } from "@/types/userStockType";
+import { useDeleteWatchList } from "@/stores/watchListStore";
 import useUserStore from "@/stores/useUserStore";
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
-const patchUserWatchList = async (userUID: string, watchList: TWatchList[]) => {
-  try {
-    await fetch(`${baseUrl}/api/userStock/${userUID}/watchList`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ watchList: watchList }), // 데이터를 JSON 문자열로 변환하여 전송
-    });
-  } catch (error) {
-    console.log("error : ", error);
-  }
-};
+import { useTranslation } from "@/utils/localization/client";
+import { updateUserInfo } from "@/firebase/firestore";
+import { UserInfo } from "@/types/UserInfo";
 
 export default function DeleteFavoriteStock() {
   const router = useRouter();
@@ -50,18 +36,38 @@ export default function DeleteFavoriteStock() {
   };
 
   // zustand store에 저장된 정보
-  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
-  const { watchList, setWatchList } = useWatchListStore();
-  const { symbolCode } = useDeleteWatchList();
+  const { userInfo, setUserInfo } = useUserStore();
+  const watchList = userInfo?.userStockCollection?.watchList;
+  const { stockName } = useDeleteWatchList();
+
+  // filter를 위해 stock name을 영어로 변환
+  const { t } = useTranslation("en", "stock");
 
   // 삭제 버튼 클릭 시
   const handleDeleteButton = async () => {
-    const newList = watchList.filter((item) => item.symbolCode !== symbolCode);
-    if (newList.length <= 0) {
-      alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
-    } else {
-      setWatchList([...newList]);
-      await patchUserWatchList(userUID, [...newList]);
+    if (watchList && userInfo.uid && userInfo.userStockCollection) {
+      const filteredList = watchList?.filter(
+        (item) => t(item).toLowerCase() !== t(stockName).toLowerCase(),
+      );
+
+      if (filteredList.length <= 0) {
+        alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
+      } else {
+        // 업데이트 된 정보
+        const updatedUserInfo: Partial<UserInfo> = {
+          ...userInfo,
+          userStockCollection: {
+            ...userInfo.userStockCollection,
+            watchList: filteredList,
+          },
+        };
+
+        // DB 업데이트
+        await updateUserInfo(userInfo?.uid, updatedUserInfo);
+
+        // 세션 정보 업데이트
+        setUserInfo(updatedUserInfo);
+      }
     }
 
     router.back(); // 모달 닫기

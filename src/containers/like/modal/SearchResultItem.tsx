@@ -1,34 +1,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Timestamp } from "firebase/firestore";
 import TextButton from "@/components/Button/TextButton";
-import { TStockType } from "@/types/stockType";
-import { TWatchList } from "@/types/userStockType";
-import { useWatchListStore } from "@/stores/watchListStore";
 import useUserStore from "@/stores/useUserStore";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 import StockIcon from "@/components/StockIcon/StockIcon";
+import { UserInfo } from "@/types/UserInfo";
+import { updateUserInfo } from "@/firebase/firestore";
 
-type TSearchResultItemProps = TStockType & {
+type TSearchResultItemProps = {
+  stockName: string;
+  symbolCode: string;
+  closePrice: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
   inWatchList?: boolean;
-};
-
-// 관심종목 추가/삭제 PATCH API
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-const patchUserWatchList = async (userUID: string, watchList: TWatchList[]) => {
-  try {
-    await fetch(`${baseUrl}/api/userStock/${userUID}/watchList`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ watchList: watchList }), // 데이터를 JSON 문자열로 변환하여 전송
-    });
-  } catch (error) {
-    console.log("error : ", error);
-  }
+  watchList?: string[];
 };
 
 export default function SearchResultItem(props: TSearchResultItemProps) {
@@ -39,42 +27,57 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
     compareToPreviousClosePrice,
     fluctuationsRatio,
     inWatchList,
+    watchList,
   } = props;
+
   // i18n
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "stock");
 
+  // 관심종목 여부
   const [isFavoriteStock, setFavoriteStock] = useState(inWatchList);
-  // session storage 에서 user UID 값을 조회
-  const userUID = useUserStore((state) => state.userInfo?.uid) || "";
-  // 관심 주식 리스트 조회
-  const { watchList, setWatchList } = useWatchListStore();
+
+  const { userInfo, setUserInfo } = useUserStore();
+
+  const updateWatchList = async (updateList: string[]) => {
+    if (userInfo && userInfo.uid && userInfo.userStockCollection) {
+      const updatedUserInfo: Partial<UserInfo> = {
+        ...userInfo,
+        userStockCollection: {
+          ...userInfo.userStockCollection,
+          watchList: updateList,
+        },
+      };
+
+      // DB 업데이트
+      await updateUserInfo(userInfo?.uid, updatedUserInfo);
+      // 세션 정보 업데이트
+      setUserInfo(updatedUserInfo);
+      // 상태 업데이트
+      setFavoriteStock((prev) => !prev);
+    }
+  };
 
   // 버튼 클릭
   const toggleFavoriteStock = async () => {
-    if (isFavoriteStock) {
-      // 삭제 로직
-      const newList = watchList.filter(
-        (item) => item.symbolCode !== symbolCode,
-      );
+    if (watchList) {
+      // 관심종목인 경우 삭제
+      if (isFavoriteStock) {
+        const newList = watchList?.filter(
+          (item) => t(item).toLowerCase() !== t(stockName).toLowerCase(),
+        );
 
-      if (newList.length <= 0) {
-        alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
-      } else {
-        setWatchList([...newList]);
-        await patchUserWatchList(userUID, [...newList]);
-        setFavoriteStock((prev) => !prev);
+        if (newList && newList.length <= 0) {
+          alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
+        } else {
+          updateWatchList(newList);
+        }
       }
-    } else {
-      // 추가 로직
-      const newList = [
-        { symbolCode: symbolCode, timestamp: Timestamp.fromDate(new Date()) },
-        ...watchList,
-      ];
-
-      setWatchList([...newList]);
-      await patchUserWatchList(userUID, [...newList]);
-      setFavoriteStock((prev) => !prev);
+      // 관심종목이 아닌 경우 추가
+      else {
+        const newList = [stockName, ...watchList];
+        updateWatchList(newList);
+      }
     }
   };
 

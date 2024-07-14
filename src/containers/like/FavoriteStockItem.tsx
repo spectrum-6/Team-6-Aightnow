@@ -2,7 +2,6 @@
 
 import RaderChart from "@/components/Chart/RadarChart";
 import TextButton from "@/components/Button/TextButton";
-import { TStockType } from "@/types/stockType";
 import { useParams, useRouter } from "next/navigation";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import { useDeleteWatchList } from "@/stores/watchListStore";
@@ -10,7 +9,15 @@ import { useTranslation } from "@/utils/localization/client";
 import StockIcon from "@/components/StockIcon/StockIcon";
 import Link from "next/link";
 
-export default function FavoriteStockItem(props: TStockType) {
+type TFavoriteStockItemProps = {
+  stockName: string;
+  symbolCode: string;
+  closePrice: string;
+  compareToPreviousClosePrice: string;
+  fluctuationsRatio: string;
+};
+
+export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const {
     stockName,
     symbolCode,
@@ -19,10 +26,9 @@ export default function FavoriteStockItem(props: TStockType) {
     fluctuationsRatio,
   } = props;
 
-  const router = useRouter();
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "stock");
-  const { setSymbolCode } = useDeleteWatchList();
+  const { setStockName } = useDeleteWatchList();
 
   const getStyleOfPrice = () => {
     if (parseFloat(fluctuationsRatio) > 0) {
@@ -106,7 +112,7 @@ export default function FavoriteStockItem(props: TStockType) {
               variant="grayscale"
               additionalClass="w-40 h-14"
               onClick={() => {
-                setSymbolCode(symbolCode);
+                setStockName(stockName);
               }}
             >
               삭제하기
