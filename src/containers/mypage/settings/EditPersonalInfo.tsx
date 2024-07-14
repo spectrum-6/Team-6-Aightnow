@@ -19,6 +19,7 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               <Link
+                scroll={false}
                 href="/settings/account/edit/editProfile"
                 className="flex items-center justify-center w-[160px] h-[36px] bg-black text-white text-sm py-2 px-[10px] rounded-lg"
               >
