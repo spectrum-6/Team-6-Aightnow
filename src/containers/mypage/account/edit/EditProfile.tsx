@@ -3,16 +3,18 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { IconEdit } from "@/icons";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
-import SerchDropdown from "@/containers/account/signUp/SerchDropdown";
+import TextButton from "@/components/Button/TextButton";
+import useUserStore from "@/stores/useUserStore";
 
 export default function EditProfile() {
+  // 세션에 저장된 관심종목 가져오기
+  const { userInfo } = useUserStore();
+  const watchList = userInfo?.userStockCollection?.watchList;
+
   const router = useRouter();
-  const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(true);
-  const [tagLength, setTagLength] = useState(0);
 
   // 버튼의 활성화 여부
   const [isButtonEnable, setButtonEnable] = useState(false);
@@ -20,49 +22,22 @@ export default function EditProfile() {
   // 상태 관리
   const [userNickname, setUserNickname] = useState(""); // 닉네임 상태
 
-  // 태그 목록 변경 시 호출될 콜백 함수
-  const handleTagsChange = (tags: string[]) => {
-    setTagLength(tags.length); // 태그가 최소 1개 이상일 때 버튼 활성화
-  };
-
-  // userName, userPhoneNumber 값이 유효한지 확인하여 버튼 활성화
+  // userNickname 값이 유효한지 확인하여 버튼 활성화
+  // TODO ======= 닉네임 중복확인 OK 인지 확인하고 버튼 활성화 해야 함
   useEffect(() => {
-    if (userNickname.trim() !== "" && tagLength > 0) {
+    if (userNickname.trim() !== "") {
       setButtonEnable(true);
     } else {
       setButtonEnable(false);
     }
-  }, [userNickname, tagLength]);
-
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-    setTimeout(() => {
-      if (pathname === "/settings/account/edit/editProfile") {
-        router.replace("/settings"); // 설정 페이지로 이동 후 모달을 다시 열 수 있게 상태 변경
-      } else {
-        router.back(); // 이전 페이지로 이동
-      }
-    }, 300); // 모달 닫힘 애니메이션 시간 조정
-  }, [pathname, router]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      closeModal();
-    } else {
-      openModal();
-    }
-  }, [isOpen, closeModal, openModal]);
+  }, [userNickname]);
 
   // ESC 키를 누르면 모달을 닫음
   useEffect(() => {
+    // ESC 버튼 시 모달 닫힘
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
-        closeModal();
+        router.back();
       }
     };
 
@@ -71,18 +46,12 @@ export default function EditProfile() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [closeModal]);
+  }, [router]);
 
-  // 수정하기 버튼 클릭 시 모달을 닫고 /mypage/settings/account 경로로 이동
+  // 수정하기 버튼 클릭 시
   const handleButtonClick = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      router.replace("/settings");
-    }, 300); // 모달 닫힘 애니메이션 시간 조정
+    router.back();
   };
-
-  // 모달이 닫혀 있으면 null 반환
-  if (!isOpen) return null;
 
   return (
     // 모달 배경 클릭 시 모달 닫기
@@ -90,7 +59,7 @@ export default function EditProfile() {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 transition-opacity"
       onClick={(event) => {
         if (event.target === event.currentTarget) {
-          closeModal();
+          router.back();
         }
       }}
     >
@@ -124,7 +93,7 @@ export default function EditProfile() {
         </div>
 
         {/* 닉네임 중복 체크 인풋 */}
-        <div className="w-[386px] mb-14">
+        <div className="w-[386px] mb-14 flex flex-col gap-4">
           <DuplicateCheckInput
             type="text"
             label="닉네임"
@@ -133,23 +102,34 @@ export default function EditProfile() {
             placeholder="닉네임을 입력해 주세요."
             buttonClickHandler={() => console.log("중복확인 버튼 클릭")}
           />
-          {/* 관심종목 인풋 */}
-          <label
-            htmlFor="interests"
-            className="block text-navy-900 mb-1 text-base font-medium self-start mt-4"
-          >
-            관심 종목
-          </label>
-          <SerchDropdown onTagsChange={handleTagsChange} />
+          {/* 관심종목 태그 목록 */}
+          <div className="flex flex-col gap-1">
+            <label className="text-base text-navy-900 font-medium">
+              관심종목
+            </label>
+            <div className="flex flex-wrap justify-start gap-2">
+              {watchList &&
+                watchList.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="block py-1 px-3 bg-navy-800 text-white text-sm rounded-md"
+                  >
+                    {tag}
+                  </span>
+                ))}
+            </div>
+          </div>
         </div>
 
         {/* 수정하기 버튼 */}
-        <button
-          className="w-[396px] h-[64px] bg-grayscale-200 hover:bg-navy-700 text-grayscale-300 hover:text-white font-medium py-2 px-6 rounded-lg text-lg"
+        <TextButton
+          size="lg"
+          variant={isButtonEnable ? "primary" : "disable"}
+          disabled={!isButtonEnable}
           onClick={handleButtonClick}
         >
           수정하기
-        </button>
+        </TextButton>
       </div>
     </div>
   );

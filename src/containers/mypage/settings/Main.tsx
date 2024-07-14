@@ -1,23 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditPersonalInfo from "./EditPersonalInfo";
 import LanguageSettings from "./LanguageSettings";
 import TermsOfService from "./TermsOfService";
+import useUserStore from "@/stores/useUserStore";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+// 서비스 이용약관 DB 조회
+type TServiceInfoContent = {
+  termsText: string;
+  policyText: string;
+};
+const getServiceInfoContent = async (): Promise<TServiceInfoContent> => {
+  const res = await (await fetch(`${baseUrl}/api/system`)).json();
+  return res;
+};
 
 export default function Main() {
+  // Session에 저장된 User 정보
+  const { userInfo } = useUserStore();
+
+  // Side bar
   const [selectedSection, setSelectedSection] = useState("personalinfo");
 
+  // 서비스 이용약관 텍스트
+  const [serviceInfoContent, setServiceInfoContent] = useState("");
+  const [userInfoContent, setUserInfoContent] = useState("");
+
+  // 서비스 이용약관 DB 조회
+  const getContent = async () => {
+    const content = await getServiceInfoContent();
+
+    setServiceInfoContent(content.termsText);
+    setUserInfoContent(content.policyText);
+  };
+
+  useEffect(() => {
+    getContent();
+  }, []);
+
   const renderContent = () => {
+    if (!userInfo) {
+      return null;
+    }
+
     switch (selectedSection) {
       case "personalinfo":
-        return <EditPersonalInfo />;
+        return <EditPersonalInfo userInfo={userInfo} />;
       case "languagesettings":
-        return <LanguageSettings />;
+        return <LanguageSettings userInfo={userInfo} />;
       case "termsofservice":
-        return <TermsOfService />;
+        return (
+          <TermsOfService
+            serviceInfoContent={serviceInfoContent}
+            userInfoContent={userInfoContent}
+          />
+        );
       default:
-        return <EditPersonalInfo />;
+        return <EditPersonalInfo userInfo={userInfo} />;
     }
   };
 
