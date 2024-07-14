@@ -3,6 +3,7 @@ import {
   User,
   reauthenticateWithCredential,
   signInWithEmailAndPassword,
+  updatePassword,
 } from "firebase/auth";
 import { UserInfo } from "@/types/UserInfo";
 import { auth } from "./firebasedb";
@@ -79,6 +80,20 @@ export const reauthenticateUser = async (currentPassword: string) => {
 
     try {
       await reauthenticateWithCredential(user, credential);
+      return { result: true };
+    } catch (error) {
+      return { error: error };
+    }
+  }
+};
+
+// 사용자의 비밀번호 재설정
+export const changePassword = async (newPassword: string) => {
+  const user = auth.currentUser;
+
+  if (user) {
+    try {
+      await updatePassword(user, newPassword);
       return { result: true };
     } catch (error) {
       return { error: error };

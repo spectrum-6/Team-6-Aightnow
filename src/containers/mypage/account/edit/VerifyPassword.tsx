@@ -82,7 +82,7 @@ export default function VerifyPassword() {
           disabled={!isButtonEnable}
           onClick={handleVerification}
         >
-          하잇
+          확인하기
         </TextButton>
       </div>
     </div>
