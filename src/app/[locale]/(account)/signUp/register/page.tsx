@@ -8,6 +8,7 @@ import useUserStore from "@/stores/useUserStore";
 import { useRouter } from "next/navigation";
 import { getUserInfo, updateUserInfo } from "@/firebase/firestore";
 import { getAuth, updatePassword } from "firebase/auth";
+import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -30,6 +31,8 @@ const Register: React.FC = () => {
         birthDate.trim() !== "",
     );
   }, [id, password, confirmPassword, phoneNumber, birthDate]);
+
+  const [isPasswordConfirmError, setPasswordConfirmError] = useState(false);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,13 +93,14 @@ const Register: React.FC = () => {
       </h3>
       <form onSubmit={handleRegister}>
         <div className="flex flex-col gap-4 mb-14">
-          <Input
+          <DuplicateCheckInput
             type="text"
             name="id"
             inputValue={id}
             setInputValue={(e) => setId(e.target.value)}
             placeholder="아이디를 입력해 주세요."
             label="아이디"
+            caption="*  6~12자의 영문, 숫자, ,_을 이용한 조합"
           />
           <Input
             type="password"
@@ -105,6 +109,7 @@ const Register: React.FC = () => {
             setInputValue={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
             label="비밀번호"
+            caption="*  8-20자 이내 숫자, 특수문자, 영문자 중 2가지 이상을 조합"
           />
           <Input
             type="password"
@@ -113,13 +118,19 @@ const Register: React.FC = () => {
             setInputValue={(e) => setConfirmPassword(e.target.value)}
             placeholder="비밀번호를 다시 입력해 주세요."
             label="비밀번호 확인"
+            state={isPasswordConfirmError ? "warning" : null}
+            caption={
+              isPasswordConfirmError
+                ? "동일한 비밀번호가 아닙니다. 다시 확인 후 입력해 주세요."
+                : ""
+            }
           />
           <Input
             type="text"
             name="phoneNumber"
             inputValue={phoneNumber}
             setInputValue={(e) => setPhoneNumber(e.target.value)}
-            placeholder="전화번호를 입력해 주세요."
+            placeholder=" - 를 제외한 휴대폰 번호를 입력해 주세요."
             label="전화번호"
           />
           <Input
@@ -127,7 +138,7 @@ const Register: React.FC = () => {
             name="birthDate"
             inputValue={birthDate}
             setInputValue={(e) => setBirthDate(e.target.value)}
-            placeholder="생년월일을 입력해 주세요."
+            placeholder="생년월일 6자리를 입력해주세요. (예시 : 991231)"
             label="생년월일"
           />
         </div>

@@ -1,56 +1,32 @@
 "use client";
 
-import { useEffect, useState, ChangeEvent } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {
-  createUserInfo,
-  getUserInfo,
-  updateUserInfo,
-} from "@/firebase/firestore";
+import { useEffect, useState } from "react";
+import { updateUserInfo } from "@/firebase/firestore";
 import useUserStore from "@/stores/useUserStore";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { UserInfo } from "@/types/UserInfo";
-import { fireStorage } from "@/firebase/firestorage";
 import TextButton from "@/components/Button/TextButton";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
-import SerchDropdown from "@/containers/account/signUp/SerchDropdown";
+import SearchDropdown from "@/containers/account/signUp/SearchDropdown";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 export default function Profile() {
+  const { data: session, update } = useSession();
+  const { setUserInfo, userInfo } = useUserStore();
   const [userNickname, setUserNickname] = useState("");
   const [profileImg, setProfileImg] = useState("/images/profile_img.png");
-  const [profileFile, setProfileFile] = useState<File | null>(null);
   const [isButtonEnable, setButtonEnable] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const { userInfo, setUserInfo } = useUserStore();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { locale } = useParams();
 
   useEffect(() => {
-    if (!userInfo && !session) {
-      router.push("/login");
+    if (session?.user?.profileImgUrl) {
+      setProfileImg(session.user.profileImgUrl);
     }
-    // 소셜 로그인 사용자의 프로필 사진이 있다면 사용
-    if (session?.user?.image) {
-      setProfileImg(session.user.image);
-    }
-  }, [userInfo, session, router]);
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setProfileFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setProfileImg(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  }, [session]);
 
   const handleTagsChange = (tags: string[]) => {
     setTags(tags);
@@ -62,43 +38,44 @@ export default function Profile() {
 
   const handleSubscription = async () => {
     try {
-      const userId = userInfo?.uid || userInfo?.email;
+      // 소셜 로그인과 일반 로그인 모두 고려
+      const userId = session?.user?.id || userInfo?.uid;
       if (!userId) {
         throw new Error("사용자 정보가 없습니다.");
       }
 
-      let profileImgUrl = profileImg;
-      if (profileFile) {
-        const storageRef = ref(fireStorage, `profile_images/${userId}`);
-        await uploadBytes(storageRef, profileFile);
-        profileImgUrl = await getDownloadURL(storageRef);
-      }
-
       const updatedUserInfo: Partial<UserInfo> = {
         nickname: userNickname,
-        profileImgUrl,
-        interests: tags,
+        profileImgUrl: profileImg,
+        watchlist: tags,
+        userStockCollection: {
+          recentSearch: [],
+          recentViews: [],
+          watchList: tags,
+        },
         registrationCompleted: true,
+        transLang: "en",
       };
 
-      // 사용자 정보 가져오기 시도
-      const existingUserInfo = await getUserInfo(userId);
+      await updateUserInfo(userId, updatedUserInfo);
 
-      if (existingUserInfo) {
-        // 기존 사용자 정보 업데이트
-        await updateUserInfo(userId, updatedUserInfo);
-      } else {
-        // 새 사용자 정보 생성
-        await createUserInfo(userId, {
-          ...userInfo,
-          ...updatedUserInfo,
-        } as UserInfo);
+      setUserInfo({
+        ...userInfo,
+        ...updatedUserInfo,
+      } as UserInfo);
+
+      // 세션이 있는 경우 (소셜 로그인) 세션 업데이트
+      if (session) {
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            ...updatedUserInfo,
+          },
+        });
       }
 
-      // Zustand 상태 업데이트
-      setUserInfo({ ...userInfo, ...updatedUserInfo } as UserInfo);
-
-      router.push("/signUp/completed");
+      router.push(`/${locale}/main`);
     } catch (error) {
       console.error("프로필 저장에 실패했습니다.", error);
     }
@@ -111,25 +88,20 @@ export default function Profile() {
       </h3>
       <form>
         <div className="text-center mb-6">
-          <label
-            htmlFor="profileImgInput"
-            className="cursor-pointer flex justify-center"
-          >
+          <div className="w-[120px] h-[120px] mx-auto rounded-full overflow-hidden">
             <Image
               src={profileImg}
               alt="사용자 프로필"
               width={120}
               height={120}
-              className="rounded-full"
+              style={{
+                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+              }}
+              onError={() => setProfileImg("/images/default_profile.png")}
             />
-          </label>
-          <input
-            type="file"
-            id="profileImgInput"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
+          </div>
         </div>
         <div className="flex flex-col gap-4 mb-14">
           <DuplicateCheckInput
@@ -140,7 +112,7 @@ export default function Profile() {
             placeholder="닉네임을 입력해 주세요."
             label="닉네임"
           />
-          <SerchDropdown onTagsChange={handleTagsChange} />
+          <SearchDropdown onTagsChange={handleTagsChange} />
         </div>
         <TextButton
           type="button"

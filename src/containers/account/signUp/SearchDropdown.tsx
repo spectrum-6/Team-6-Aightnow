@@ -13,7 +13,7 @@ const tempData = [
   "Mcdonalds",
 ];
 
-export default function SerchDropdown({
+export default function SearchDropdown({
   onTagsChange,
 }: {
   onTagsChange: (tags: string[]) => void;
