@@ -15,7 +15,6 @@ type TReportContainer = {
   stockExchangeType: string;
   corporateOverview: string;
   calcPrice: string;
-  stockPriceInfo: any;
 };
 
 export default function ReportContainer(props: TReportContainer) {
@@ -30,7 +29,6 @@ export default function ReportContainer(props: TReportContainer) {
     corporateOverview,
     calcPrice,
     stockExchangeType,
-    stockPriceInfo,
   } = props;
 
   return (
@@ -55,11 +53,7 @@ export default function ReportContainer(props: TReportContainer) {
                   corporateOverview={corporateOverview}
                   calcPrice={calcPrice}
                 />
-                <StockChart
-                  reutersCode={reutersCode}
-                  stockExchangeType={stockExchangeType}
-                  stockPriceInfo={stockPriceInfo}
-                />
+                <StockChart symbolCode={symbolCode} />
               </div>
               <div className="flex flex-row w-[1200px] h-[297px] gap-[20px] mb-10">
                 <AIStockList />

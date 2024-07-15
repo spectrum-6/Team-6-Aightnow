@@ -1,44 +1,106 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AreaChart from "@/components/Chart/AreaChart";
+import { getStockInfoApi } from "@/services/report/stockPriceApi";
+
+type TPriceInfo = {
+  localDateTime: string;
+  currentPrice: number;
+  accumulatedTradingVolume: number;
+  closePrice: number;
+  localDate: string;
+};
+
+type TDataCacheItem = {
+  accumulatedTradingVolume: number;
+  currentPrice: number;
+  localDateTime: string;
+  openPrice: number;
+  closePrice: number;
+  highPrice: number;
+  lowPrice: number;
+  localDate: string;
+};
+
+type TDataCache = {
+  [key: string]: TDataCacheItem[];
+};
 
 type TStockChartProps = {
-  reutersCode: string;
-  stockExchangeType: string;
-  stockPriceInfo: any;
+  symbolCode: string;
 };
 
 export default function StockChart(props: TStockChartProps) {
-  const { reutersCode, stockExchangeType, stockPriceInfo } = props;
+  const { symbolCode } = props;
 
   // 기간 버튼 state
   const [selected, setSelected] = useState<string>("1일");
+  // 데이터를 캐시할 상태
+  const [dataCache, setDataCache] = useState<TDataCache>({});
 
   // 기간 버튼 배열
   const buttons = ["1일", "3개월", "1년", "3년", "10년"];
 
   const selectBtnIdx = buttons.indexOf(selected);
 
-  const { stockPriceArray, stockDateArray } = stockPriceInfo[0].stockPrice[
-    selectBtnIdx
-  ].priceInfo.reduce(
-    (acc: any, cur: any) => {
-      if (selectBtnIdx === 0) {
-        acc.stockPriceArray.push(cur.currentPrice);
-        acc.stockDateArray.push(
-          `${cur.localDateTime.slice(0, 4)}/${cur.localDateTime.slice(4, 6)}`,
-        );
-      } else {
-        acc.stockPriceArray.push(cur.closePrice);
-        acc.stockDateArray.push(
-          `${cur.localDate.slice(0, 4)}/${cur.localDate.slice(4, 6)}`,
-        );
+  // 페이지 진입 시 '1일' 데이터 로드
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const initialData = await getStockInfoApi(symbolCode);
+        setDataCache({ "1일": initialData.stockPrice[0].priceInfo });
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
       }
-      return acc;
-    },
-    { stockPriceArray: [], stockDateArray: [] },
-  );
+    };
+
+    loadInitialData();
+  }, []);
+
+  const handleButtonClick = async (item: string) => {
+    setSelected(item);
+
+    // 캐시된 데이터가 있는지 확인
+    if (dataCache[item]) {
+      // console.log("Cached data:", dataCache[item]);
+      return;
+    }
+
+    try {
+      // API 호출
+      const response = await getStockInfoApi(symbolCode);
+      const selectBtnIdx = buttons.indexOf(item);
+      const data = response.stockPrice[selectBtnIdx].priceInfo;
+
+      setDataCache((prevCache: TDataCache) => ({
+        ...prevCache,
+        [item]: data,
+      }));
+      // console.log("Fetched data:", data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const stockPriceArray: number[] = [];
+  const stockDateArray: string[] = [];
+
+  const priceInfo = dataCache[selected] || [];
+
+  priceInfo.forEach((el: TPriceInfo) => {
+    if (selectBtnIdx === 0) {
+      stockPriceArray.push(el.currentPrice);
+      stockDateArray.push(
+        `${el.localDateTime.slice(0, 4)}/${el.localDateTime.slice(4, 6)}`,
+      );
+    } else {
+      stockPriceArray.push(el.closePrice);
+      stockDateArray.push(
+        `${el.localDate.slice(0, 4)}/${el.localDate.slice(4, 6)}`,
+      );
+    }
+  });
 
   return (
     <div className="w-[692px] h-[256px] bg-white rounded-2xl p-8">
@@ -53,7 +115,6 @@ export default function StockChart(props: TStockChartProps) {
             selected={selected}
           />
         </div>
-
         {/* 기간 선택 버튼들 */}
         <div className="flex flex-col gap-2 text-sm font-medium">
           {buttons.map((item, index) => (
@@ -61,7 +122,7 @@ export default function StockChart(props: TStockChartProps) {
               key={index}
               // 버튼 클릭 시 선택된 버튼 상태를 업데이트
               onClick={() => {
-                setSelected(item);
+                handleButtonClick(item);
               }}
               // 선택된 버튼과 선택되지 않은 버튼의 스타일 적용
               className={
