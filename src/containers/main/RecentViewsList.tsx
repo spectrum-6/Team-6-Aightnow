@@ -35,11 +35,11 @@ export const ticker: Tticker = {
   u: "U",
 };
 
-type TInterestListProps = {
+type TRecentViewsListProps = {
   item: string;
 };
 
-export default function InterestList(props: TInterestListProps) {
+export default function RecentViewsList(props: TRecentViewsListProps) {
   const { item } = props;
 
   const [realtimeInfo, setRealtimeInfo] = useState<realtimeInfo | null>(null);
