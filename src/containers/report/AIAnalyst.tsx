@@ -15,7 +15,6 @@ type TAiAnalystProps = {
   closePrice: string;
   compareToPreviousClosePrice: string;
   fluctuationsRatio: string;
-  // id: string;
 };
 
 export default function AiAnalyst(props: TAiAnalystProps) {
@@ -26,24 +25,23 @@ export default function AiAnalyst(props: TAiAnalystProps) {
     closePrice,
     compareToPreviousClosePrice,
     fluctuationsRatio,
-    // id,
   } = props;
 
   const getStockLogo = (reutersCode: string) => {
     switch (reutersCode) {
-      case "aapl":
+      case "AAPL.O":
         return <IconApple width={33} height={33} />;
-      case "tsla":
+      case "TSLA.O":
         return <IconTsla width={33} height={33} />;
-      case "amzn":
+      case "AMZN.O":
         return <IconAmazon width={33} height={33} />;
-      case "msft":
+      case "MSFT.O":
         return <IconMs width={33} height={33} />;
-      case "googl":
+      case "GOOGL.O":
         return <IconGoogle width={33} height={33} />;
-      case "u":
+      case "U":
         return <IconUnity width={33} height={33} />;
-      case "nvda":
+      case "NVDA.O":
         return <IconNvidia width={33} height={33} />;
     }
   };
