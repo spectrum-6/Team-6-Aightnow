@@ -10,6 +10,8 @@ import {
   Timestamp,
   DocumentData,
   startAfter,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 
@@ -26,6 +28,14 @@ export type TNewsData = {
   stock: string[];
   stockName: string;
   viewCount: number;
+};
+
+export type TStockData = {
+  stockName: string;
+  symbolCode: string;
+  closePrice: number;
+  compareToPreviousClosePrice: number;
+  fluctuationsRatio: number;
 };
 
 const formatDate = (timestamp: Timestamp) => {
@@ -148,4 +158,61 @@ export const fetchLatestNews = async (
     }),
   );
   return { news: latestNews, lastVisible: lastVisibleDoc };
+};
+
+// 뉴스 디테일 페이지의 관심 종목 가져오기
+export const fetchRelatedStocks = async (
+  stockIds: string[],
+): Promise<TStockData[]> => {
+  const relatedStocks: TStockData[] = [];
+
+  for (const stockId of stockIds) {
+    const stockDocRef = doc(firestore, "stocks", stockId);
+    const stockDocSnap = await getDoc(stockDocRef);
+    if (stockDocSnap.exists()) {
+      const data = stockDocSnap.data() as DocumentData;
+      relatedStocks.push({
+        stockName: data.stockName,
+        symbolCode: data.symbolCode,
+        closePrice: data.closePrice,
+        compareToPreviousClosePrice: data.compareToPreviousClosePrice,
+        fluctuationsRatio: data.fluctuationsRatio,
+      });
+    } else {
+      console.log(`문서가 없습니다: ${stockId}`);
+    }
+  }
+  console.log("stock 데이터:", relatedStocks);
+
+  return relatedStocks;
+};
+
+// 뉴스 디테일 페이지의 관련 기사 가져오기
+export const fetchRelatedArticles = async (
+  stockName: string,
+): Promise<TNewsData[]> => {
+  const newsRef = collection(firestore, "news");
+  const q = query(newsRef, where("stock", "array-contains", stockName));
+  const querySnapshot = await getDocs(q);
+
+  const relatedArticles = querySnapshot.docs.map((doc) => {
+    const data = doc.data() as DocumentData;
+    return {
+      id: doc.id,
+      title: data.title,
+      date: data.date.toDate().toISOString(),
+      company: data.company,
+      content: Array.isArray(data.content)
+        ? data.content.join(" ")
+        : data.content,
+      image: data.image,
+      stock: data.stock,
+      stockName: data.stockName,
+      viewCount: data.viewCount,
+    };
+  });
+
+  console.log("Related articles data:", relatedArticles);
+
+  return relatedArticles;
 };
