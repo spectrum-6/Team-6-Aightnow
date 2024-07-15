@@ -11,7 +11,7 @@ import {
   IconNvidia,
 } from "@/icons";
 
-type realtimeInfo = {
+type TRealtimeInfo = {
   reutersCode: string;
   stockName: string;
   symbolCode: string;
@@ -42,7 +42,7 @@ type TInterestListProps = {
 export default function InterestList(props: TInterestListProps) {
   const { item } = props;
 
-  const [realtimeInfo, setRealtimeInfo] = useState<realtimeInfo | null>(null);
+  const [realtimeInfo, setRealtimeInfo] = useState<TRealtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
     const realtimeInfo = await getRealtimeInfo(ticker[item].toLowerCase());

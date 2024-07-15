@@ -17,24 +17,26 @@ export default function RecentViews({ className }: { className?: string }) {
         {/* 최근 조회 */}
         <div className="flex flex-col gap-6">
           <h4 className="font-bold text-navy-900">최근 조회</h4>
-          {recentViews?.length !== 0 ? (
-            recentViews?.map((item, index) => {
-              return (
-                <div className="flex flex-col items-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
-                  <ul className="flex flex-col w-[494px] overflow-hidden">
-                    <RecentViewsList key={index} item={item} />
-                  </ul>
-                </div>
-              );
-            })
-          ) : (
-            <div className="flex flex-col items-center justify-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
-              <IconExclam />
-              <span className="text-2xl text-navy-900 font-medium">
-                최근 조회한 종목이 없습니다.
-              </span>
-            </div>
-          )}
+          <div
+            className={`flex flex-col items-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px] ${
+              recentViews?.length === 0 ? "justify-center" : ""
+            }`}
+          >
+            {recentViews?.length !== 0 ? (
+              <ul className="flex flex-col w-[494px] overflow-hidden">
+                {recentViews?.map((item, index) => (
+                  <RecentViewsList key={index} item={item} />
+                ))}
+              </ul>
+            ) : (
+              <>
+                <IconExclam />
+                <span className="text-2xl text-navy-900 font-medium">
+                  최근 조회한 종목이 없습니다.
+                </span>
+              </>
+            )}
+          </div>
         </div>
         {/* 관심 종목 */}
         <div className="flex flex-col gap-6">
