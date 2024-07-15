@@ -45,7 +45,7 @@ export default function RecentViewsList(props: TRecentViewsListProps) {
   const [realtimeInfo, setRealtimeInfo] = useState<realtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
-    const realtimeInfo = await getRealtimeInfo(ticker[item].toLowerCase());
+    const realtimeInfo = await getRealtimeInfo(item.toLowerCase());
     setRealtimeInfo(realtimeInfo);
   };
 
