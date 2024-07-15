@@ -8,12 +8,16 @@ type TArticleProps = {
     company: string;
     date: string;
     viewCount: number;
-    content: string[];
+    content: string | string[];
     image: string;
   };
 };
 
-export default function Article({ data }: TArticleProps) {
+const Article: React.FC<TArticleProps> = ({ data }) => {
+  const contentArray = Array.isArray(data.content)
+    ? data.content
+    : [data.content];
+
   return (
     <article className="w-[792px] p-8 bg-white rounded-2xl">
       <h3 className="mb-4 text-grayscale-900 text-3xl font-bold">
@@ -44,15 +48,17 @@ export default function Article({ data }: TArticleProps) {
           </p>
           아잇나우 AI요약
         </h4>
-        {data.content.map((paragraph, index) => (
+        {contentArray.map((paragraph, index) => (
           <p key={index} className="mt-6">
             {paragraph}
           </p>
         ))}
-        <p className="mt-8">
+        {/* <p className="mt-8">
           <img src={data.image} alt="뉴스 이미지" width="728" height="370" />
-        </p>
+        </p> */}
       </div>
     </article>
   );
-}
+};
+
+export default Article;
