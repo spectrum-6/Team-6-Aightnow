@@ -13,14 +13,21 @@ import RelatedStock from "@/containers/news/newsDetail/RelatedStock";
 import RelatedArticle from "@/containers/news/newsDetail/RelatedArticle";
 import Article from "@/containers/news/newsDetail/Article";
 import { firestore } from "@/firebase/firebasedb";
+import {
+  fetchRelatedArticles,
+  fetchRelatedStocks,
+  TStockData,
+  TNewsData as TRelatedNewsData,
+} from "@/app/api/news/route";
 
-type NewsData = {
+type TNewsData = {
   title: string;
   company: string;
   date: string;
   viewCount: number;
   content: string[];
   image: string;
+  stock: string[];
 };
 
 // 날짜 변환
@@ -34,7 +41,11 @@ const formatDate = (timestamp: Timestamp) => {
 
 export default function NewsDetailPage() {
   const { id } = useParams();
-  const [data, setData] = useState<NewsData | null>(null);
+  const [data, setData] = useState<TNewsData | null>(null);
+  const [relatedStocks, setRelatedStocks] = useState<TStockData[]>([]);
+  const [relatedArticles, setRelatedArticles] = useState<TRelatedNewsData[]>(
+    [],
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,13 +54,15 @@ export default function NewsDetailPage() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetchedData = docSnap.data() as DocumentData;
-          const formattedData: NewsData = {
+          console.log("stock배열 들고와??", fetchedData.stock);
+          const formattedData: TNewsData = {
             title: fetchedData.title,
             company: fetchedData.company,
             date: formatDate(fetchedData.date), // 날짜 형식 변환
             viewCount: fetchedData.viewCount,
             content: fetchedData.content,
             image: fetchedData.image,
+            stock: fetchedData.stock,
           };
           setData(formattedData);
 
@@ -64,6 +77,15 @@ export default function NewsDetailPage() {
               ? { ...prevData, viewCount: prevData.viewCount + 1 }
               : prevData,
           );
+
+          // 관련 주식 데이터 가져오기
+          const stocks = await fetchRelatedStocks(fetchedData.stock);
+          console.log("stock 데이터:", stocks);
+          setRelatedStocks(stocks);
+
+          // 관련 기사 데이터 가져오기
+          const articles = await fetchRelatedArticles(fetchedData.stockName);
+          setRelatedArticles(articles);
         } else {
           console.log("문서가 없어요🤨");
         }
@@ -82,8 +104,8 @@ export default function NewsDetailPage() {
           </h2>
           <Article data={data} />
           <aside className="w-[384px]">
-            <RelatedStock />
-            <RelatedArticle />
+            <RelatedStock stocks={relatedStocks} />
+            <RelatedArticle articles={relatedArticles} />
           </aside>
         </section>
       )}
