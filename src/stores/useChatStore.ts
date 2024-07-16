@@ -1,62 +1,145 @@
-// src/stores/useChatStore.ts
-
-import { callTogetherAI } from "@/utils/TogetherAI";
 import { create } from "zustand";
+import { callTogetherAI } from "@/utils/TogetherAI";
+import { getStockData } from "@/utils/stockData";
+import { LocaleTypes } from "@/utils/localization/settings";
 
-// 채팅 메시지의 구조를 정의하는 인터페이스
+interface StockInfo {
+  symbol: string;
+  currentPrice: number;
+  priceChange: number;
+  percentChange: number;
+  targetPrice: number;
+  analystOpinion: string;
+  chartData: Array<{ date: string; price: number }>;
+}
+
 interface ChatMessage {
-  role: "user" | "assistant";
+  role: string;
   content: string;
+  stockInfo?: StockInfo;
+  translationParams?: Record<string, string | number>;
 }
 
-// 채팅 스토어의 상태와 액션을 정의하는 인터페이스
 interface ChatStore {
-  chatHistory: ChatMessage[]; // 채팅 기록을 저장하는 배열
-  isLoading: boolean; // API 호출 중 로딩 상태를 나타내는 플래그
-  addMessage: (message: ChatMessage) => void; // 새 메시지를 추가하는 함수
-  sendMessage: (content: string) => Promise<void>; // 사용자 메시지를 보내고 AI 응답을 받는 함수
-  clearChat: () => void; // 채팅 기록을 초기화하는 함수
+  chatHistory: ChatMessage[];
+  isLoading: boolean;
+  currentStock: string | null;
+  stockData: any | null;
+  language: LocaleTypes;
+  addMessage: (message: ChatMessage) => void;
+  updateLastMessage: (
+    content: string,
+    stockInfo?: StockInfo,
+    translationParams?: Record<string, string | number>,
+  ) => void;
+  sendMessage: (content: string) => Promise<void>;
+  fetchStockData: () => Promise<void>;
+  clearChat: () => void;
+  setLanguage: (lang: LocaleTypes) => void;
 }
 
-// Zustand store 생성
 const useChatStore = create<ChatStore>((set, get) => ({
   chatHistory: [],
   isLoading: false,
+  currentStock: null,
+  stockData: null,
+  language: "ko",
 
-  // 새 메시지를 채팅 기록에 추가하는 함수
   addMessage: (message) =>
     set((state) => ({
       chatHistory: [...state.chatHistory, message],
     })),
 
-  // 사용자 메시지를 보내고 AI 응답을 받는 함수
+  updateLastMessage: (content, stockInfo, translationParams) =>
+    set((state) => ({
+      chatHistory: state.chatHistory.map((msg, index) =>
+        index === state.chatHistory.length - 1
+          ? { ...msg, content, stockInfo, translationParams }
+          : msg,
+      ),
+    })),
+
   sendMessage: async (content) => {
-    set({ isLoading: true }); // 로딩 상태 시작
-    const userMessage: ChatMessage = { role: "user", content };
-    get().addMessage(userMessage); // 사용자 메시지 추가
+    set({ isLoading: true });
+    const userMessage = { role: "user", content };
+    get().addMessage(userMessage);
+
+    const { language } = get();
+    get().addMessage({ role: "assistant", content: "generatingResponse" });
 
     try {
-      // Together.ai API 호출
-      const aiResponse = await callTogetherAI([
-        ...get().chatHistory,
-        userMessage,
-      ]);
-      // AI 응답 추가
-      get().addMessage({ role: "assistant", content: aiResponse });
+      const stockSymbolMatch = content.match(/^[A-Za-z]{1,5}$/);
+      if (stockSymbolMatch) {
+        const stockSymbol = stockSymbolMatch[0].toLowerCase();
+        set({ currentStock: stockSymbol });
+
+        await get().fetchStockData();
+        const stockInfo = get().stockData;
+
+        if (stockInfo) {
+          const stockInfoData: StockInfo = {
+            symbol: stockSymbol.toUpperCase(),
+            currentPrice: stockInfo.closePrice,
+            priceChange: stockInfo.compareToPreviousClosePrice,
+            percentChange: stockInfo.fluctuationsRatio,
+            targetPrice: stockInfo.integrationData?.targetPrice || "N/A",
+            analystOpinion: stockInfo.integrationData?.opinionDesc || "N/A",
+            chartData:
+              stockInfo.priceChartData
+                ?.find((d: any) => d.periodType === "month&range=3")
+                ?.priceInfo.map((d: any) => ({
+                  date: d.localDate,
+                  price: d.closePrice,
+                })) || [],
+          };
+
+          get().updateLastMessage("stockInfoFetched", stockInfoData, {
+            symbol: stockSymbol.toUpperCase(),
+          });
+        } else {
+          get().updateLastMessage("stockInfoNotFound", undefined, {
+            symbol: stockSymbol.toUpperCase(),
+          });
+        }
+      } else {
+        const { currentStock } = get();
+        const aiResponse = await callTogetherAI(
+          [...get().chatHistory.slice(0, -1), userMessage],
+          currentStock ?? undefined,
+          language,
+        );
+        get().updateLastMessage(aiResponse);
+      }
     } catch (error) {
       console.error("AI 응답 오류:", error);
-      // 오류 발생 시 에러 메시지 추가
-      get().addMessage({
-        role: "assistant",
-        content: "죄송합니다. 응답을 생성하는 중 오류가 발생했습니다.",
-      });
+      get().updateLastMessage("error Generating Response");
     } finally {
-      set({ isLoading: false }); // 로딩 상태 종료
+      set({ isLoading: false });
     }
   },
 
-  // 채팅 기록을 초기화하는 함수
-  clearChat: () => set({ chatHistory: [] }),
+  fetchStockData: async () => {
+    const { currentStock } = get();
+    if (currentStock) {
+      try {
+        const data = await getStockData(currentStock);
+        set({ stockData: data });
+      } catch (error) {
+        console.error("주식 데이터 fetch 실패:", error);
+        set({ stockData: null });
+      }
+    }
+  },
+
+  clearChat: () =>
+    set({
+      chatHistory: [],
+      currentStock: null,
+      stockData: null,
+      language: "ko",
+    }),
+
+  setLanguage: (lang: LocaleTypes) => set({ language: lang }),
 }));
 
 export default useChatStore;

@@ -1,51 +1,68 @@
-// src/components/ChatBot/ChatBot.tsx
-
 import React, { useState, useEffect, useRef } from "react";
+import useChatStore from "@/stores/useChatStore";
 import IconButton from "../Button/IconButton";
 import Input from "../Input";
 import Bot from "./Bot";
 import User from "./User";
-import useChatStore from "@/stores/useChatStore";
+import { LocaleTypes } from "@/utils/localization/settings";
+import { useTranslation } from "@/utils/localization/client";
 
-// ChatBot 컴포넌트의 props 인터페이스
 interface ChatBotProps {
-  onClose: () => void; // 챗봇을 닫는 함수
+  onClose: () => void;
+  lang: LocaleTypes;
 }
 
-const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
-  // 로컬 상태: 현재 입력 메시지
+const ChatBot: React.FC<ChatBotProps> = ({ onClose, lang }) => {
   const [message, setMessage] = useState("");
-
-  // Zustand store에서 필요한 상태와 액션 가져오기
-  const { chatHistory, isLoading, sendMessage } = useChatStore();
-
-  // 채팅창 맨 아래로 스크롤하기 위한 ref
+  const { t } = useTranslation(lang, "chatbot");
+  const {
+    chatHistory,
+    isLoading,
+    sendMessage,
+    currentStock,
+    stockData,
+    fetchStockData,
+    setLanguage,
+  } = useChatStore();
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // 채팅 기록이 변경될 때마다 맨 아래로 스크롤
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+  }, [chatHistory, isLoading]);
 
-  // 입력 메시지 변경 핸들러
+  useEffect(() => {
+    if (currentStock) {
+      fetchStockData();
+    }
+  }, [currentStock, fetchStockData]);
+
+  useEffect(() => {
+    setLanguage(lang);
+  }, [lang, setLanguage]);
+
   function handleMessageChange(e: React.ChangeEvent<HTMLInputElement>) {
     setMessage(e.target.value);
   }
 
-  // 메시지 제출 핸들러
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!message.trim()) return; // 빈 메시지 제출 방지
-
-    await sendMessage(message); // 메시지 전송 및 AI 응답 요청
-    setMessage(""); // 입력 필드 초기화
+    if (!message.trim()) return;
+    await sendMessage(message);
+    setMessage("");
   }
+
+  // 주가 차트 데이터 준비
+  const chartData =
+    stockData?.priceChartData?.find(
+      (d: any) => d.periodType === "month&range=3",
+    )?.priceInfo || [];
 
   return (
     <div className="fixed bottom-0 right-0 w-[480px] h-[640px] bg-white shadow-chatbot rounded-t-3xl overflow-hidden flex flex-col">
-      {/* 챗봇 헤더 */}
       <nav className="bg-navy-900 w-full h-16 flex items-center justify-between px-6 border-b border-gray-200 rounded-tl-3xl">
-        <span className="text-grayscale-100 text-2xl font-bold">나우 챗봇</span>
+        <span className="text-grayscale-100 text-2xl font-bold">
+          {t("title")}
+        </span>
         <IconButton
           icon="close"
           size="xsm"
@@ -54,22 +71,64 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
         />
       </nav>
 
-      {/* 채팅 내용 (스크롤 가능한 영역) */}
-      <section className="flex-grow overflow-y-auto p-4">
-        <div className="flex flex-col gap-3">
-          {chatHistory.map((chat, index) =>
-            chat.role === "user" ? (
-              <User key={index} content={chat.content} />
-            ) : (
-              <Bot key={index}>{chat.content}</Bot>
-            ),
-          )}
-          {isLoading && <Bot>응답을 생성 중입니다...</Bot>}
-          <div ref={chatEndRef} />
+      <div className="flex-grow overflow-y-auto">
+        <div className="p-4">
+          <div className="flex flex-col gap-3">
+            {chatHistory.map((chat, index) =>
+              chat.role === "user" ? (
+                <User key={index} content={chat.content} />
+              ) : (
+                <Bot key={index}>
+                  {chat.content === "generatingResponse" ? (
+                    <div className="animate-pulse">
+                      {t("generatingResponse")}
+                    </div>
+                  ) : (
+                    t(chat.content, chat.translationParams)
+                  )}
+                  {chat.stockInfo && (
+                    <div className="mt-2 p-3 bg-gray-100 rounded-lg">
+                      <h3 className="font-bold">
+                        {t("stockInfo", { symbol: chat.stockInfo.symbol })}
+                      </h3>
+                      <p>
+                        {t("currentPrice")}: ${chat.stockInfo.currentPrice}
+                      </p>
+                      <p
+                        className={
+                          chat.stockInfo.priceChange >= 0
+                            ? "text-red-500"
+                            : "text-blue-500"
+                        }
+                      >
+                        {t("change")}: {chat.stockInfo.priceChange} (
+                        {chat.stockInfo.percentChange}%)
+                      </p>
+                      <p>
+                        {t("targetPrice")}: ${chat.stockInfo.targetPrice}
+                      </p>
+                      <p>
+                        {t("analystOpinion")}:{" "}
+                        {t(chat.stockInfo.analystOpinion)}
+                      </p>
+                    </div>
+                  )}
+                </Bot>
+              ),
+            )}
+            {isLoading &&
+              !chatHistory[chatHistory.length - 1]?.content.includes(
+                "generatingResponse",
+              ) && (
+                <Bot>
+                  <div className="animate-pulse">{t("generatingResponse")}</div>
+                </Bot>
+              )}
+            <div ref={chatEndRef} />
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* 메시지 입력 폼 (항상 하단에 고정) */}
       <form
         onSubmit={handleSubmit}
         className="border-t border-gray-200 flex items-center gap-2 p-4 bg-white"
@@ -77,7 +136,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
         <div className="flex-grow">
           <Input
             type="text"
-            placeholder="메시지를 입력하세요..."
+            placeholder={t("inputPlaceholder")}
             inputValue={message}
             setInputValue={handleMessageChange}
             iconPosition="right"
@@ -88,7 +147,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose }) => {
           className="text-white bg-navy-900 text-base font-medium w-[63px] h-[63px] rounded-xl ml-2"
           disabled={isLoading}
         >
-          전송
+          {t("send")}
         </button>
       </form>
     </div>

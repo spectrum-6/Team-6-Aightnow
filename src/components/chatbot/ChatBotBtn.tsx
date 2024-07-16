@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import IconButton from "@/components/Button/IconButton";
-import ChatBot from "./chatbot";
+import ChatBot from "./ChatBot";
 
 const ChatBotBtn: React.FC = () => {
   // 챗봇 열림/닫힘 상태를 관리하는 로컬 상태
@@ -25,7 +25,7 @@ const ChatBotBtn: React.FC = () => {
         <IconButton size="fab" icon="fab" onClick={openChatBot} />
       </div>
       {/* 챗봇 모달 (열려있을 때만 렌더링) */}
-      {isChatBotOpen && <ChatBot onClose={closeChatBot} />}
+      {isChatBotOpen && <ChatBot onClose={closeChatBot} lang={"ko"} />}
     </>
   );
 };
