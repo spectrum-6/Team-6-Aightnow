@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@langchain/community": "^0.2.19",
     "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
     "firebase": "^10.12.3",
     "firebase-admin": "^12.2.0",
     "i18next": "^23.11.5",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-resources-to-backend": "^1.2.1",
+    "langchain": "^0.2.10",
     "next": "^14.2.5",
     "next-auth": "^4.24.7",
     "react": "^18",
@@ -28,6 +31,9 @@
     "tailwind-scrollbar-hide": "^1.1.7",
     "ts-node": "^10.9.2",
     "zustand": "^4.5.4"
+  },
+  "overrides": {
+    "@langchain/core": "0.1.5"
   },
   "devDependencies": {
     "@types/firebase": "^3.2.1",

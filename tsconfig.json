@@ -31,7 +31,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tailwind.config.js",
-    "src/components/chatbot/**/*.tsx"
+    "src/components/ChatBot/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }
