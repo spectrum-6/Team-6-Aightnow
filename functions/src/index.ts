@@ -1,10 +1,3 @@
-import * as functions from "firebase-functions";
+import { realtimeApiPost } from "./test";
 
-export const simpleSchedule = functions.pubsub
-  .schedule("every 1 minutes")
-  .timeZone("Asia/Seoul")
-  .onRun(async (context) => {
-    console.log("====================================");
-    console.log("Simple scheduled function triggered.");
-    console.log("====================================");
-  });
+export const testAPI = realtimeApiPost;
