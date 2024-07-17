@@ -38,17 +38,12 @@ export default function DeleteFavoriteStock() {
   // zustand store에 저장된 정보
   const { userInfo, setUserInfo } = useUserStore();
   const watchList = userInfo?.userStockCollection?.watchList;
-  const { stockName } = useDeleteWatchList();
-
-  // filter를 위해 stock name을 영어로 변환
-  const { t } = useTranslation("en", "stock");
+  const { symbolCode } = useDeleteWatchList();
 
   // 삭제 버튼 클릭 시
   const handleDeleteButton = async () => {
     if (watchList && userInfo.uid && userInfo.userStockCollection) {
-      const filteredList = watchList?.filter(
-        (item) => t(item).toLowerCase() !== t(stockName).toLowerCase(),
-      );
+      const filteredList = watchList?.filter((item) => item !== symbolCode);
 
       if (filteredList.length <= 0) {
         alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
