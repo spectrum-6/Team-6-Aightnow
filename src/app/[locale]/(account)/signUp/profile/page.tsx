@@ -103,7 +103,6 @@ export default function Profile() {
       const updatedUserInfo: Partial<UserInfo> = {
         nickname: userNickname,
         profileImgUrl: newProfileImgUrl,
-        watchlist: tags,
         userStockCollection: {
           recentSearch: [],
           recentViews: [],
