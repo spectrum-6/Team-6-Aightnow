@@ -2,22 +2,45 @@
 
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IconEdit } from "@/icons";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
 import TextButton from "@/components/Button/TextButton";
 import useUserStore from "@/stores/useUserStore";
+import { uploadProfileImage } from "@/firebase/firestorage";
+import { UserInfo } from "@/types/UserInfo";
+import { updateUserInfo } from "@/firebase/firestore";
 
 export default function EditProfile() {
   // 세션에 저장된 관심종목 가져오기
-  const { userInfo } = useUserStore();
+  const { userInfo, setUserInfo } = useUserStore();
   const watchList = userInfo?.userStockCollection?.watchList;
 
   const router = useRouter();
 
   // 버튼의 활성화 여부
   const [isButtonEnable, setButtonEnable] = useState(false);
+
+  // profile image
+  const [profileImg, setProfileImg] = useState(userInfo?.profileImgUrl);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImg(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // 상태 관리
   const [userNickname, setUserNickname] = useState(""); // 닉네임 상태
@@ -49,8 +72,38 @@ export default function EditProfile() {
   }, [router]);
 
   // 수정하기 버튼 클릭 시
-  const handleButtonClick = () => {
-    router.back();
+  const handleButtonClick = async () => {
+    try {
+      const uid = userInfo?.uid;
+
+      if (!uid) {
+        throw new Error("사용자 정보가 없습니다.");
+      }
+
+      let newProfileImgUrl = profileImg;
+
+      if (fileInputRef.current?.files?.[0]) {
+        newProfileImgUrl = await uploadProfileImage(
+          fileInputRef.current.files[0],
+          uid,
+        );
+      }
+
+      const updatedUserInfo: Partial<UserInfo> = {
+        ...userInfo,
+        nickname: userNickname,
+        profileImgUrl: newProfileImgUrl,
+      };
+
+      // DB 업데이트
+      await updateUserInfo(uid, updatedUserInfo);
+      // 세션 정보 업데이트
+      setUserInfo(updatedUserInfo);
+
+      router.back();
+    } catch (error) {
+      console.error("프로필 저장에 실패했습니다.", error);
+    }
   };
 
   return (
@@ -70,24 +123,23 @@ export default function EditProfile() {
         </h3>
 
         <div className="relative w-[120px] h-[120px] mb-8 flex items-center justify-center">
-          {/* 이 이미지는 버튼까지 붙어있는거라서 일단 버튼 따로 되어있는걸로
-          적용시켜뒀습니다! + 적절한걸로 골라서 쓰세요! 🍀 */}
-          {/* <Image
-            src={"/images/profile_img.png"}
-            alt="사용자 기본 프로필"
-            width={120}
-            height={120}
-          /> */}
-
           {/* 프로필 이미지 */}
           <img
-            src="https://i.ibb.co/3BtYXVs/Vector.png"
+            src={profileImg || "https://i.ibb.co/3BtYXVs/Vector.png"}
             alt="프로필"
             className="w-[100px] h-[100px] rounded-full"
           />
 
           {/* 이미지 수정 버튼 */}
-          <button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            accept="image/*"
+            className="hidden"
+          />
+
+          <button onClick={handleImageClick}>
             <IconEdit className="absolute w-[33.33px] h-[33.33px] left-[65%] top-[65%] bg-grayscale-400 rounded-full" />
           </button>
         </div>
