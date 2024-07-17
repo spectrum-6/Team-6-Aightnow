@@ -1,12 +1,12 @@
 import { firestore } from "@/firebase/firebasedb";
 import { doc, getDoc } from "firebase/firestore";
 
-// stocks 컬렉션의 특정 doc을 조회
+// scheduleStock 컬렉션의 특정 doc을 조회
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const docRef = doc(firestore, "stocks", params.id); // api/stocks/AAPL
+  const docRef = doc(firestore, "scheduleStock", params.id); // api/stocks/AAPL
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return Response.json(docSnap.data());
