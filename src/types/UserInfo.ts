@@ -14,7 +14,7 @@ export interface UserInfo {
   socialProvider?: string | null;
   registrationCompleted?: boolean;
   isNewUser?: boolean;
-  watchlist?: string[]; // 회원가입 시 symbolCode만 저장
+  // watchlist?: string[]; // 회원가입 시 symbolCode만 저장
   userStockCollection?: IUserStockCollection;
 }
 

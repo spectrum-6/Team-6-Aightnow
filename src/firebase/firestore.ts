@@ -83,7 +83,6 @@ export const createUserInfo = async (
       ...userInfo,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      watchlist: userInfo.watchlist || [],
       userStockCollection: userInfo.userStockCollection || {
         recentSearch: [],
         recentViews: [],

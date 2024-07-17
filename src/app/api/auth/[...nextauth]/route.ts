@@ -41,7 +41,6 @@ const handler = NextAuth({
             ? userSnapshot.data()?.registrationCompleted || false
             : false,
           isNewUser: !userSnapshot.exists(),
-          watchlist: [],
           userStockCollection: {
             recentSearch: [],
             recentViews: [],
