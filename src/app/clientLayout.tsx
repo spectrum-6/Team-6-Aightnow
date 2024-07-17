@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SessionProvider, useSession } from "next-auth/react";
 import useUserStore, { initializeAuthListener } from "@/stores/useUserStore";
 import Loading from "./[locale]/loading";
@@ -21,18 +21,27 @@ export default function ClientLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isInitialized = useUserStore((state) => state.isInitialized);
+  const [isLoading, setIsLoading] = useState(true);
+  const setIsInitialized = useUserStore((state) => state.setIsInitialized);
 
   useEffect(() => {
     const unsubscribe = initializeAuthListener();
+
+    // 초기화 완료 후 로딩 상태 해제
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+      setIsLoading(false);
+    }, 1000); // 1초 후에 초기화 완료로 설정
+
     return () => {
       if (typeof unsubscribe === "function") {
         unsubscribe();
       }
+      clearTimeout(timer);
     };
-  }, []);
+  }, [setIsInitialized]);
 
-  if (!isInitialized) {
+  if (isLoading) {
     return <Loading />;
   }
 

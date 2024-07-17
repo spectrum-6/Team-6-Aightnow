@@ -1,4 +1,4 @@
-import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
+import ChatBotBtn from "@/components/ChatBot/ChatBotBtn";
 import Header from "@/components/Header";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
