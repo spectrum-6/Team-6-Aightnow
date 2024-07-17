@@ -41,8 +41,8 @@ export default function TrendingSearch() {
 
       if (result) {
         list.push(result);
+        setTrendingSearchList([...list]);
       }
-      setTrendingSearchList([...list]);
     });
   };
 

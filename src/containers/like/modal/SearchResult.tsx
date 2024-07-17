@@ -40,8 +40,6 @@ export default function SearchResult(props: TSearchResultProps) {
         koName.includes(inputValue) ||
         symbolCode.toLowerCase().includes(inputValue.toLowerCase())
       ) {
-        const watchListdd = watchList?.includes(symbolCode);
-
         if (watchList?.includes(symbolCode)) {
           searchResultList.push({ ...item, inWatchList: true });
         } else {
@@ -51,7 +49,6 @@ export default function SearchResult(props: TSearchResultProps) {
     });
 
     setFilteredData([...searchResultList]);
-    console.log(searchResultList);
   };
 
   useEffect(() => {
