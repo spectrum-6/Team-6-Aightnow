@@ -92,7 +92,7 @@ export const createUserInfo = async (
       username: userInfo.username || null, // 사용자이름 필드(kakao)
     });
     // userStock 컬렉션에 빈 watchList 생성
-    await createUserStock(userId);
+    // await createUserStock(userId);
   } catch (error: any) {
     console.error("Error creating user info:", error.message);
     throw error;
