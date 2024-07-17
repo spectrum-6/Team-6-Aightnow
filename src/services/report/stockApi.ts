@@ -1,8 +1,10 @@
+"use server";
+
 type TCodes = {
   [key: string]: string; // index signature
 };
 
-export const codes: TCodes = {
+const codes: TCodes = {
   aapl: "AAPL.O",
   tsla: "TSLA.O",
   amzn: "AMZN.O",

@@ -1,10 +1,13 @@
+// useUserStore.ts
+
 import { create } from "zustand";
-import { UserInfo } from "@/types/UserInfo";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebasedb";
 import { getUserInfo, updateLastLoginAt } from "@/firebase/firestore";
 import { Session } from "next-auth";
+import { UserInfo } from "@/types/UserInfo";
 
+// UserState 인터페이스 정의
 export interface UserState {
   user: User | null;
   userInfo: UserInfo | null;
@@ -18,17 +21,30 @@ export interface UserState {
   syncSessionUser: (session: Session | null) => void;
 }
 
+// Zustand store 생성
 const useUserStore = create<UserState>((set) => ({
   user: null,
   userInfo: null,
   registrationStep: null,
   isInitialized: false,
+
+  // Firebase User 객체 설정
   setUser: (user) => set({ user }),
+
+  // UserInfo 객체 설정
   setUserInfo: (userInfo) => set({ userInfo }),
+
+  // 회원가입 단계 설정
   setRegistrationStep: (step) => set({ registrationStep: step }),
+
+  // 사용자 정보 초기화
   clearUserInfo: () =>
     set({ user: null, userInfo: null, registrationStep: null }),
+
+  // 초기화 상태 설정
   setIsInitialized: (isInitialized) => set({ isInitialized }),
+
+  // NextAuth 세션과 상태 동기화
   syncSessionUser: (session) => {
     if (session?.user) {
       set({
@@ -36,8 +52,9 @@ const useUserStore = create<UserState>((set) => ({
           id: session.user.id,
           email: session.user.email || "",
           username: session.user.name || "",
+          phoneNumber: session.user.phoneNumber || "",
           profileImgUrl: session.user.image || "",
-          // socialProvider: session.user.provider,
+          socialProvider: session.provider, // 소셜 로그인 제공자
           createdAt: session.user.createdAt,
           lastLoginAt: session.user.lastLoginAt,
         } as UserInfo,
@@ -50,42 +67,49 @@ const useUserStore = create<UserState>((set) => ({
 
 export default useUserStore;
 
-// 클라이언트 사이드에서만 실행되는 함수
+// Firebase 인증 상태 리스너 초기화
+
 export const initializeAuthListener = () => {
   if (typeof window === "undefined") {
-    return () => {}; // 서버 사이드에서는 아무 것도 하지 않음
+    return () => {};
   }
 
   const unsubscribe = onAuthStateChanged(auth, async (user) => {
     const store = useUserStore.getState();
 
     if (user) {
-      // 사용자가 로그인한 경우
-      console.log("사용자가 로그인하였습니다.", user.uid);
+      console.log("Firebase 인증 상태: 사용자 로그인", user.uid);
 
       try {
-        // Firestore에서 사용자 정보 가져오기
         const userInfo = await getUserInfo(user.uid);
 
-        // Zustand 스토어 업데이트
-        store.setUser(user);
-        store.setUserInfo(userInfo);
-
-        // 마지막 로그인 시간 업데이트
-        await updateLastLoginAt(user.uid);
+        if (userInfo) {
+          console.log(
+            "Firestore에서 사용자 정보를 성공적으로 가져왔습니다.",
+            user.uid,
+          );
+          store.setUser(user);
+          store.setUserInfo(userInfo);
+          await updateLastLoginAt(user.uid);
+        } else {
+          console.warn(
+            "사용자 정보를 Firestore에서 찾을 수 없습니다.",
+            user.uid,
+          );
+          // 여기에서 추가적인 처리를 할 수 있습니다. 예: 사용자 정보 초기화
+          store.clearUserInfo();
+        }
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        store.clearUserInfo();
       }
     } else {
-      // 사용자가 로그인하지 않은 상태
+      console.log("Firebase 인증 상태: 로그아웃");
       store.clearUserInfo();
-      console.log("사용자가 로그아웃했습니다.");
     }
 
-    // 초기화 완료 표시
     store.setIsInitialized(true);
   });
 
-  // 클린업 함수 반환
   return unsubscribe;
 };

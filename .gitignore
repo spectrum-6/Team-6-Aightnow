@@ -35,3 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env
+firestore-debug.log
+pubsub-debug.log
+ui-debug.log
+functions/firestore-debug.log
+functions/pubsub-debug.log
+functions/ui-debug.log

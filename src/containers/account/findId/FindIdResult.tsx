@@ -11,21 +11,33 @@ const OAuthType = {
 type TFindIdResultProps = {
   userId: string;
   registDate: string;
-  authType?: "kakao" | "naver" | "google" | null;
+  authType: "kakao" | "naver" | "google" | null;
+  email?: string; // 이메일 필드 추가
 };
 
 export default function FindIdResult(props: TFindIdResultProps) {
-  const { userId, registDate, authType } = props;
+  const { userId, registDate, authType, email } = props;
+
+  // 가입일 포맷팅 함수
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
+      2,
+      "0",
+    )}.${String(date.getDate()).padStart(2, "0")}`;
+  };
 
   return (
     <>
       <div className="mb-14">
         <p className="text-sm text-black font-medium text-center my-4">
-          휴대폰 번호와 일치하는 아이디입니다.
+          {authType
+            ? "소셜 로그인으로 가입된 계정입니다."
+            : "일반 로그인으로 가입된 계정입니다."}
         </p>
         <div className="h-[120px] flex flex-col justify-center items-center gap-4 border border-grayscale-300 rounded-lg text-grayscale-900 ">
           <div className="flex items-center">
-            <span className="mr-2">아이디 : </span>
+            <span className="mr-2">{authType ? "이메일 : " : "아이디 : "}</span>
             {authType && (
               <Image
                 src={OAuthType[authType].src}
@@ -35,11 +47,11 @@ export default function FindIdResult(props: TFindIdResultProps) {
                 className="mr-1"
               />
             )}
-            {userId}
+            {authType ? email : userId}
           </div>
           <p>
             <span className="mr-2">가입일 : </span>
-            {registDate}
+            {formatDate(registDate)}
           </p>
         </div>
       </div>

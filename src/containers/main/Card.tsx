@@ -1,5 +1,8 @@
-import { IconApple } from "@/icons";
+"use client";
+
 import React from "react";
+import RadarChart from "@/components/Chart/RadarChart";
+import { IconApple } from "@/icons";
 
 const Card: React.FC = () => {
   return (
@@ -20,8 +23,8 @@ const Card: React.FC = () => {
         </div>
       </div>
       {/* 2. 차트box */}
-      <div className="flex gap-[24px]">
-        <div className="w-[168px] h-[168px] bg-blue-100"></div>
+      <div className="flex">
+        <RadarChart width={155} height={155} />
         {/* 차트 list */}
         <div className="flex flex-col p-[16px] bg-gray-100 rounded-lg w-[168px] h-[168px]">
           <ul className="flex flex-col space-y-1">

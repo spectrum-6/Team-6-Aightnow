@@ -83,15 +83,16 @@ export const createUserInfo = async (
       ...userInfo,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      watchlist: userInfo.watchlist || [],
       userStockCollection: userInfo.userStockCollection || {
         recentSearch: [],
         recentViews: [],
         watchList: [],
       },
+      phoneNumber: userInfo.phoneNumber || null, // 전화번호 필드(아이디 찾기 떄문에)
+      username: userInfo.username || null, // 사용자이름 필드(kakao)
     });
     // userStock 컬렉션에 빈 watchList 생성
-    await createUserStock(userId);
+    // await createUserStock(userId);
   } catch (error: any) {
     console.error("Error creating user info:", error.message);
     throw error;

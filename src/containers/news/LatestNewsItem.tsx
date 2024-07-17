@@ -1,38 +1,68 @@
 import Link from "next/link";
-import Image from "next/image";
+import React from "react";
 
 type TLatestNewsItemProps = {
+  id: string;
   title: string;
-  hour: number;
+  date: string;
   company: string;
   content: string;
   image: string;
 };
 
-export default function LatestNewsItem(props: TLatestNewsItemProps) {
-  const { title, hour, company, content, image } = props;
+const LatestNewsItem = React.forwardRef<HTMLLIElement, TLatestNewsItemProps>(
+  ({ id, title, date, company, content, image }, ref) => {
+    const now = new Date();
+    const newsDate = new Date(date);
+    const timeDiff = now.getTime() - newsDate.getTime();
 
-  return (
-    <>
-      <li className="pb-8">
-        <Link href="news/newsDetail" className="flex gap-5">
-          <p>
-            <Image src={image} alt="뉴스 이미지" width="252" height="148" />
-          </p>
-          <div className="w-[832px] h-[148px]">
-            <div className="mb-4 flex justify-between items-center gap-4">
-              <h3 className="text-lg font-bold truncate">{title}</h3>
-              <span className="text-grayscale-600 text-sm flex-shrink-0">
-                <span>{hour}</span>시간전
-                <span className="before:content-['∙'] before:mx-2">
-                  {company}
+    const secondsDiff = Math.floor(timeDiff / 1000);
+    const minutesDiff = Math.floor(secondsDiff / 60);
+    const hoursDiff = Math.floor(minutesDiff / 60);
+    const daysDiff = Math.floor(hoursDiff / 24);
+
+    // 경과 시간
+    let displayDate;
+    if (daysDiff >= 1) {
+      displayDate = `${newsDate.getFullYear()}.${String(
+        newsDate.getMonth() + 1,
+      ).padStart(2, "0")}.${String(newsDate.getDate()).padStart(2, "0")}`;
+    } else if (hoursDiff >= 1) {
+      displayDate = `${hoursDiff}시간 전`;
+    } else if (minutesDiff >= 1) {
+      displayDate = `${minutesDiff}분 전`;
+    } else {
+      displayDate = `${secondsDiff}초 전`;
+    }
+
+    return (
+      <>
+        <li ref={ref} className="pb-8 border-b-2 mb-8">
+          <Link href={`/news/newsDetail/${id}`} className="flex gap-5">
+            <p>
+              <img
+                src={image}
+                alt="뉴스 이미지"
+                className="w-[252px] h-[148px] rounded-xl"
+              />
+            </p>
+            <div className="w-[832px] h-[148px]">
+              <div className="mb-4 flex justify-between items-center gap-4">
+                <h3 className="text-lg font-bold truncate">{title}</h3>
+                <span className="text-grayscale-600 text-sm flex-shrink-0">
+                  <span>{displayDate}</span>
+                  <span className="before:content-['∙'] before:mx-2">
+                    {company}
+                  </span>
                 </span>
-              </span>
+              </div>
+              <p className="truncate-4">{content}</p>
             </div>
-            <p className="truncate-4">{content}</p>
-          </div>
-        </Link>
-      </li>
-    </>
-  );
-}
+          </Link>
+        </li>
+      </>
+    );
+  },
+);
+
+export default LatestNewsItem;

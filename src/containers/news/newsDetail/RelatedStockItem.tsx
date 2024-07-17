@@ -2,19 +2,26 @@ import Link from "next/link";
 import { IconApple } from "@/icons";
 
 type TRelatedStockItemProps = {
-  title: string;
-  enTitle: string;
-  price: string;
-  value: string;
-  rate: string;
+  stockName: string;
+  symbolCode: string;
+  closePrice: number;
+  compareToPreviousClosePrice: number;
+  fluctuationsRatio: number;
 };
 
 export default function RelatedStockItem(props: TRelatedStockItemProps) {
-  const { title, enTitle, price, value, rate } = props;
+  const {
+    stockName,
+    symbolCode,
+    closePrice,
+    compareToPreviousClosePrice,
+    fluctuationsRatio,
+  } = props;
 
   return (
     <>
       <li className="mt-5">
+        {/* report 페이지로 연결 */}
         <Link href="#" className="w-full h-full block">
           <div className="flex justify-between">
             <div className="flex gap-4">
@@ -22,15 +29,17 @@ export default function RelatedStockItem(props: TRelatedStockItemProps) {
                 <IconApple />
               </p>
               <p>
-                <strong className="block">{title}</strong>
-                <span className="text-sm">{enTitle}</span>
+                <strong className="block">{stockName}</strong>
+                <span className="text-sm">{symbolCode}</span>
               </p>
             </div>
             <p className="text-right">
-              <strong className="block text-sm font-medium">${price}</strong>
+              <strong className="block text-sm font-medium">
+                ${closePrice}
+              </strong>
               <span className="text-blue-600 text-xs">
-                <span>▼{value}</span>
-                <span className="ml-2">-{rate}%</span>
+                <span>{compareToPreviousClosePrice}</span>
+                <span className="ml-2">{fluctuationsRatio}%</span>
               </span>
             </p>
           </div>

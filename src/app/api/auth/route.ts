@@ -95,12 +95,13 @@ async function handleRegister(id: string, password: string, email: string) {
       createdAt: new Date().toISOString(),
       lastLoginAt: new Date().toISOString(),
       registrationCompleted: false,
-      watchlist: [],
       userStockCollection: {
         recentSearch: [],
         recentViews: [],
         watchList: [],
       },
+      phoneNumber: null,
+      username: null,
     };
     await createUserInfo(user.uid, newUserInfo);
 
