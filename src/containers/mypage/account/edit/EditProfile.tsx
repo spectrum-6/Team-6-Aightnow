@@ -1,8 +1,7 @@
 // EditPersonalInfo 에서 열리는 프로필 수정 모달
-
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IconEdit } from "@/icons";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
@@ -11,6 +10,7 @@ import useUserStore from "@/stores/useUserStore";
 import { uploadProfileImage } from "@/firebase/firestorage";
 import { UserInfo } from "@/types/UserInfo";
 import { updateUserInfo } from "@/firebase/firestore";
+import { duplicateCheck } from "@/utils/duplicateCheck";
 
 export default function EditProfile() {
   // 세션에 저장된 관심종목 가져오기
@@ -42,18 +42,35 @@ export default function EditProfile() {
     }
   };
 
-  // 상태 관리
-  const [userNickname, setUserNickname] = useState(""); // 닉네임 상태
+  // 닉네임
+  const [userNickname, setUserNickname] = useState("");
+  const [userNicknameInputState, setUserNicknameInputState] = useState<
+    "warning" | "success" | null
+  >(null); // 중복확인 버튼 상태
+
+  // 닉네임 중복 체크
+  const userNicknameDuplicateCheck = async () => {
+    if (!userNickname) return;
+    try {
+      const res = await duplicateCheck("nickname", userNickname);
+      if (res.data > 0) {
+        setUserNicknameInputState("warning");
+      } else {
+        setUserNicknameInputState("success");
+      }
+    } catch (error) {
+      console.error("Failed to check for duplicate Nickname:", error);
+    }
+  };
 
   // userNickname 값이 유효한지 확인하여 버튼 활성화
-  // TODO ======= 닉네임 중복확인 OK 인지 확인하고 버튼 활성화 해야 함
   useEffect(() => {
-    if (userNickname.trim() !== "") {
+    if (userNickname.trim() !== "" && userNicknameInputState === "success") {
       setButtonEnable(true);
     } else {
       setButtonEnable(false);
     }
-  }, [userNickname]);
+  }, [userNickname, userNicknameInputState]);
 
   // ESC 키를 누르면 모달을 닫음
   useEffect(() => {
@@ -151,8 +168,9 @@ export default function EditProfile() {
             label="닉네임"
             inputValue={userNickname}
             setInputValue={(e) => setUserNickname(e.target.value)}
+            state={userNicknameInputState}
             placeholder="닉네임을 입력해 주세요."
-            buttonClickHandler={() => console.log("중복확인 버튼 클릭")}
+            buttonClickHandler={userNicknameDuplicateCheck}
           />
           {/* 관심종목 태그 목록 */}
           <div className="flex flex-col gap-1">
