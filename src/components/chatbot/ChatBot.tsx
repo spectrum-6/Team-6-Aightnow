@@ -59,7 +59,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose, lang }) => {
 
   return (
     <div className="fixed bottom-0 right-0 w-[480px] h-[640px] bg-white shadow-chatbot rounded-t-3xl overflow-hidden flex flex-col">
-      <nav className="bg-navy-900 w-full h-16 flex items-center justify-between px-6 border-b border-gray-200 rounded-tl-3xl">
+      <nav className="sticky top-0 z-10 bg-navy-900 w-full h-16 flex items-center justify-between px-6 border-b border-gray-200 rounded-tl-3xl">
         <span className="text-grayscale-100 text-2xl font-bold">
           {t("title")}
         </span>
@@ -71,61 +71,56 @@ const ChatBot: React.FC<ChatBotProps> = ({ onClose, lang }) => {
         />
       </nav>
 
-      <div className="flex-grow overflow-y-auto">
-        <div className="p-4">
-          <div className="flex flex-col gap-3">
-            {chatHistory.map((chat, index) =>
-              chat.role === "user" ? (
-                <User key={index} content={chat.content} />
-              ) : (
-                <Bot key={index}>
-                  {chat.content === "generatingResponse" ? (
-                    <div className="animate-pulse">
-                      {t("generatingResponse")}
-                    </div>
-                  ) : (
-                    t(chat.content, chat.translationParams)
-                  )}
-                  {chat.stockInfo && (
-                    <div className="mt-2 p-3 bg-gray-100 rounded-lg">
-                      <h3 className="font-bold">
-                        {t("stockInfo", { symbol: chat.stockInfo.symbol })}
-                      </h3>
-                      <p>
-                        {t("currentPrice")}: ${chat.stockInfo.currentPrice}
-                      </p>
-                      <p
-                        className={
-                          chat.stockInfo.priceChange >= 0
-                            ? "text-red-500"
-                            : "text-blue-500"
-                        }
-                      >
-                        {t("change")}: {chat.stockInfo.priceChange} (
-                        {chat.stockInfo.percentChange}%)
-                      </p>
-                      <p>
-                        {t("targetPrice")}: ${chat.stockInfo.targetPrice}
-                      </p>
-                      <p>
-                        {t("analystOpinion")}:{" "}
-                        {t(chat.stockInfo.analystOpinion)}
-                      </p>
-                    </div>
-                  )}
-                </Bot>
-              ),
-            )}
-            {isLoading &&
-              !chatHistory[chatHistory.length - 1]?.content.includes(
-                "generatingResponse",
-              ) && (
-                <Bot>
+      <div className="flex-grow overflow-y-auto max-h-[488px] p-4">
+        <div className="flex flex-col gap-3">
+          {chatHistory.map((chat, index) =>
+            chat.role === "user" ? (
+              <User key={index} content={chat.content} />
+            ) : (
+              <Bot key={index}>
+                {chat.content === "generatingResponse" ? (
                   <div className="animate-pulse">{t("generatingResponse")}</div>
-                </Bot>
-              )}
-            <div ref={chatEndRef} />
-          </div>
+                ) : (
+                  t(chat.content, chat.translationParams)
+                )}
+                {chat.stockInfo && (
+                  <div className="mt-2 p-3 bg-gray-100 rounded-lg">
+                    <h3 className="font-bold">
+                      {t("stockInfo", { symbol: chat.stockInfo.symbol })}
+                    </h3>
+                    <p>
+                      {t("currentPrice")}: ${chat.stockInfo.currentPrice}
+                    </p>
+                    <p
+                      className={
+                        chat.stockInfo.priceChange >= 0
+                          ? "text-red-500"
+                          : "text-blue-500"
+                      }
+                    >
+                      {t("change")}: {chat.stockInfo.priceChange} (
+                      {chat.stockInfo.percentChange}%)
+                    </p>
+                    <p>
+                      {t("targetPrice")}: ${chat.stockInfo.targetPrice}
+                    </p>
+                    <p>
+                      {t("analystOpinion")}: {t(chat.stockInfo.analystOpinion)}
+                    </p>
+                  </div>
+                )}
+              </Bot>
+            ),
+          )}
+          {isLoading &&
+            !chatHistory[chatHistory.length - 1]?.content.includes(
+              "generatingResponse",
+            ) && (
+              <Bot>
+                <div className="animate-pulse">{t("generatingResponse")}</div>
+              </Bot>
+            )}
+          <div ref={chatEndRef} />
         </div>
       </div>
 
