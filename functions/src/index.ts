@@ -1,3 +1,3 @@
-import { realtimeApiPost } from "./test";
+import { realtimeApiSchedule } from "./realTimeApi";
 
-export const testAPI = realtimeApiPost;
+export const getStockDataRealtimeAPI = realtimeApiSchedule;

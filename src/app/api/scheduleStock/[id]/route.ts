@@ -7,7 +7,7 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const docRef = doc(firestore, "scheduleStock", params.id); // api/scheduleStock/AAPL
+  const docRef = doc(firestore, "scheduleStockData", params.id); // api/scheduleStockData/AAPL
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return Response.json(docSnap.data());

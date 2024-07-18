@@ -3,7 +3,7 @@ import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 
 // scheduleStock 컬렉션의 모든 doc을 조회하여 배열로 반환
 export async function GET(request: Request) {
-  const querySnap = await getDocs(collection(firestore, "scheduleStock"));
+  const querySnap = await getDocs(collection(firestore, "scheduleStockData"));
   const data = querySnap.docs.map((doc) => doc.data());
 
   return Response.json(data);
@@ -20,7 +20,7 @@ export async function PATCH(request: Request) {
       });
     }
 
-    const docRef = doc(firestore, "scheduleStock", id);
+    const docRef = doc(firestore, "scheduleStockData", id);
     await updateDoc(docRef, { stockPrice: stockPriceData });
 
     return new Response(
