@@ -1,11 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "@/components/Input";
 import SearchResult from "@/containers/like/modal/SearchResult";
 import SearchContainer from "@/containers/like/modal/SearchContainer";
 import { IconClose } from "@/icons";
+import { TStockType } from "@/types/stockType";
+
+// DB에 저장된 모든 stock 리스트 조회
+const getStockListData = async () => {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/scheduleStock`);
+
+    return await response.json();
+  } catch (e) {
+    console.log("error : ", e);
+  }
+};
 
 export default function AddFavoriteStock() {
   const router = useRouter();
@@ -15,6 +29,19 @@ export default function AddFavoriteStock() {
     router.back();
     setInputValue("");
   };
+
+  const [stockListData, setStockListData] = useState<TStockType[]>([]);
+
+  const getList = async () => {
+    const result = await getStockListData();
+    if (result) {
+      setStockListData(result);
+    }
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
 
   return (
     <>
@@ -48,7 +75,10 @@ export default function AddFavoriteStock() {
             />
           </div>
           {inputValue ? (
-            <SearchResult inputValue={inputValue} />
+            <SearchResult
+              inputValue={inputValue}
+              stockListData={stockListData}
+            />
           ) : (
             <SearchContainer />
           )}

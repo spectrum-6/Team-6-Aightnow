@@ -24,30 +24,23 @@ export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "stock");
 
-  const getStyleOfPrice = () => {
-    if (parseFloat(fluctuationsRatio) > 0) {
-      return (
-        <p className="text-warning-100">
-          <span>▲ {compareToPreviousClosePrice}</span>
-          <span className="ml-4">{fluctuationsRatio}%</span>
-        </p>
-      );
-    } else if (parseFloat(fluctuationsRatio) < 0) {
-      return (
-        <p className="text-blue-600">
-          <span>▼ {parseFloat(compareToPreviousClosePrice) * -1}</span>
-          <span className="ml-4">{fluctuationsRatio}%</span>
-        </p>
-      );
-    } else if (parseFloat(fluctuationsRatio) === 0) {
-      return (
-        <p className="text-grayscale-500">
-          <span>{compareToPreviousClosePrice}</span>
-          <span className="ml-4">{fluctuationsRatio}%</span>
-        </p>
-      );
-    }
-  };
+  //---
+  const changeClassName = (price: number) =>
+    price > 0
+      ? "text-warning-100"
+      : price < 0
+      ? "text-blue-600"
+      : "text-grayscale-500";
+
+  const formatComparePrice = (comparePrice: string) =>
+    Number(comparePrice) > 0
+      ? `▲${comparePrice}`
+      : Number(comparePrice) < 0
+      ? `▼${comparePrice.replace("-", "")}`
+      : `${comparePrice}`;
+
+  const formatRatio = (ratio: string) =>
+    Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
 
   return (
     <>
@@ -63,7 +56,10 @@ export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
                 {t(stockName)}
               </strong>
             </div>
-            {getStyleOfPrice()}
+            <p className={changeClassName(Number(compareToPreviousClosePrice))}>
+              <span>{formatComparePrice(compareToPreviousClosePrice)}</span>
+              <span className="ml-4">{formatRatio(fluctuationsRatio)}%</span>
+            </p>
           </div>
         </Link>
       </li>

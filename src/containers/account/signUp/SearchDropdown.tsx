@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 
 const tempData = [
-  "apple",
-  "amazon",
-  "adobe",
-  "AMD",
-  "google",
-  "Goldman",
-  "MS",
-  "Meta",
-  "Micron",
-  "Mcdonalds",
+  { stockName: "Apple", symbolCode: "APPL" },
+  { stockName: "Amazon", symbolCode: "AMZN" },
+  { stockName: "Google", symbolCode: "GOOGL" },
+  { stockName: "MicroSoft", symbolCode: "MSFT" },
+  { stockName: "Nvidia", symbolCode: "NVDA" },
+  { stockName: "Tesla", symbolCode: "TSLA" },
+  { stockName: "Unity", symbolCode: "U" },
 ];
+
+type TStockList = {
+  stockName: string;
+  symbolCode: string;
+};
 
 export default function SearchDropdown({
   onTagsChange,
@@ -22,10 +24,11 @@ export default function SearchDropdown({
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setFocused] = useState(false);
   // 검색 시 데이터
-  const [filteredData, setFilteredData] = useState<string[]>([]); // 필터링된 데이터 상태 추가
+  const [filteredData, setFilteredData] = useState<TStockList[]>([]); // 필터링된 데이터 상태 추가
 
   // 관심종목 tag
-  const [tags, setTags] = useState<string[]>([]); // 태그 목록 상태 추가
+  const [tagList, setTagList] = useState<TStockList[]>([]); // 태그 목록 상태 추가
+  const [watchlist, setWatchlist] = useState<string[]>([]); // DB 저장용 symbolCode array
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -51,28 +54,32 @@ export default function SearchDropdown({
     setInputValue(value); // 입력값 업데이트
 
     // 입력값에 따라 데이터 필터링
-    const filtered = tempData.filter((item) =>
-      item.toLowerCase().includes(value.toLowerCase()),
+    const filtered = tempData.filter(
+      (item) =>
+        item.stockName.toLowerCase().includes(value.toLowerCase()) ||
+        item.symbolCode.toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredData(filtered);
     setFocused(true); // 드롭다운 열기
   };
 
   // 태그 추가
-  const handleAddTag = (tag: string) => {
-    if (!tags.includes(tag)) {
-      setTags([...tags, tag]);
-      onTagsChange([...tags, tag]); // 태그가 변경될 때 부모 컴포넌트로 전달
+  const handleAddTag = (tag: TStockList) => {
+    if (!tagList.includes(tag)) {
+      setTagList([...tagList, tag]);
+      setWatchlist([...watchlist, tag.symbolCode]);
+      onTagsChange([...watchlist, tag.symbolCode]); // 태그가 변경될 때 부모 컴포넌트로 전달
     }
     setInputValue(""); // 입력값 초기화
     setFocused(false); // 드롭다운 닫기
   };
 
   // tag 클릭 시 해당 태그 제거
-  const handleTagClick = (tag: string) => {
-    const updatedTags = tags.filter((t) => t !== tag);
-    setTags(updatedTags);
-    onTagsChange(updatedTags); // 태그가 변경될 때 부모 컴포넌트로 전달
+  const handleTagClick = (tag: TStockList) => {
+    const updatedTagList = tagList.filter((t) => t !== tag);
+    setTagList(updatedTagList);
+    const symbolCodeList = updatedTagList.map((t) => t.symbolCode);
+    onTagsChange(symbolCodeList); // 태그가 변경될 때 부모 컴포넌트로 전달
   };
 
   return (
@@ -89,20 +96,20 @@ export default function SearchDropdown({
       />
 
       <div className="flex flex-wrap justify-start mt-3 gap-2">
-        {tags.map((tag, index) => (
+        {tagList.map((tag, index) => (
           <button
             type="button"
             key={index}
             className="py-1 px-3 bg-navy-800 text-white text-sm rounded-md"
             onClick={() => handleTagClick(tag)}
           >
-            {tag}
+            {tag.stockName}
           </button>
         ))}
       </div>
 
       {isFocused && filteredData.length > 0 && (
-        <ul className="absolute top-16 w-full flex flex-col border border-grayscale-300 bg-white rounded-lg text-grayscale-900 text-base overflow-hidden">
+        <ul className="absolute top-24 w-full flex flex-col border border-grayscale-300 bg-white rounded-lg text-grayscale-900 text-base overflow-hidden">
           {filteredData.map((item, index) => (
             <li
               key={index}
@@ -111,7 +118,7 @@ export default function SearchDropdown({
                 handleAddTag(item); // 태그 추가
               }}
             >
-              {item}
+              {item.stockName}
             </li>
           ))}
         </ul>

@@ -39,6 +39,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
 
   const { userInfo, setUserInfo } = useUserStore();
 
+  // watchlist 업데이트
   const updateWatchList = async (updateList: string[]) => {
     if (userInfo && userInfo.uid && userInfo.userStockCollection) {
       const updatedUserInfo: Partial<UserInfo> = {
@@ -63,9 +64,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
     if (watchList) {
       // 관심종목인 경우 삭제
       if (isFavoriteStock) {
-        const newList = watchList?.filter(
-          (item) => t(item).toLowerCase() !== t(stockName).toLowerCase(),
-        );
+        const newList = watchList?.filter((item) => item !== symbolCode);
 
         if (newList && newList.length <= 0) {
           alert("관심종목은 최소 1개 이상 설정되어야 합니다.");
@@ -75,39 +74,29 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
       }
       // 관심종목이 아닌 경우 추가
       else {
-        const newList = [stockName, ...watchList];
+        const newList = [symbolCode, ...watchList];
         updateWatchList(newList);
       }
     }
   };
 
   //---
-  const getStyleOfPrice = () => {
-    if (parseFloat(fluctuationsRatio) > 0) {
-      return (
-        <p className="text-warning-100 text-sm">
-          <span className="ml-2">▲ {compareToPreviousClosePrice}</span>
-          <span className="ml-2">{fluctuationsRatio}%</span>
-        </p>
-      );
-    } else if (parseFloat(fluctuationsRatio) < 0) {
-      return (
-        <p className="text-blue-600 text-sm">
-          <span className="ml-2">
-            ▼ {parseFloat(compareToPreviousClosePrice) * -1}
-          </span>
-          <span className="ml-2">{fluctuationsRatio}%</span>
-        </p>
-      );
-    } else if (parseFloat(fluctuationsRatio) === 0) {
-      return (
-        <p className="text-grayscale-500 text-sm">
-          <span className="ml-2">{compareToPreviousClosePrice}</span>
-          <span className="ml-2">{fluctuationsRatio}%</span>
-        </p>
-      );
-    }
-  };
+  const changeClassName = (price: number) =>
+    price > 0
+      ? "text-warning-100"
+      : price < 0
+      ? "text-blue-600"
+      : "text-grayscale-500";
+
+  const formatComparePrice = (comparePrice: string) =>
+    Number(comparePrice) > 0
+      ? `▲${comparePrice}`
+      : Number(comparePrice) < 0
+      ? `▼${comparePrice.replace("-", "")}`
+      : `${comparePrice}`;
+
+  const formatRatio = (ratio: string) =>
+    Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
 
   return (
     <>
@@ -126,11 +115,22 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
               </span>
             </div>
             <div className="flex items-center gap-5">
-              <div className="flex items-center justify-between w-[150px]">
+              <div className="flex flex-1 items-center justify-between">
                 <span className="text-grayscale-900 font-medium">
                   ${closePrice}
                 </span>
-                {getStyleOfPrice()}
+                <p
+                  className={changeClassName(
+                    Number(compareToPreviousClosePrice),
+                  )}
+                >
+                  <span className="ml-2">
+                    {formatComparePrice(compareToPreviousClosePrice)}
+                  </span>
+                  <span className="ml-2">
+                    {formatRatio(fluctuationsRatio)}%
+                  </span>
+                </p>
               </div>
               <TextButton
                 variant={isFavoriteStock ? "grayscale" : "primary"}

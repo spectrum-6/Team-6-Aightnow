@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { getUserInfo, updateUserInfo } from "@/firebase/firestore";
 import { getAuth, updatePassword } from "firebase/auth";
 import DuplicateCheckInput from "@/containers/account/DuplicateCheckInput";
+import { duplicateCheck } from "@/utils/duplicateCheck";
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -21,6 +22,10 @@ const Register: React.FC = () => {
   const [birthDate, setBirthDate] = useState("");
   const [isButtonEnable, setButtonEnable] = useState(false);
   const [message, setMessage] = useState("");
+  // 아이디 중복확인 버튼 상태
+  const [idInputState, setIdInputState] = useState<
+    "warning" | "success" | null
+  >(null);
 
   useEffect(() => {
     setButtonEnable(
@@ -28,11 +33,27 @@ const Register: React.FC = () => {
         password.trim() !== "" &&
         password === confirmPassword &&
         phoneNumber.trim() !== "" &&
-        birthDate.trim() !== "",
+        birthDate.trim() !== "" &&
+        idInputState === "success",
     );
-  }, [id, password, confirmPassword, phoneNumber, birthDate]);
+  }, [id, password, confirmPassword, phoneNumber, birthDate, idInputState]);
 
   const [isPasswordConfirmError, setPasswordConfirmError] = useState(false);
+
+  // id 중복 체크
+  const idDuplicateCheck = async () => {
+    if (!id) return;
+    try {
+      const res = await duplicateCheck("id", id);
+      if (res.data > 0) {
+        setIdInputState("warning");
+      } else {
+        setIdInputState("success");
+      }
+    } catch (error) {
+      console.error("Failed to check for duplicate Id:", error);
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,6 +122,8 @@ const Register: React.FC = () => {
             placeholder="아이디를 입력해 주세요."
             label="아이디"
             caption="*  6~12자의 영문, 숫자, ,_을 이용한 조합"
+            state={idInputState}
+            buttonClickHandler={idDuplicateCheck}
           />
           <Input
             type="password"

@@ -1,4 +1,3 @@
-import { useStockStore } from "@/stores/stockStore";
 import SearchResultItem from "./SearchResultItem";
 import { useEffect, useState } from "react";
 import { TStockType } from "@/types/stockType";
@@ -7,6 +6,7 @@ import { useTranslation } from "@/utils/localization/client";
 
 type TSearchResultProps = {
   inputValue: string;
+  stockListData: TStockType[];
 };
 
 type TResultList = TStockType & {
@@ -14,44 +14,45 @@ type TResultList = TStockType & {
 };
 
 export default function SearchResult(props: TSearchResultProps) {
-  const { inputValue } = props;
+  const { inputValue, stockListData } = props;
 
-  // 모든 주식 리스트 조회
-  const { stockList } = useStockStore();
   // 관심 주식 리스트 조회
   const { userInfo } = useUserStore();
   const watchList = userInfo?.userStockCollection?.watchList;
 
-  // filter를 위해 stock name을 영어로 변환
-  const { t } = useTranslation("en", "stock");
-
   // 필터링된 데이터 상태 추가
   const [filteredData, setFilteredData] = useState<TResultList[]>([]);
 
-  const getFilterdData = () => {
-    // 검색어가 stockName 혹은 symbolCode와 일치하는 stock filter
-    const searchResultList: TResultList[] = stockList.filter(
-      (item) =>
-        item.stockName.toLowerCase().includes(inputValue.toLowerCase()) ||
-        item.symbolCode.toLowerCase().includes(inputValue.toLowerCase()),
-    );
+  //
+  const { t: en } = useTranslation("en", "stock");
+  const { t: ko } = useTranslation("ko", "stock");
 
-    if (watchList) {
-      const lowerCaseArr = watchList.map((item) => t(item).toLowerCase());
-      searchResultList.map((stock) => {
-        if (lowerCaseArr.includes(t(stock.stockName).toLowerCase())) {
-          stock.inWatchList = true;
+  const getFilterdData = (inputValue: string) => {
+    let searchResultList: TResultList[] = [];
+
+    stockListData.map((item) => {
+      const enName = en(item.stockName).toLowerCase();
+      const koName = ko(item.stockName);
+      const symbolCode = item.symbolCode;
+
+      if (
+        enName.includes(inputValue.toLowerCase()) || // 영어 이름 필터링
+        koName.includes(inputValue) ||
+        symbolCode.toLowerCase().includes(inputValue.toLowerCase())
+      ) {
+        if (watchList?.includes(symbolCode)) {
+          searchResultList.push({ ...item, inWatchList: true });
         } else {
-          stock.inWatchList = false;
+          searchResultList.push({ ...item, inWatchList: false });
         }
-      });
+      }
+    });
 
-      setFilteredData(searchResultList);
-    }
+    setFilteredData([...searchResultList]);
   };
 
   useEffect(() => {
-    getFilterdData();
+    getFilterdData(inputValue);
   }, [inputValue]);
 
   return (
