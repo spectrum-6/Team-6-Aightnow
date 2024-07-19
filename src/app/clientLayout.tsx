@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 import useUserStore, { initializeAuthListener } from "@/stores/useUserStore";
 import Loading from "./[locale]/loading";
 import { signInWithCustomToken } from "firebase/auth";
@@ -11,6 +12,8 @@ function AuthSync() {
   const { data: session, status } = useSession();
   const syncSessionUser = useUserStore((state) => state.syncSessionUser);
   const [isFirebaseInitialized, setIsFirebaseInitialized] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // Firebase 커스텀 토큰으로 인증
@@ -30,8 +33,24 @@ function AuthSync() {
     // 세션 사용자 정보 동기화
     if (status === "authenticated" && isFirebaseInitialized) {
       syncSessionUser(session);
+
+      // 세션이 존재하고 로그인 페이지에 있다면 main으로 리다이렉트
+      if (pathname.includes("/login")) {
+        if (!session.user.registrationCompleted) {
+          router.push(`/signUp/profile`);
+        } else {
+          router.push(`/main`);
+        }
+      }
     }
-  }, [session, syncSessionUser, status, isFirebaseInitialized]);
+  }, [
+    session,
+    syncSessionUser,
+    status,
+    isFirebaseInitialized,
+    router,
+    pathname,
+  ]);
 
   return null;
 }
@@ -51,7 +70,7 @@ export default function ClientLayout({
     const timer = setTimeout(() => {
       setIsInitialized(true);
       setIsLoading(false);
-    }, 1000); // 1초 후에 초기화 완료로 설정
+    }, 1000);
 
     return () => {
       if (typeof unsubscribe === "function") {

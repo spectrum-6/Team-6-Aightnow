@@ -29,7 +29,7 @@ export default function Header() {
     try {
       await auth.signOut();
       await signOut({ redirect: false });
-      clearUserInfo(); // Clear the user from Zustand state
+      clearUserInfo(); // Zustand 상태 초기화
       router.push("/login");
     } catch (error) {
       console.error("로그아웃에 실패했습니다.", error);

@@ -9,7 +9,6 @@ import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn } from "@/firebase/fireauth";
-import { UserInfo } from "@/types/UserInfo";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
@@ -20,10 +19,13 @@ const LoginClient: React.FC = () => {
   // 세션 상태에 따라 리다이렉트
   React.useEffect(() => {
     if (session) {
-      if (!session.user.registrationCompleted) {
-        router.push(`/${locale}/signUp/profile`);
-      } else {
-        router.push(`/${locale}/main`);
+      // 세션이 존재하고 로그인 페이지에 있다면 main으로 리다이렉트
+      if (window.location.pathname.includes('/login')) {
+        if (!session.user.registrationCompleted) {
+          router.push(`/${locale}/signUp/profile`);
+        } else {
+          router.push(`/${locale}/main`);
+        }
       }
     }
   }, [session, router, locale]);
