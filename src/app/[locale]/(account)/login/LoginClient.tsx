@@ -10,7 +10,6 @@ import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn } from "@/firebase/fireauth";
 import { UserInfo } from "@/types/UserInfo";
-import { User as FirebaseUser } from "firebase/auth";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
@@ -18,6 +17,7 @@ const LoginClient: React.FC = () => {
   const { data: session } = useSession();
   const { setUserInfo } = useUserStore();
 
+  // 세션 상태에 따라 리다이렉트
   React.useEffect(() => {
     if (session) {
       if (!session.user.registrationCompleted) {
@@ -28,30 +28,21 @@ const LoginClient: React.FC = () => {
     }
   }, [session, router, locale]);
 
+  // 로그인 핸들러
   const handleLogin = async (id: string, password: string) => {
     try {
-      const firebaseUser = (await firebaseSignIn(id, password)) as FirebaseUser;
-      const userInfo: UserInfo = {
-        id: firebaseUser.uid,
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        username: firebaseUser.displayName,
-        profileImgUrl: firebaseUser.photoURL,
-        phoneNumber: firebaseUser.phoneNumber,
-        createdAt:
-          firebaseUser.metadata.creationTime || new Date().toISOString(),
-        lastLoginAt:
-          firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
-        socialProvider: null,
-        registrationCompleted: true,
-        isNewUser: false,
-        userStockCollection: {
-          recentSearch: [],
-          recentViews: [],
-          watchList: [],
-        },
-      };
+      // firebaseSignIn 함수는 UserInfo 객체를 직접 반환
+      const userInfo = await firebaseSignIn(id, password);
+
+      // userInfo가 정의되어 있는지 확인
+      if (!userInfo) {
+        throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+      }
+
+      // Zustand store에 사용자 정보 저장
       setUserInfo(userInfo);
+
+      // 메인 페이지로 리다이렉트
       router.push(`/${locale}/main`);
     } catch (error: any) {
       console.error("로그인에 실패했습니다.", error);
@@ -59,6 +50,7 @@ const LoginClient: React.FC = () => {
     }
   };
 
+  // 소셜 로그인 핸들러
   const handleSocialLogin = (provider: string) => {
     signIn(provider);
     console.log("공급자 인증 중");
