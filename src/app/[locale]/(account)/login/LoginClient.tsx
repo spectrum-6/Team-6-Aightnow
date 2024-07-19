@@ -31,7 +31,7 @@ const LoginClient: React.FC = () => {
   // 로그인 핸들러
   const handleLogin = async (id: string, password: string) => {
     try {
-      // firebaseSignIn 함수는 UserInfo 객체를 직접 반환합니다.
+      // firebaseSignIn 함수는 UserInfo 객체를 직접 반환
       const userInfo = await firebaseSignIn(id, password);
 
       // userInfo가 정의되어 있는지 확인
