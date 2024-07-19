@@ -18,6 +18,15 @@ declare module "next-auth" {
   }
 }
 
+interface Profile {
+  kakao_account?: {
+    phone_number?: string;
+  };
+  properties?: {
+    nickname?: string;
+  };
+}
+
 declare module "next-auth/jwt" {
   interface JWT {
     firebaseToken?: string;

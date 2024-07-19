@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
       if (account && user) {
         try {
           // Firebase Admin SDK를 사용하여 사용자 생성 또는 업데이트
@@ -73,10 +73,35 @@ export const authOptions: NextAuthOptions = {
             phoneNumber: null,
           };
 
-          // 카카오와 네이버 사용자의 경우 username을 null로 설정
-          if (account.provider === "kakao" || account.provider === "naver") {
-            userData.username = null;
+          // 소셜 로그인 제공자별로 추가 정보 처리
+          switch (account.provider) {
+            case "google":
+              // Google은 기본적으로 이름을 제공하지만, 전화번호는 안줌
+              userData.username = user.name;
+              break;
+            case "naver":
+              // Naver profile 정보에서 이름과 전화번호 추출
+              if (profile) {
+                userData.username = (profile as any).name;
+                userData.phoneNumber = (profile as any).mobile;
+              }
+              break;
+            case "kakao":
+              // Kakao profile 정보에서 이름과 전화번호 추출
+              if (profile) {
+                userData.nickname = (profile as any).properties?.nickname;
+                userData.phoneNumber = (
+                  profile as any
+                ).kakao_account?.phone_number;
+              }
+              break;
           }
+          // Firebase Firestore에 저장하기 전에 undefined 값 제거
+          Object.keys(userData).forEach((key) => {
+            if (userData[key as keyof UserInfo] === undefined) {
+              delete userData[key as keyof UserInfo];
+            }
+          });
 
           await setDoc(userRef, userData, { merge: true });
 
