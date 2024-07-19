@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const tempData = [
-  { stockName: "Apple", symbolCode: "APPL" },
+  { stockName: "Apple", symbolCode: "AAPL" },
   { stockName: "Amazon", symbolCode: "AMZN" },
   { stockName: "Google", symbolCode: "GOOGL" },
   { stockName: "MicroSoft", symbolCode: "MSFT" },
