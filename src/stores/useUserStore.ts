@@ -1,5 +1,3 @@
-// useUserStore.ts
-
 import { create } from "zustand";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebasedb";
@@ -7,7 +5,6 @@ import { getUserInfo, updateLastLoginAt } from "@/firebase/firestore";
 import { Session } from "next-auth";
 import { UserInfo } from "@/types/UserInfo";
 
-// UserState 인터페이스 정의
 export interface UserState {
   user: User | null;
   userInfo: UserInfo | null;
@@ -19,55 +16,66 @@ export interface UserState {
   clearUserInfo: () => void;
   setIsInitialized: (isInitialized: boolean) => void;
   syncSessionUser: (session: Session | null) => void;
+  syncFirebaseUser: (firebaseUser: User) => void;
 }
 
-// Zustand store 생성
 const useUserStore = create<UserState>((set) => ({
   user: null,
   userInfo: null,
   registrationStep: null,
   isInitialized: false,
 
-  // Firebase User 객체 설정
   setUser: (user) => set({ user }),
-
-  // UserInfo 객체 설정
   setUserInfo: (userInfo) => set({ userInfo }),
-
-  // 회원가입 단계 설정
   setRegistrationStep: (step) => set({ registrationStep: step }),
-
-  // 사용자 정보 초기화
   clearUserInfo: () =>
     set({ user: null, userInfo: null, registrationStep: null }),
-
-  // 초기화 상태 설정
   setIsInitialized: (isInitialized) => set({ isInitialized }),
 
-  // NextAuth 세션과 상태 동기화
-  syncSessionUser: (session) => {
+  syncSessionUser: async (session) => {
     if (session?.user) {
-      set({
-        userInfo: {
-          id: session.user.id,
-          email: session.user.email || "",
-          username: session.user.name || "",
-          phoneNumber: session.user.phoneNumber || "",
-          profileImgUrl: session.user.image || "",
-          socialProvider: session.provider, // 소셜 로그인 제공자
-          createdAt: session.user.createdAt,
-          lastLoginAt: session.user.lastLoginAt,
-        } as UserInfo,
-      });
+      const userInfo = await getUserInfo(session.user.id);
+      if (userInfo) {
+        set({
+          userInfo: {
+            ...userInfo,
+            id: session.user.id,
+            uid: session.user.id,
+            email: session.user.email || null,
+            username: session.user.name || null,
+            profileImgUrl: session.user.image || null,
+            socialProvider: session.provider,
+          },
+        });
+      }
     } else {
       set({ user: null, userInfo: null });
+    }
+  },
+
+  syncFirebaseUser: async (firebaseUser) => {
+    const userInfo = await getUserInfo(firebaseUser.uid);
+    if (userInfo) {
+      set({
+        userInfo: {
+          ...userInfo,
+          id: firebaseUser.uid,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          username: firebaseUser.displayName,
+          profileImgUrl: firebaseUser.photoURL,
+          phoneNumber: firebaseUser.phoneNumber,
+          createdAt:
+            firebaseUser.metadata.creationTime || new Date().toISOString(),
+          lastLoginAt:
+            firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
+        },
+      });
     }
   },
 }));
 
 export default useUserStore;
-
-// Firebase 인증 상태 리스너 초기화
 
 export const initializeAuthListener = () => {
   if (typeof window === "undefined") {
@@ -89,15 +97,14 @@ export const initializeAuthListener = () => {
             user.uid,
           );
           store.setUser(user);
-          store.setUserInfo(userInfo);
+          store.syncFirebaseUser(user);
           await updateLastLoginAt(user.uid);
         } else {
           console.warn(
             "사용자 정보를 Firestore에서 찾을 수 없습니다.",
             user.uid,
           );
-          // 여기에서 추가적인 처리를 할 수 있습니다. 예: 사용자 정보 초기화
-          store.clearUserInfo();
+          store.syncFirebaseUser(user);
         }
       } catch (error) {
         console.error("사용자 정보를 가져오는 중 오류 발생:", error);
