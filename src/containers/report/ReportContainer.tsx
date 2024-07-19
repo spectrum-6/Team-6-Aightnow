@@ -53,7 +53,10 @@ export default function ReportContainer(props: TReportContainer) {
                   corporateOverview={corporateOverview}
                   calcPrice={calcPrice}
                 />
-                <StockChart symbolCode={symbolCode} />
+                <StockChart
+                  reutersCode={reutersCode}
+                  stockExchangeType={stockExchangeType}
+                />
               </div>
               <div className="flex flex-row w-[1200px] h-[297px] gap-[20px] mb-10">
                 <AIStockList />
