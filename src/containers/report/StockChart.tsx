@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AreaChart from "@/components/Chart/AreaChart";
-import { getStockInfoApi } from "@/services/report/stockPriceApi";
+import { stockPriceApi } from "@/services/report/stockPriceApi";
 
 type TPriceInfo = {
   localDateTime: string;
@@ -28,11 +28,12 @@ type TDataCache = {
 };
 
 type TStockChartProps = {
-  symbolCode: string;
+  reutersCode: string;
+  stockExchangeType: string;
 };
 
 export default function StockChart(props: TStockChartProps) {
-  const { symbolCode } = props;
+  const { reutersCode, stockExchangeType } = props;
 
   // 기간 버튼 state
   const [selected, setSelected] = useState<string>("1일");
@@ -48,8 +49,12 @@ export default function StockChart(props: TStockChartProps) {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const initialData = await getStockInfoApi(symbolCode);
-        setDataCache({ "1일": initialData.stockPrice[0].priceInfo });
+        const initialData = await stockPriceApi({
+          code: reutersCode,
+          stockExchangeType: stockExchangeType,
+        });
+
+        setDataCache({ "1일": initialData && initialData[0].priceInfo });
       } catch (error) {
         console.error("Error fetching initial data:", error);
       }
@@ -69,9 +74,12 @@ export default function StockChart(props: TStockChartProps) {
 
     try {
       // API 호출
-      const response = await getStockInfoApi(symbolCode);
+      const response = await stockPriceApi({
+        code: reutersCode,
+        stockExchangeType: stockExchangeType,
+      });
       const selectBtnIdx = buttons.indexOf(item);
-      const data = response.stockPrice[selectBtnIdx].priceInfo;
+      const data = response && response[selectBtnIdx].priceInfo;
 
       setDataCache((prevCache: TDataCache) => ({
         ...prevCache,
