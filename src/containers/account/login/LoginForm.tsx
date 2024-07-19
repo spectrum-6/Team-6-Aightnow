@@ -7,7 +7,11 @@ import Input from "@/components/Input";
 import Link from "next/link";
 
 interface LoginFormProps {
-  onLogin: (id: string, password: string) => Promise<void>;
+  onLogin: (
+    id: string,
+    password: string,
+    isAutoLogin: boolean,
+  ) => Promise<void>;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
@@ -30,8 +34,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     setError("");
 
     try {
-      // onLogin 함수 호출 (id와 password만 전달)
-      await onLogin(id, password);
+      // onLogin 함수 호출 (id, password, 자동 로그인 상태 전달)
+      await onLogin(id, password, isAutoLoginChecked);
     } catch (error: any) {
       setError("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
     }
