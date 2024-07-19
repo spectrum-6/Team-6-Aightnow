@@ -21,20 +21,6 @@ type TRealtimeInfo = {
   stockExchangeType: string;
 };
 
-type Tticker = {
-  [key: string]: string;
-};
-
-export const ticker: Tticker = {
-  apple: "AAPL",
-  amazon: "AMZN",
-  google: "GOOGL",
-  msft: "MSFT",
-  nvda: "NVDA",
-  tsla: "TSLA",
-  u: "U",
-};
-
 type TInterestListProps = {
   item: string;
 };
@@ -45,7 +31,7 @@ export default function InterestList(props: TInterestListProps) {
   const [realtimeInfo, setRealtimeInfo] = useState<TRealtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
-    const realtimeInfo = await getRealtimeInfo(ticker[item].toLowerCase());
+    const realtimeInfo = await getRealtimeInfo(item.toLowerCase());
     setRealtimeInfo(realtimeInfo);
   };
 
