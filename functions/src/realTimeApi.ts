@@ -14,10 +14,10 @@ const reutersCodeList = [
   "NVDA.O",
 ];
 
-// 뉴욕 시간 16시마다 실행되는 스케쥴
+// 매일 오전 6시 5분마다 실행되는 스케쥴
 export const realtimeApiSchedule = functions.pubsub
-  .schedule("every day 16:02")
-  .timeZone("America/New_York")
+  .schedule("every day 06:05")
+  .timeZone("Asia/Seoul")
   .onRun(async (context) => {
     try {
       reutersCodeList.map(async (code) => {
