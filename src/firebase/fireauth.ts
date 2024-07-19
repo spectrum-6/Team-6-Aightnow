@@ -1,7 +1,9 @@
 import {
   EmailAuthProvider,
   User,
+  getAuth,
   reauthenticateWithCredential,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
@@ -148,5 +150,30 @@ export const authDeleteUser = async () => {
     } catch (error) {
       return { error: error };
     }
+  }
+};
+
+// 이메일 인증 상태 확인
+export const checkEmailVerification = async (): Promise<boolean> => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user) {
+    await user.reload(); // 사용자 정보 새로고침
+    return user.emailVerified;
+  }
+
+  return false;
+};
+
+// 이메일 인증 메일 재전송
+export const resendVerificationEmail = async (): Promise<void> => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user && !user.emailVerified) {
+    await sendEmailVerification(user);
+  } else {
+    throw new Error("이메일 인증 메일을 보낼 수 없습니다.");
   }
 };
