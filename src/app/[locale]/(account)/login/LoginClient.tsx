@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -9,7 +9,6 @@ import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn } from "@/firebase/fireauth";
-import { UserInfo } from "@/types/UserInfo";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
@@ -18,15 +17,15 @@ const LoginClient: React.FC = () => {
   const { setUserInfo } = useUserStore();
 
   // 세션 상태에 따라 리다이렉트
-  React.useEffect(() => {
-    if (session) {
+  useEffect(() => {
+    if (status === "authenticated" && session) {
       if (!session.user.registrationCompleted) {
         router.push(`/${locale}/signUp/profile`);
       } else {
         router.push(`/${locale}/main`);
       }
     }
-  }, [session, router, locale]);
+  }, [session, status, router, locale]);
 
   // 로그인 핸들러
   const handleLogin = async (id: string, password: string) => {
