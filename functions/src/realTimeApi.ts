@@ -53,7 +53,7 @@ export const realtimeApiSchedule = functions.pubsub
           closePrice,
           compareToPreviousClosePrice,
           fluctuationsRatio,
-          stockExchangeType,
+          stockExchangeType: stockExchangeType.name,
         });
 
         console.log(
