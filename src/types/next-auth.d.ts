@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { UserInfo } from "@/types/UserInfo";
+import { UserInfo } from "./UserInfo";
 
 declare module "next-auth" {
   interface Session {
@@ -9,6 +9,17 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
     };
-    provider?: string; // 명시적으로 provider 필드 추가
+    provider?: string;
+    firebaseToken?: string;
+  }
+
+  interface User {
+    firebaseToken?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    firebaseToken?: string;
   }
 }

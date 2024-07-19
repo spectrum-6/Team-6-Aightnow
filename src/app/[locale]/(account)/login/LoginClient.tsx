@@ -9,6 +9,8 @@ import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn } from "@/firebase/fireauth";
+import { UserInfo } from "@/types/UserInfo";
+import { User as FirebaseUser } from "firebase/auth";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
@@ -28,7 +30,27 @@ const LoginClient: React.FC = () => {
 
   const handleLogin = async (id: string, password: string) => {
     try {
-      const userInfo = await firebaseSignIn(id, password);
+      const firebaseUser = (await firebaseSignIn(id, password)) as FirebaseUser;
+      const userInfo: UserInfo = {
+        id: firebaseUser.uid,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        username: firebaseUser.displayName,
+        profileImgUrl: firebaseUser.photoURL,
+        phoneNumber: firebaseUser.phoneNumber,
+        createdAt:
+          firebaseUser.metadata.creationTime || new Date().toISOString(),
+        lastLoginAt:
+          firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
+        socialProvider: null,
+        registrationCompleted: true,
+        isNewUser: false,
+        userStockCollection: {
+          recentSearch: [],
+          recentViews: [],
+          watchList: [],
+        },
+      };
       setUserInfo(userInfo);
       router.push(`/${locale}/main`);
     } catch (error: any) {
