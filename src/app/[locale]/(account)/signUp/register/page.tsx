@@ -28,6 +28,34 @@ const Register: React.FC = () => {
   >(null);
 
   useEffect(() => {
+    const checkEmailVerification = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        await user.reload(); // 사용자 정보 새로고침
+        if (!user.emailVerified) {
+          setMessage(
+            "이메일 인증이 완료되지 않았습니다. 인증 후 다시 시도해주세요.",
+          );
+          router.push("/signUp/verify");
+        } else {
+          // Firestore에서 사용자 정보 가져오기
+          const userInfo = await getUserInfo(user.uid);
+          if (userInfo) {
+            setUserInfo(userInfo);
+          }
+        }
+      } else {
+        setMessage("사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
+        router.push("/login");
+      }
+    };
+
+    checkEmailVerification();
+  }, [router, setUserInfo]);
+
+  useEffect(() => {
     setButtonEnable(
       id.trim() !== "" &&
         password.trim() !== "" &&
@@ -58,43 +86,43 @@ const Register: React.FC = () => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!userInfo || !userInfo.uid) {
-      setMessage("사용자 정보가 없습니다. 다시 시도해주세요.");
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser || !currentUser.emailVerified) {
+      setMessage(
+        "이메일 인증이 완료되지 않았습니다. 인증 후 다시 시도해주세요.",
+      );
       return;
     }
+
     if (password !== confirmPassword) {
       setMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
+
     try {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-
-      if (!currentUser) {
-        setMessage("사용자 인증 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
-        return;
-      }
-
       // 이미 존재하는 사용자인지 확인
-      const existingUser = await getUserInfo(userInfo.uid);
+      const existingUser = await getUserInfo(currentUser.uid);
 
       // 회원가입 정보 추가
       const updatedUserInfo = {
         ...(existingUser || {}),
         id,
-        password, //실제로 저장하면 털린다
         phoneNumber,
         birthDate,
-        uid: userInfo.uid,
-        email: userInfo.email,
-        username: userInfo.username,
+        uid: currentUser.uid,
+        email: currentUser.email,
+        username: userInfo?.username || "",
+        emailVerified: true,
+        registrationCompleted: true,
       };
 
       // Firebase Authentication 비밀번호 업데이트
       await updatePassword(currentUser, password);
 
       // Firestore 사용자 정보 업데이트 또는 생성
-      await updateUserInfo(userInfo.uid, updatedUserInfo);
+      await updateUserInfo(currentUser.uid, updatedUserInfo);
 
       // Zustand 상태 업데이트
       setUserInfo(updatedUserInfo);
