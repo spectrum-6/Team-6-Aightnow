@@ -28,8 +28,12 @@ const useUserStore = create<UserState>((set) => ({
   setUser: (user) => set({ user }),
   setUserInfo: (userInfo) => set({ userInfo }),
   setRegistrationStep: (step) => set({ registrationStep: step }),
-  clearUserInfo: () =>
-    set({ user: null, userInfo: null, registrationStep: null }),
+  clearUserInfo: () => set({ 
+    user: null, 
+    userInfo: null, 
+    registrationStep: null,
+    isInitialized: false 
+  }),
   setIsInitialized: (isInitialized) => set({ isInitialized }),
 
   syncSessionUser: async (session) => {

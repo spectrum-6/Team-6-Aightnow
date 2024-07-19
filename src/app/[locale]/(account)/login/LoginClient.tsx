@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -17,18 +17,15 @@ const LoginClient: React.FC = () => {
   const { setUserInfo } = useUserStore();
 
   // 세션 상태에 따라 리다이렉트
-  React.useEffect(() => {
-    if (session) {
-      // 세션이 존재하고 로그인 페이지에 있다면 main으로 리다이렉트
-      if (window.location.pathname.includes('/login')) {
-        if (!session.user.registrationCompleted) {
-          router.push(`/${locale}/signUp/profile`);
-        } else {
-          router.push(`/${locale}/main`);
-        }
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      if (!session.user.registrationCompleted) {
+        router.push(`/${locale}/signUp/profile`);
+      } else {
+        router.push(`/${locale}/main`);
       }
     }
-  }, [session, router, locale]);
+  }, [session, status, router, locale]);
 
   // 로그인 핸들러
   const handleLogin = async (id: string, password: string) => {

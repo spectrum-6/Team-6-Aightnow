@@ -6,10 +6,9 @@ import { useParams } from "next/navigation";
 import { LocaleTypes, fallbackLng } from "@/utils/localization/settings";
 import { useTranslation } from "@/utils/localization/client";
 import { useRouter } from "next/navigation";
-
 import useUserStore from "@/stores/useUserStore";
 import { useEffect, useState } from "react";
-import { auth } from "@/firebase/firebasedb";
+import { signOut as firebaseSignOut } from "@/firebase/fireauth";
 import { signOut } from "next-auth/react";
 
 const navList = ["search", "news", "like", "settings"];
@@ -22,15 +21,30 @@ export default function Header() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // This will ensure the client-only code runs after hydration
+    setIsClient(true);
   }, []);
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      // Firebase 로그아웃
+      await firebaseSignOut();
+
+      // NextAuth 로그아웃
       await signOut({ redirect: false });
-      clearUserInfo(); // Zustand 상태 초기화
-      router.push("/login");
+
+      // Zustand 상태 초기화
+      clearUserInfo();
+
+      // 쿠키 및 로컬 스토리지 정리
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      localStorage.clear();
+
+      // 로그인 페이지로 리다이렉트
+      router.push(`/${locale}/login`);
     } catch (error) {
       console.error("로그아웃에 실패했습니다.", error);
     }
