@@ -1,20 +1,23 @@
 import {
   EmailAuthProvider,
   User,
-  getAuth,
   reauthenticateWithCredential,
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
 import { UserInfo } from "@/types/UserInfo";
 import { auth } from "./firebasedb";
-import { getUserInfo, getUserInfoById, updateUserInfo } from "./firestore";
+import { getUserInfo, getUserInfoById } from "./firestore";
 
-// 아이디로 로그인
+// Firebase를 사용한 로그인 (토큰 반환 추가)
 export const signIn = async (
   id: string,
   password: string,
-): Promise<UserInfo> => {
+): Promise<{
+  userInfo: UserInfo;
+  accessToken: string;
+  refreshToken: string;
+}> => {
   try {
     console.log("ID로 로그인 시도 중:", id);
     const userInfo = await getUserInfoById(id);
@@ -41,17 +44,44 @@ export const signIn = async (
       throw new Error("로그인 후 사용자 정보를 찾을 수 없음");
     }
 
-    // 비밀번호 변경 감지 및 Firestore 업데이트
-    if (user.metadata.lastSignInTime !== user.metadata.creationTime) {
-      console.log("비밀번호가 변경되었습니다. Firestore 업데이트 중...");
-      await updateUserInfo(user.uid, { password: "********" }); // 실제 비밀번호 대신 별표로 표시
-      console.log("Firestore 업데이트 완료");
-    }
+    // 액세스 토큰과 리프레시 토큰 획득
+    const accessToken = await user.getIdToken();
+    const refreshToken = user.refreshToken;
 
-    console.log("로그인 성공, 사용자 정보 반환 중");
-    return updatedUserInfo;
+    return { userInfo: updatedUserInfo, accessToken, refreshToken };
   } catch (error: any) {
     console.error("로그인 오류:", error);
+    throw error;
+  }
+};
+
+// 리프레시 토큰을 사용하여 새 액세스 토큰 획득
+export const refreshToken = async (
+  refreshToken: string,
+): Promise<{ accessToken: string; userInfo: UserInfo }> => {
+  try {
+    // Firebase Admin SDK를 사용하여 서버 측에서 처리해야 함
+    // 여기서는 예시로 클라이언트 측 로직만 표현
+    const response = await fetch("/api/refreshToken", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error("토큰 갱신 실패");
+    }
+
+    const { accessToken, uid } = await response.json();
+    const userInfo = await getUserInfo(uid);
+
+    if (!userInfo) {
+      throw new Error("사용자 정보를 찾을 수 없음");
+    }
+
+    return { accessToken, userInfo };
+  } catch (error) {
+    console.error("토큰 갱신 오류:", error);
     throw error;
   }
 };

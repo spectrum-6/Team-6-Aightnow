@@ -8,13 +8,69 @@ import Image from "next/image";
 import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
-import { signIn as firebaseSignIn } from "@/firebase/fireauth";
+import { signIn as firebaseSignIn, refreshToken } from "@/firebase/fireauth";
+import { UserInfo } from "@/types/UserInfo";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
   const { locale } = useParams();
   const { data: session } = useSession();
   const { setUserInfo } = useUserStore();
+
+  // 자동 로그인 체크 (일반 로그인 + 소셜 로그인)
+  useEffect(() => {
+    const checkAutoLogin = async () => {
+      // 일반 로그인 자동 로그인 체크
+      const refreshTokenValue = localStorage.getItem("refreshToken");
+      if (refreshTokenValue) {
+        try {
+          const { accessToken, userInfo } = await refreshToken(
+            refreshTokenValue,
+          );
+          setUserInfo(userInfo);
+          await fetch("/api/setAccessToken", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accessToken }),
+          });
+          router.push(`/${locale}/main`);
+          return; // 일반 로그인 성공 시 소셜 로그인 체크 스킵
+        } catch (error) {
+          console.error("일반 로그인 자동 로그인 실패:", error);
+          localStorage.removeItem("refreshToken");
+        }
+      }
+
+      // 소셜 로그인 자동 로그인 체크 (NextAuth 세션 활용)
+      if (status === "authenticated" && session) {
+        try {
+          // NextAuth 세션 정보를 사용하여 사용자 정보 설정
+          setUserInfo(session.user as UserInfo);
+
+          // 필요한 경우 Firebase 커스텀 토큰 생성 (서버 사이드에서 처리)
+          const response = await fetch("/api/createFirebaseToken", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session }),
+          });
+          const { firebaseToken } = await response.json();
+
+          // Firebase 토큰을 안전하게 저장 (예: HTTP-only 쿠키)
+          await fetch("/api/setFirebaseToken", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ firebaseToken }),
+          });
+
+          router.push(`/${locale}/main`);
+        } catch (error) {
+          console.error("소셜 로그인 자동 로그인 실패:", error);
+        }
+      }
+    };
+
+    checkAutoLogin();
+  }, [session, status]);
 
   // 세션 상태에 따라 리다이렉트
   useEffect(() => {
@@ -27,21 +83,26 @@ const LoginClient: React.FC = () => {
     }
   }, [session, status, router, locale]);
 
-  // 로그인 핸들러
-  const handleLogin = async (id: string, password: string) => {
+  // 로그인 핸들러 (일반 로그인)
+  const handleLogin = async (
+    id: string,
+    password: string,
+    isAutoLogin: boolean,
+  ) => {
     try {
-      // firebaseSignIn 함수는 UserInfo 객체를 직접 반환
-      const userInfo = await firebaseSignIn(id, password);
-
-      // userInfo가 정의되어 있는지 확인
-      if (!userInfo) {
-        throw new Error("사용자 정보를 가져오는데 실패했습니다.");
-      }
-
-      // Zustand store에 사용자 정보 저장
+      const { userInfo, accessToken, refreshToken } = await firebaseSignIn(
+        id,
+        password,
+      );
       setUserInfo(userInfo);
-
-      // 메인 페이지로 리다이렉트
+      await fetch("/api/setAccessToken", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken }),
+      });
+      if (isAutoLogin) {
+        localStorage.setItem("refreshToken", refreshToken);
+      }
       router.push(`/${locale}/main`);
     } catch (error: any) {
       console.error("로그인에 실패했습니다.", error);
@@ -50,9 +111,16 @@ const LoginClient: React.FC = () => {
   };
 
   // 소셜 로그인 핸들러
-  const handleSocialLogin = (provider: string) => {
-    signIn(provider);
-    console.log("공급자 인증 중");
+  const handleSocialLogin = async (provider: string) => {
+    try {
+      const result = await signIn(provider, { redirect: false });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("소셜 로그인 실패:", error);
+      alert("소셜 로그인에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
