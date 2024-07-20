@@ -51,7 +51,7 @@ export async function realtimeApi(code: string) {
 }
 
 // 기업 정보 및 종목 정보
-export async function basicApi(code: string) {
+export async function basicApi(code: string): Promise<any> {
   try {
     const response = await fetch(
       `https://api.stock.naver.com/stock/${codes[code]}/basic`,
@@ -62,7 +62,19 @@ export async function basicApi(code: string) {
     }
 
     const data = await response.json();
-    return data;
+
+    const stockData = {
+      closePrice: data.closePrice,
+      compareToPreviousClosePrice: data.compareToPreviousClosePrice,
+      fluctuationsRatio: data.fluctuationsRatio,
+      basePrice: data.stockItemTotalInfos[0].value,
+      accumulatedTradingVolume: data.stockItemTotalInfos[4].value,
+      stockItemTotalInfos: data.stockItemTotalInfos,
+    };
+
+    const strStockData = JSON.stringify(stockData);
+
+    return strStockData;
   } catch (error) {
     console.error("error:", error);
   }
@@ -108,7 +120,7 @@ export async function calcPriceApi() {
 export async function stockLatestNewsListApi(code: string) {
   try {
     const response = await fetch(
-      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=10&page=1`,
+      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=5&page=1`,
     );
 
     if (!response.ok) {
@@ -126,7 +138,10 @@ export async function stockLatestNewsListApi(code: string) {
 }
 
 // 종목 최신 뉴스 내용
-export async function stockLatestNewsContentApi(code: string, aids: string[]) {
+export async function stockLatestNewsContentApi(
+  code: string,
+  aids: string[],
+): Promise<any> {
   try {
     const fetchPromises = aids.map(async (aid) => {
       const response = await fetch(
@@ -142,7 +157,9 @@ export async function stockLatestNewsContentApi(code: string, aids: string[]) {
 
     const news = await Promise.all(fetchPromises);
 
-    const result = news.map((item, index) => {
+    const result = news.map((item) => {
+      let date = item.article.dt;
+
       // HTML 문자열
       let htmlString = item.article.content;
 
@@ -150,12 +167,15 @@ export async function stockLatestNewsContentApi(code: string, aids: string[]) {
       let textContent = htmlString
         .replace(/<\/?[^>]+>/g, "") // HTML 태그 제거
         .replace(/\n+/g, " ") // 줄바꿈을 공백으로 변경
+        .replace(/&amp;/g, "&")
         .trim(); // 앞뒤 공백 제거
 
-      return { [`news${index}`]: textContent };
+      return { [date]: textContent };
     });
 
-    return result;
+    const strResult = JSON.stringify(result);
+
+    return strResult;
   } catch (error) {
     console.error("error:", error);
     throw error;

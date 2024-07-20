@@ -9,8 +9,31 @@ import { createRetrieverTool } from "langchain/tools/retriever";
 import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { pull } from "langchain/hub";
 import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";
+import {
+  basicApi,
+  stockLatestNewsListApi,
+  stockLatestNewsContentApi,
+} from "@/services/report/stockApi";
 
-export default async function promptGenerator(id: string) {
+type TStockNames = {
+  [key: string]: string; // index signature
+};
+
+const stockNames: TStockNames = {
+  aapl: "Apple",
+  tsla: "Tesla",
+  amzn: "Amazon.com",
+  msft: "Microsoft",
+  googl: "Alphabet Inc Class A",
+  u: "Unity Software",
+  nvda: "NVIDIA",
+};
+
+export default async function promptGenerator(id: string, symbolCode: string) {
+  const stockInfo = await basicApi(id);
+  const stockAid = await stockLatestNewsListApi(id);
+  const stockLatestNews = await stockLatestNewsContentApi(id, stockAid);
+
   // LLM 초기화
   //   const chatModel = new ChatOpenAI({});
   const chatModel = new ChatTogetherAI({
@@ -23,8 +46,10 @@ export default async function promptGenerator(id: string) {
   // Documents
   const documents = [
     new Document({
-      pageContent:
-        "LangSmith is a platform for building production-grade LLM applications.",
+      pageContent: stockInfo,
+    }),
+    new Document({
+      pageContent: stockLatestNews,
     }),
   ];
 
@@ -68,10 +93,10 @@ export default async function promptGenerator(id: string) {
 
   // 에이전트 호출
   const agentResult = await agentExecutor.invoke({
-    input: `You are a professional stock analyst. Please write an analysis report on Tesla (TSLA) stock. Follow these instructions:
+    input: `You are a professional stock analyst. Please write an analysis report on ${stockNames[id]} (${symbolCode}) stock, referencing this ${stockInfo}, ${stockLatestNews}. Follow these instructions:
 
-      1. First, accurately state Tesla's current stock price and the change in amount and percentage compared to the previous day.
-      2. Next, analyze Tesla's investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
+      1. First, accurately state ${stockNames[id]}'s current stock price and the change in amount and percentage compared to the previous day.
+      2. Next, analyze ${stockNames[id]}'s investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
         - Current value (0-100)
         - Previous day's value (0-100)
         - Change in value from the previous day (0-100) (with + or - sign)
@@ -82,14 +107,17 @@ export default async function promptGenerator(id: string) {
         - Profitability: Measure of profit from financial investment activities
         - Growth potential: Measured through indicators such as sales, profits, market share, etc., indicating expected future growth
         - Interest level: Measured by the frequency of searches/mentions of stock-related information or news
-      4. Based on this analysis, provide a professional opinion on Tesla's current situation and outlook in 3-4 sentences. You can include specific figures, facts, industry trends, comparisons with competitors, etc.
+      4. Based on this analysis, provide a professional opinion on ${stockNames[id]}'s current situation and outlook in 3-4 sentences. You can include specific figures, facts, industry trends, comparisons with competitors, etc.
       5. Finally, present an investment outlook or advice based on this analysis in 1-2 sentences.
       6. The entire report should be about 10 lines long, including the analysis of each indicator and the comprehensive analysis.
-      7. Write this in JSON format.
+      7. Answer only in JSON format without additional explanation.
       8. Use a formal, professional tone, but don't make it too rigid.
 
-      All figures must be accurate, and the report must be written in Korean.`,
+      All figures must be accurate, and the report must be written in Korean.
+      You must strictly follow all of the instructions above.`,
   });
+
+  console.log("🍎", agentResult.output);
 
   return agentResult.output;
 }

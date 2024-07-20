@@ -44,7 +44,7 @@ export default async function Page({ params }: TParams) {
     id.toUpperCase(),
   );
 
-  const promptResult = await promptGenerator(id);
+  const promptResult = await promptGenerator(id, symbolCode);
   // console.log("!!!!!", promptResult);
 
   return (
