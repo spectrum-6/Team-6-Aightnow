@@ -103,3 +103,24 @@ export async function calcPriceApi() {
     console.error("error:", error);
   }
 }
+
+// 종목 최신 뉴스 리스트
+export async function stockLatestNewsListApi(code: string) {
+  try {
+    const response = await fetch(
+      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=10&page=1`,
+    );
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = await response.json();
+
+    const aidData = data.map((item: any) => item.aid);
+
+    return aidData;
+  } catch (error) {
+    console.error("error:", error);
+  }
+}
