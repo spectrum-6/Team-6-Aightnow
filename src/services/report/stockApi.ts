@@ -138,7 +138,10 @@ export async function stockLatestNewsListApi(code: string) {
 }
 
 // 종목 최신 뉴스 내용
-export async function stockLatestNewsContentApi(code: string, aids: string[]) {
+export async function stockLatestNewsContentApi(
+  code: string,
+  aids: string[],
+): Promise<any> {
   try {
     const fetchPromises = aids.map(async (aid) => {
       const response = await fetch(
@@ -154,7 +157,9 @@ export async function stockLatestNewsContentApi(code: string, aids: string[]) {
 
     const news = await Promise.all(fetchPromises);
 
-    const result = news.map((item, index) => {
+    const result = news.map((item) => {
+      let date = item.article.dt;
+
       // HTML 문자열
       let htmlString = item.article.content;
 
@@ -162,12 +167,15 @@ export async function stockLatestNewsContentApi(code: string, aids: string[]) {
       let textContent = htmlString
         .replace(/<\/?[^>]+>/g, "") // HTML 태그 제거
         .replace(/\n+/g, " ") // 줄바꿈을 공백으로 변경
+        .replace(/&amp;/g, "&")
         .trim(); // 앞뒤 공백 제거
 
-      return { [`news${index}`]: textContent };
+      return { [date]: textContent };
     });
 
-    return result;
+    const strResult = JSON.stringify(result);
+
+    return strResult;
   } catch (error) {
     console.error("error:", error);
     throw error;
