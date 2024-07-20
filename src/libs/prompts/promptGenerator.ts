@@ -110,10 +110,11 @@ export default async function promptGenerator(id: string, symbolCode: string) {
       4. Based on this analysis, provide a professional opinion on ${stockNames[id]}'s current situation and outlook in 3-4 sentences. You can include specific figures, facts, industry trends, comparisons with competitors, etc.
       5. Finally, present an investment outlook or advice based on this analysis in 1-2 sentences.
       6. The entire report should be about 10 lines long, including the analysis of each indicator and the comprehensive analysis.
-      7. Write this in JSON format.
+      7. Answer only in JSON format without additional explanation.
       8. Use a formal, professional tone, but don't make it too rigid.
 
-      All figures must be accurate, and the report must be written in Korean.`,
+      All figures must be accurate, and the report must be written in Korean.
+      You must strictly follow all of the instructions above.`,
   });
 
   console.log("🍎", agentResult.output);
