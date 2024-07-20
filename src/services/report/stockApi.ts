@@ -124,3 +124,31 @@ export async function stockLatestNewsListApi(code: string) {
     console.error("error:", error);
   }
 }
+
+// 종목 최신 뉴스 내용
+export async function stockLatestNewsContentApi(code: string, aids: string[]) {
+  try {
+    const fetchPromises = aids.map(async (aid) => {
+      const response = await fetch(
+        `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${aid}?reutersCode=${codes[code]}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      return response.json();
+    });
+
+    const news = await Promise.all(fetchPromises);
+
+    const result = news.map((item, index) => {
+      return { [`news${index}`]: item.article.content };
+    });
+
+    return result;
+  } catch (error) {
+    console.error("error:", error);
+    throw error;
+  }
+}
