@@ -68,10 +68,28 @@ export default async function promptGenerator(id: string) {
 
   // 에이전트 호출
   const agentResult = await agentExecutor.invoke({
-    input: "how can LangSmith help with testing?",
-  });
+    input: `You are a professional stock analyst. Please write an analysis report on Tesla (TSLA) stock. Follow these instructions:
 
-  console.log("!!!!!", agentResult.output);
+      1. First, accurately state Tesla's current stock price and the change in amount and percentage compared to the previous day.
+      2. Next, analyze Tesla's investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
+        - Current value (0-100)
+        - Previous day's value (0-100)
+        - Change in value from the previous day (0-100) (with + or - sign)
+        - Percentage change from the previous day (%) (with + or - sign)
+        Both of these must be included.
+      3. The meaning of these indicators:
+        - Investment index: Overall evaluation of the stock market or a specific stock
+        - Profitability: Measure of profit from financial investment activities
+        - Growth potential: Measured through indicators such as sales, profits, market share, etc., indicating expected future growth
+        - Interest level: Measured by the frequency of searches/mentions of stock-related information or news
+      4. Based on this analysis, provide a professional opinion on Tesla's current situation and outlook in 3-4 sentences. You can include specific figures, facts, industry trends, comparisons with competitors, etc.
+      5. Finally, present an investment outlook or advice based on this analysis in 1-2 sentences.
+      6. The entire report should be about 10 lines long, including the analysis of each indicator and the comprehensive analysis.
+      7. Write this in JSON format.
+      8. Use a formal, professional tone, but don't make it too rigid.
+
+      All figures must be accurate, and the report must be written in Korean.`,
+  });
 
   return agentResult.output;
 }
