@@ -51,7 +51,7 @@ export async function realtimeApi(code: string) {
 }
 
 // 기업 정보 및 종목 정보
-export async function basicApi(code: string) {
+export async function basicApi(code: string): Promise<any> {
   try {
     const response = await fetch(
       `https://api.stock.naver.com/stock/${codes[code]}/basic`,
@@ -62,7 +62,19 @@ export async function basicApi(code: string) {
     }
 
     const data = await response.json();
-    return data;
+
+    const stockData = {
+      closePrice: data.closePrice,
+      compareToPreviousClosePrice: data.compareToPreviousClosePrice,
+      fluctuationsRatio: data.fluctuationsRatio,
+      basePrice: data.stockItemTotalInfos[0].value,
+      accumulatedTradingVolume: data.stockItemTotalInfos[4].value,
+      stockItemTotalInfos: data.stockItemTotalInfos,
+    };
+
+    const strStockData = JSON.stringify(stockData);
+
+    return strStockData;
   } catch (error) {
     console.error("error:", error);
   }
