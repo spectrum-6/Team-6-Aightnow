@@ -143,7 +143,16 @@ export async function stockLatestNewsContentApi(code: string, aids: string[]) {
     const news = await Promise.all(fetchPromises);
 
     const result = news.map((item, index) => {
-      return { [`news${index}`]: item.article.content };
+      // HTML 문자열
+      let htmlString = item.article.content;
+
+      // HTML 태그를 제거하고 텍스트만 추출
+      let textContent = htmlString
+        .replace(/<\/?[^>]+>/g, "") // HTML 태그 제거
+        .replace(/\n+/g, " ") // 줄바꿈을 공백으로 변경
+        .trim(); // 앞뒤 공백 제거
+
+      return { [`news${index}`]: textContent };
     });
 
     return result;
