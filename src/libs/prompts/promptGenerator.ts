@@ -93,7 +93,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
 
   // 에이전트 호출
   const agentResult = await agentExecutor.invoke({
-    input: `You are a professional stock analyst. Please write an analysis report on ${stockNames[id]} (${symbolCode}) stock. Follow these instructions:
+    input: `You are a professional stock analyst. Please write an analysis report on ${stockNames[id]} (${symbolCode}) stock, referencing this ${stockInfo}, ${stockLatestNews}. Follow these instructions:
 
       1. First, accurately state ${stockNames[id]}'s current stock price and the change in amount and percentage compared to the previous day.
       2. Next, analyze ${stockNames[id]}'s investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
@@ -116,7 +116,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
       All figures must be accurate, and the report must be written in Korean.`,
   });
 
-  console.log(agentResult);
+  console.log("🍎", agentResult.output);
 
   return agentResult.output;
 }
