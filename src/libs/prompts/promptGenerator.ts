@@ -9,8 +9,17 @@ import { createRetrieverTool } from "langchain/tools/retriever";
 import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { pull } from "langchain/hub";
 import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";
+import {
+  basicApi,
+  stockLatestNewsListApi,
+  stockLatestNewsContentApi,
+} from "@/services/report/stockApi";
 
 export default async function promptGenerator(id: string) {
+  const stockInfo = await basicApi(id);
+  const stockAid = await stockLatestNewsListApi(id);
+  const stockLatestNews = await stockLatestNewsContentApi(id, stockAid);
+
   // LLM 초기화
   //   const chatModel = new ChatOpenAI({});
   const chatModel = new ChatTogetherAI({
@@ -23,8 +32,10 @@ export default async function promptGenerator(id: string) {
   // Documents
   const documents = [
     new Document({
-      pageContent:
-        "LangSmith is a platform for building production-grade LLM applications.",
+      pageContent: stockInfo,
+    }),
+    new Document({
+      pageContent: stockLatestNews,
     }),
   ];
 
