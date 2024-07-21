@@ -60,7 +60,12 @@ export default function AIStockList(props: TAIStockListProps) {
       {/* 본문 섹션 */}
       <div className="flex justify-between">
         {/* 주식 차트 */}
-        <RaderChart width={176} height={176} labels={true} />
+        <RaderChart
+          width={176}
+          height={176}
+          labels={true}
+          promptResult={promptResult}
+        />
         {/* 주식 데이터 */}
         <div className="flex flex-col justify-center p-6 gap-1 w-[176px] h-[176px] bg-grayscale-100 rounded-3xl font-medium">
           <p className="text-base text-grayscale-600 flex justify-between items-center">
