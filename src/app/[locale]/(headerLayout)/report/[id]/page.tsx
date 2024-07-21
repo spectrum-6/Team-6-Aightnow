@@ -45,7 +45,7 @@ export default async function Page({ params }: TParams) {
   );
 
   const promptResult = await promptGenerator(id, symbolCode);
-  // console.log("!!!!!", promptResult);
+  console.log("🍋", promptResult);
 
   return (
     <>
@@ -59,6 +59,7 @@ export default async function Page({ params }: TParams) {
         stockExchangeType={stockExchangeType}
         corporateOverview={corporateOverview}
         calcPrice={calcPrice}
+        promptResult={promptResult}
       />
     </>
   );
