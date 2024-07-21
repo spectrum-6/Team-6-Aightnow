@@ -72,6 +72,7 @@ export default function ReportContainer(props: TReportContainer) {
                   closePrice={closePrice}
                   compareToPreviousClosePrice={compareToPreviousClosePrice}
                   fluctuationsRatio={fluctuationsRatio}
+                  promptResult={promptResult}
                 />
               </div>
             </div>
