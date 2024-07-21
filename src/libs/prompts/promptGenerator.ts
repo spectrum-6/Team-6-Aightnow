@@ -14,6 +14,7 @@ import {
   stockLatestNewsListApi,
   stockLatestNewsContentApi,
 } from "@/services/report/stockApi";
+import { example } from "./example";
 
 type TStockNames = {
   [key: string]: string; // index signature
@@ -96,13 +97,14 @@ export default async function promptGenerator(id: string, symbolCode: string) {
     input: `You are a professional stock analyst. Please write an analysis report on ${stockNames[id]} (${symbolCode}) stock, referencing this ${stockInfo}, ${stockLatestNews}. Follow these instructions:
 
       1. First, accurately state ${stockNames[id]}'s current stock price and the change in amount and percentage compared to the previous day.
-      2. Next, analyze ${stockNames[id]}'s investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
+      2. Next, analyze ${stockNames[id]}'s stock price, investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
         - Current value (0-100)
         - Previous day's value (0-100)
-        - Change in value from the previous day (0-100) (with + or - sign)
-        - Percentage change from the previous day (%) (with + or - sign)
+        - Change in value from the previous day (0-100) (with - sign)
+        - Percentage change from the previous day (%) (with - sign)
         Both of these must be included.
       3. The meaning of these indicators:
+        - stock price
         - Investment index: Overall evaluation of the stock market or a specific stock
         - Profitability: Measure of profit from financial investment activities
         - Growth potential: Measured through indicators such as sales, profits, market share, etc., indicating expected future growth
@@ -114,10 +116,13 @@ export default async function promptGenerator(id: string, symbolCode: string) {
       8. Use a formal, professional tone, but don't make it too rigid.
 
       All figures must be accurate, and the report must be written in Korean.
-      You must strictly follow all of the instructions above.`,
+      You must strictly follow all of the instructions above.
+      
+      example: ${example}
+    `,
   });
 
-  console.log("🍎", agentResult.output);
+  const result = JSON.parse(agentResult.output);
 
-  return agentResult.output;
+  return result;
 }
