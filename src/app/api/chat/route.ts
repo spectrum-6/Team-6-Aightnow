@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        model: "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
         messages,
+        temperature: 0.7,
         max_tokens: 1000,
       }),
     });
