@@ -69,6 +69,7 @@ const useUserStore = create<UserState>((set) => ({
           username: firebaseUser.displayName,
           profileImgUrl: firebaseUser.photoURL,
           phoneNumber: firebaseUser.phoneNumber,
+          socialProvider: firebaseUser.providerId,
           createdAt:
             firebaseUser.metadata.creationTime || new Date().toISOString(),
           lastLoginAt:

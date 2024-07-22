@@ -90,6 +90,7 @@ export const authOptions: NextAuthOptions = {
               // Kakao profile 정보에서 이름과 전화번호 추출
               if (profile) {
                 userData.nickname = (profile as any).properties?.nickname;
+                userData.username = (profile as any).name;
                 userData.phoneNumber = (
                   profile as any
                 ).kakao_account?.phone_number;

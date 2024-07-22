@@ -48,29 +48,6 @@ export async function callTogetherAI(
     const data = await response.json();
     let aiResponse = data.choices[0].message.content;
 
-    // 응답 후처리
-    /*     if (language === "ko") {
-      // 영어 문장 제거
-      aiResponse = aiResponse.replace(/\s+[A-Za-z,\s.!?]*[.!?]/g, "");
-
-      if (
-        messages[messages.length - 1].content.toLowerCase().includes("안녕") &&
-        !aiResponse.includes("안녕")
-      ) {
-        aiResponse = `안녕하세요! ${aiResponse}`;
-      }
-    } else if (language === "en") {
-      // 한국어 문장 제거
-      aiResponse = aiResponse.replace(/[가-힣\s.,!?]*[.!?]/g, "");
-
-      if (
-        messages[messages.length - 1].content.toLowerCase().includes("hello") &&
-        !aiResponse.toLowerCase().includes("hello")
-      ) {
-        aiResponse = `Hello! ${aiResponse}`;
-      }
-    } */
-
     return aiResponse;
   } catch (error) {
     console.error("Together.ai API 호출 중 오류 발생:", error);

@@ -112,7 +112,7 @@ const useChatStore = create<ChatStore>((set, get) => ({
       }
     } catch (error) {
       console.error("AI 응답 오류:", error);
-      get().updateLastMessage("error Generating Response");
+      get().updateLastMessage("응답 생성 중 오류 발생");
     } finally {
       set({ isLoading: false });
     }
