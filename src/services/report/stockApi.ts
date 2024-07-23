@@ -120,7 +120,7 @@ export async function calcPriceApi() {
 export async function stockLatestNewsListApi(code: string) {
   try {
     const response = await fetch(
-      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=5&page=1`,
+      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=3&page=1`,
     );
 
     if (!response.ok) {
