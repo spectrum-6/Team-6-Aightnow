@@ -14,11 +14,25 @@ const codes: TCodes = {
   nvda: "NVDA.O",
 };
 
+// 주식 코드 검증 함수
+function getValidStockCode(code: string): string {
+  const upperCode = code.toUpperCase();
+  const stockCode = codes[upperCode] || codes[code];
+
+  if (!stockCode) {
+    throw new Error(`Invalid stock code: ${code}`);
+  }
+
+  return stockCode;
+}
+
 // 실시간 기반 데이터
 export async function realtimeApi(code: string) {
   try {
+    const stockCode = getValidStockCode(code);
+
     const response = await fetch(
-      `https://polling.finance.naver.com/api/realtime/worldstock/stock/${codes[code]}`,
+      `https://polling.finance.naver.com/api/realtime/worldstock/stock/${stockCode}`,
     );
 
     if (!response.ok) {
@@ -26,6 +40,11 @@ export async function realtimeApi(code: string) {
     }
 
     const data = await response.json();
+
+    if (!data.datas || data.datas.length === 0) {
+      throw new Error("No data returned from API");
+    }
+
     const {
       reutersCode,
       stockName,
@@ -46,15 +65,18 @@ export async function realtimeApi(code: string) {
       stockExchangeType: stockExchangeType.name,
     };
   } catch (error) {
-    console.error("error:", error);
+    console.error("realtimeApi error:", error);
+    throw error;
   }
 }
 
 // 기업 정보 및 종목 정보
-export async function basicApi(code: string): Promise<any> {
+export async function basicApi(code: string): Promise<string> {
   try {
+    const stockCode = getValidStockCode(code);
+
     const response = await fetch(
-      `https://api.stock.naver.com/stock/${codes[code]}/basic`,
+      `https://api.stock.naver.com/stock/${stockCode}/basic`,
     );
 
     if (!response.ok) {
@@ -67,24 +89,25 @@ export async function basicApi(code: string): Promise<any> {
       closePrice: data.closePrice,
       compareToPreviousClosePrice: data.compareToPreviousClosePrice,
       fluctuationsRatio: data.fluctuationsRatio,
-      basePrice: data.stockItemTotalInfos[0].value,
-      accumulatedTradingVolume: data.stockItemTotalInfos[4].value,
+      basePrice: data.stockItemTotalInfos[0]?.value,
+      accumulatedTradingVolume: data.stockItemTotalInfos[4]?.value,
       stockItemTotalInfos: data.stockItemTotalInfos,
     };
 
-    const strStockData = JSON.stringify(stockData);
-
-    return strStockData;
+    return JSON.stringify(stockData);
   } catch (error) {
-    console.error("error:", error);
+    console.error("basicApi error:", error);
+    throw error;
   }
 }
 
 // 분석평점 / 목표주가 / 산업비교정보
 export async function integrationApi(code: string) {
   try {
+    const stockCode = getValidStockCode(code);
+
     const response = await fetch(
-      `https://api.stock.naver.com/stock/${codes[code]}/integration`,
+      `https://api.stock.naver.com/stock/${stockCode}/integration`,
     );
 
     if (!response.ok) {
@@ -94,7 +117,8 @@ export async function integrationApi(code: string) {
     const data = await response.json();
     return data.corporateOverview;
   } catch (error) {
-    console.error("error:", error);
+    console.error("integrationApi error:", error);
+    throw error;
   }
 }
 
@@ -110,17 +134,25 @@ export async function calcPriceApi() {
     }
 
     const data = await response.json();
+
+    if (!data.result || !data.result.calcPrice) {
+      throw new Error("No exchange rate data returned from API");
+    }
+
     return data.result.calcPrice;
   } catch (error) {
-    console.error("error:", error);
+    console.error("calcPriceApi error:", error);
+    throw error;
   }
 }
 
 // 종목 최신 뉴스 리스트
 export async function stockLatestNewsListApi(code: string) {
   try {
+    const stockCode = getValidStockCode(code);
+
     const response = await fetch(
-      `https://api.stock.naver.com/news/worldStock/${codes[code]}?pageSize=3&page=1`,
+      `https://api.stock.naver.com/news/worldStock/${stockCode}?pageSize=3&page=1`,
     );
 
     if (!response.ok) {
@@ -129,11 +161,16 @@ export async function stockLatestNewsListApi(code: string) {
 
     const data = await response.json();
 
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid news data returned from API");
+    }
+
     const aidData = data.map((item: any) => item.aid);
 
     return aidData;
   } catch (error) {
-    console.error("error:", error);
+    console.error("stockLatestNewsListApi error:", error);
+    throw error;
   }
 }
 
@@ -141,11 +178,13 @@ export async function stockLatestNewsListApi(code: string) {
 export async function stockLatestNewsContentApi(
   code: string,
   aids: string[],
-): Promise<any> {
+): Promise<string> {
   try {
+    const stockCode = getValidStockCode(code);
+
     const fetchPromises = aids.map(async (aid) => {
       const response = await fetch(
-        `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${aid}?reutersCode=${codes[code]}`,
+        `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${aid}?reutersCode=${stockCode}`,
       );
 
       if (!response.ok) {
@@ -173,11 +212,9 @@ export async function stockLatestNewsContentApi(
       return { [date]: textContent };
     });
 
-    const strResult = JSON.stringify(result);
-
-    return strResult;
+    return JSON.stringify(result);
   } catch (error) {
-    console.error("error:", error);
+    console.error("stockLatestNewsContentApi error:", error);
     throw error;
   }
 }
