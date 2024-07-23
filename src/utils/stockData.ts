@@ -5,19 +5,14 @@ import {
 } from "@/services/report/stockApi";
 import { stockPriceApi } from "@/services/report/stockPriceApi";
 
-// 캐시를 위한 인터페이스 정의
 interface CacheItem {
   data: any;
   timestamp: number;
 }
 
-// 간단한 인메모리 캐시 구현
 const cache: { [key: string]: CacheItem } = {};
-
-// 캐시 유효 시간 (5분)
 const CACHE_TTL = 5 * 60 * 1000;
 
-// 캐시된 데이터를 가져오거나 새로 fetch하는 함수
 async function getCachedData(key: string, fetchFunction: () => Promise<any>) {
   const now = Date.now();
   if (cache[key] && now - cache[key].timestamp < CACHE_TTL) {
@@ -29,13 +24,20 @@ async function getCachedData(key: string, fetchFunction: () => Promise<any>) {
   return data;
 }
 
-// 종합적인 주식 데이터를 가져오는 함수
 export async function getStockData(symbol: string) {
   try {
     // 실시간 주식 데이터 가져오기
     const realtimeData = await getCachedData(`realtime_${symbol}`, () =>
       realtimeApi(symbol),
     );
+
+    if (
+      !realtimeData ||
+      !realtimeData.symbolCode ||
+      !realtimeData.stockExchangeType
+    ) {
+      throw new Error(`실시간 데이터 가져오기 실패: ${symbol}`);
+    }
 
     // 통합 데이터 가져오기
     const integrationData = await getCachedData(`integration_${symbol}`, () =>
@@ -56,12 +58,16 @@ export async function getStockData(symbol: string) {
     // 모든 데이터를 하나의 객체로 통합
     return {
       ...realtimeData,
-      integrationData,
-      exchangeRate,
-      priceChartData,
+      integrationData: integrationData || null,
+      exchangeRate: exchangeRate || null,
+      priceChartData: priceChartData || null,
     };
   } catch (error) {
     console.error("주식 데이터 fetch 중 오류 발생:", error);
+    // 에러 객체에 추가 정보를 포함시킵니다
+    if (error instanceof Error) {
+      (error as any).symbol = symbol;
+    }
     throw error;
   }
 }
