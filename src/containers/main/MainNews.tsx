@@ -16,7 +16,7 @@ export default function MainNews() {
     popularNewsData();
   }, []);
 
-  const mainNewsData = popularNews[0];
+  const mainNewsData = popularNews && popularNews[0];
 
   return (
     <div className="flex flex-col gap-4 w-[1105px]">
