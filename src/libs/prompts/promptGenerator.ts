@@ -38,7 +38,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
   // LLM 초기화
   //   const chatModel = new ChatOpenAI({});
   const chatModel = new ChatTogetherAI({
-    apiKey: process.env.TOGETHER_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
     model: "meta-llama/Llama-3-70b-chat-hf",
     temperature: 0.3,
     topP: 0.3,
@@ -57,7 +57,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
   // 벡터 스토어 생성 및 인덱싱
   //   const embeddings = new OpenAIEmbeddings();
   const embeddings = new TogetherAIEmbeddings({
-    apiKey: process.env.TOGETHER_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
     model: "togethercomputer/m2-bert-80M-8k-retrieval",
   });
   const vectorstore = await MemoryVectorStore.fromDocuments(
