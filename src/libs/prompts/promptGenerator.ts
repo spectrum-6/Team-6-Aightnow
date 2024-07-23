@@ -15,6 +15,7 @@ import {
   stockLatestNewsContentApi,
 } from "@/services/report/stockApi";
 import { example } from "./example";
+import { tempResult } from "./tempResult";
 
 type TStockNames = {
   [key: string]: string; // index signature
@@ -31,14 +32,14 @@ const stockNames: TStockNames = {
 };
 
 export default async function promptGenerator(id: string, symbolCode: string) {
-  const stockInfo = await basicApi(id);
+  /* const stockInfo = await basicApi(id);
   const stockAid = await stockLatestNewsListApi(id);
   const stockLatestNews = await stockLatestNewsContentApi(id, stockAid);
 
   // LLM 초기화
   //   const chatModel = new ChatOpenAI({});
   const chatModel = new ChatTogetherAI({
-    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_API_KEY,
     model: "meta-llama/Llama-3-70b-chat-hf",
     temperature: 0.3,
     topP: 0.3,
@@ -57,7 +58,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
   // 벡터 스토어 생성 및 인덱싱
   //   const embeddings = new OpenAIEmbeddings();
   const embeddings = new TogetherAIEmbeddings({
-    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_API_KEY,
     model: "togethercomputer/m2-bert-80M-8k-retrieval",
   });
   const vectorstore = await MemoryVectorStore.fromDocuments(
@@ -117,12 +118,15 @@ export default async function promptGenerator(id: string, symbolCode: string) {
 
       All figures must be accurate, and the report must be written in Korean.
       You must strictly follow all of the instructions above.
-      
+
       example: ${example}
     `,
   });
 
-  const result = JSON.parse(agentResult.output);
+  const result = JSON.parse(agentResult.output); */
+
+  // 임시
+  const result = tempResult;
 
   return result;
 }
