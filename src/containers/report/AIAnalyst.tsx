@@ -15,7 +15,7 @@ type TAiAnalystProps = {
   closePrice: string;
   compareToPreviousClosePrice: string;
   fluctuationsRatio: string;
-  // id: string;
+  promptResult: any;
 };
 
 export default function AiAnalyst(props: TAiAnalystProps) {
@@ -26,24 +26,27 @@ export default function AiAnalyst(props: TAiAnalystProps) {
     closePrice,
     compareToPreviousClosePrice,
     fluctuationsRatio,
-    // id,
+    promptResult,
   } = props;
+
+  const analysis = promptResult.analysis;
+  const investmentOutlook = promptResult.investmentOutlook;
 
   const getStockLogo = (reutersCode: string) => {
     switch (reutersCode) {
-      case "aapl":
+      case "AAPL.O":
         return <IconApple width={33} height={33} />;
-      case "tsla":
+      case "TSLA.O":
         return <IconTsla width={33} height={33} />;
-      case "amzn":
+      case "AMZN.O":
         return <IconAmazon width={33} height={33} />;
-      case "msft":
+      case "MSFT.O":
         return <IconMs width={33} height={33} />;
-      case "googl":
+      case "GOOGL.O":
         return <IconGoogle width={33} height={33} />;
-      case "u":
+      case "U":
         return <IconUnity width={33} height={33} />;
-      case "nvda":
+      case "NVDA.O":
         return <IconNvidia width={33} height={33} />;
     }
   };
@@ -105,18 +108,7 @@ export default function AiAnalyst(props: TAiAnalystProps) {
       {/* 설명 */}
       <div className="h-24 overflow-y-auto">
         <p className="font-medium">
-          "급격한 금리 인상에도 견조한 자동차 수요를 반영하여 테슬라의
-          목표주가를 340달러로 26% 상향 조정하고 Top Pick으로 유지한다. 단기
-          상승에 따른 숨 고르기가 예상되지만, 중기적으로 동사의 경쟁우위는 더
-          강해지고 있다. 기존 OEM의 전기차 전환이 더디고 중국 신생 업체들의 현금
-          흐름이 약화되고있는 가운데, 테슬라의 멕시코 공장이 가동되면 전기차
-          제조 경쟁력 격차는 더 벌어질 것으로 예상된다. 급격한 금리 인상에도
-          견조한 자동차 수요를 반영하여 테슬라의 목표주가를 340달러로 26% 상향
-          조정하고 Top Pick으로 유지한다. 단기 상승에 따른 숨 고르기가
-          예상되지만, 중기적으로 동사의 경쟁우위는 더 강해지고 있다. 기존 OEM의
-          전기차 전환이 더디고 중국 신생 업체들의 현금 흐름이 약화되고있는
-          가운데, 테슬라의 멕시코 공장이 가동되면 전기차 제조 경쟁력 격차는 더
-          벌어질 것으로 예상된다."
+          {analysis} {investmentOutlook}
         </p>
       </div>
     </div>

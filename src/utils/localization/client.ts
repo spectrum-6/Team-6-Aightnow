@@ -35,21 +35,22 @@ export function useTranslation(lng: LocaleTypes, ns: string) {
   const translator = useTransAlias(ns);
   const { i18n } = translator;
 
+  // 클라이언트 측에서 실행 중인 경우 커스텀 번역 구현 사용
+  useCustomTranslationImplem(i18n, lng);
+
   // 서버 측에서 실행 중인 경우
   if (runsOnServerSide && lng) {
     i18n.changeLanguage(lng);
-  } else {
-    // 클라이언트 측에서 실행 중인 경우 커스텀 번역 구현 사용
-    useCustomTranslationImplem(i18n, lng);
   }
   return translator;
 }
 
 // 클라이언트 측에서 언어 변경을 처리하는 커스텀 훅
 function useCustomTranslationImplem(i18n: i18n, lng: LocaleTypes) {
+  // 서버측 실행 시 return
   // This effect changes the language of the application when the lng prop changes.
   useEffect(() => {
-    if (!lng) return; // || i18n.resolvedLanguage === lng) return;
+    if (runsOnServerSide || !lng) return; // || i18n.resolvedLanguage === lng) return;
     i18n.changeLanguage(lng);
   }, [lng, i18n]);
 }

@@ -1,0 +1,14 @@
+{
+  "title": "나우 챗봇",
+  "stockInfo": "{{symbol}} 주식 정보",
+  "currentPrice": "현재 가격",
+  "change": "변동",
+  "targetPrice": "목표가",
+  "analystOpinion": "분석가 의견",
+  "generatingResponse": "응답을 생성 중입니다...",
+  "inputPlaceholder": "질문을 입력하거나 주식 심볼을 입력하세요 (예: aapl)",
+  "send": "전송",
+  "stockInfoFetched": "{{symbol}}에 대한 주식 정보를 가져왔습니다. 이 주식에 대해 어떤 정보가 더 필요하신가요?",
+  "stockInfoNotFound": "죄송합니다. {{symbol}}에 대한 정보를 찾을 수 없습니다. 다른 주식 심볼을 입력해주세요.",
+  "errorGeneratingResponse": "죄송합니다. 응답을 생성하는 중 오류가 발생했습니다."
+}

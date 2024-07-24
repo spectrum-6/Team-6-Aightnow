@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { UserInfo } from "@/types/UserInfo";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebasedb";
 import { getUserInfo, updateLastLoginAt } from "@/firebase/firestore";
 import { Session } from "next-auth";
+import { UserInfo } from "@/types/UserInfo";
 
 export interface UserState {
   user: User | null;
@@ -16,6 +16,7 @@ export interface UserState {
   clearUserInfo: () => void;
   setIsInitialized: (isInitialized: boolean) => void;
   syncSessionUser: (session: Session | null) => void;
+  syncFirebaseUser: (firebaseUser: User) => void;
 }
 
 const useUserStore = create<UserState>((set) => ({
@@ -23,70 +24,104 @@ const useUserStore = create<UserState>((set) => ({
   userInfo: null,
   registrationStep: null,
   isInitialized: false,
+
   setUser: (user) => set({ user }),
   setUserInfo: (userInfo) => set({ userInfo }),
   setRegistrationStep: (step) => set({ registrationStep: step }),
-  clearUserInfo: () =>
-    set({ user: null, userInfo: null, registrationStep: null }),
+  clearUserInfo: () => set({ 
+    user: null, 
+    userInfo: null, 
+    registrationStep: null,
+    isInitialized: false 
+  }),
   setIsInitialized: (isInitialized) => set({ isInitialized }),
-  syncSessionUser: (session) => {
+
+  syncSessionUser: async (session) => {
     if (session?.user) {
-      set({
-        userInfo: {
-          id: session.user.id,
-          email: session.user.email || "",
-          username: session.user.name || "",
-          phoneNumber: session.user.phoneNumber || "",
-          profileImgUrl: session.user.image || "",
-          socialProvider: session.provider, //소셜 로그인
-          createdAt: session.user.createdAt,
-          lastLoginAt: session.user.lastLoginAt,
-        } as UserInfo,
-      });
+      const userInfo = await getUserInfo(session.user.id);
+      if (userInfo) {
+        set({
+          userInfo: {
+            ...userInfo,
+            id: session.user.id,
+            uid: session.user.id,
+            email: session.user.email || null,
+            username: session.user.name || null,
+            profileImgUrl: session.user.image || null,
+            socialProvider: session.provider,
+          },
+        });
+      }
     } else {
       set({ user: null, userInfo: null });
+    }
+  },
+
+  syncFirebaseUser: async (firebaseUser) => {
+    const userInfo = await getUserInfo(firebaseUser.uid);
+    if (userInfo) {
+      set({
+        userInfo: {
+          ...userInfo,
+          id: firebaseUser.uid,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          username: firebaseUser.displayName,
+          profileImgUrl: firebaseUser.photoURL,
+          phoneNumber: firebaseUser.phoneNumber,
+          socialProvider: firebaseUser.providerId,
+          createdAt:
+            firebaseUser.metadata.creationTime || new Date().toISOString(),
+          lastLoginAt:
+            firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
+        },
+      });
     }
   },
 }));
 
 export default useUserStore;
 
-// 클라이언트 사이드에서만 실행되는 함수
 export const initializeAuthListener = () => {
   if (typeof window === "undefined") {
-    return () => {}; // 서버 사이드에서는 아무 것도 하지 않음
+    return () => {};
   }
 
   const unsubscribe = onAuthStateChanged(auth, async (user) => {
     const store = useUserStore.getState();
 
     if (user) {
-      // 사용자가 로그인한 경우
-      console.log("사용자가 로그인하였습니다.", user.uid);
+      console.log("Firebase 인증 상태: 사용자 로그인", user.uid);
 
       try {
-        // Firestore에서 사용자 정보 가져오기
         const userInfo = await getUserInfo(user.uid);
 
-        // Zustand 스토어 업데이트
-        store.setUser(user);
-        store.setUserInfo(userInfo);
-
-        // 마지막 로그인 시간 업데이트
-        await updateLastLoginAt(user.uid);
+        if (userInfo) {
+          console.log(
+            "Firestore에서 사용자 정보를 성공적으로 가져왔습니다.",
+            user.uid,
+          );
+          store.setUser(user);
+          store.syncFirebaseUser(user);
+          await updateLastLoginAt(user.uid);
+        } else {
+          console.warn(
+            "사용자 정보를 Firestore에서 찾을 수 없습니다.",
+            user.uid,
+          );
+          store.syncFirebaseUser(user);
+        }
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        store.clearUserInfo();
       }
     } else {
-      // 사용자가 로그인하지 않은 상태
+      console.log("Firebase 인증 상태: 로그아웃");
       store.clearUserInfo();
-      console.log("사용자가 로그아웃했습니다.");
     }
 
-    // 초기화 완료 표시
     store.setIsInitialized(true);
   });
 
-  // 클린업 함수 반환
   return unsubscribe;
 };

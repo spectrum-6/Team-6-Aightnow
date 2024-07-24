@@ -13,6 +13,7 @@ import SearchDropdown from "@/containers/account/signUp/SearchDropdown";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Input from "@/components/Input";
+import { duplicateCheck } from "@/utils/duplicateCheck";
 
 export default function Profile() {
   const { data: session, update } = useSession();
@@ -52,11 +53,31 @@ export default function Profile() {
     setTags(tags);
   };
 
+  // 닉네임 중복 체크
+  const [userNicknameInputState, setUserNicknameInputState] = useState<
+    "warning" | "success" | null
+  >(null); // 닉네임 중복확인 버튼 상태
+
+  const userNicknameDuplicateCheck = async () => {
+    if (!userNickname) return;
+    try {
+      const res = await duplicateCheck("nickname", userNickname);
+      if (res.data > 0) {
+        setUserNicknameInputState("warning");
+      } else {
+        setUserNicknameInputState("success");
+      }
+    } catch (error) {
+      console.error("Failed to check for duplicate Nickname:", error);
+    }
+  };
+
   useEffect(() => {
     // 버튼 활성화 조건 수정: 소셜 사용자의 경우 전화번호도 필수/카카오 사용자는 이름도 필수
     const isValid: boolean =
       userNickname.trim() !== "" &&
       tags.length > 0 &&
+      userNicknameInputState === "success" &&
       (!isSocialUser || (isSocialUser && phoneNumber.trim() !== "")) &&
       (!isKakaoOrNaverUser || (isKakaoOrNaverUser && username.trim() !== ""));
 
@@ -68,6 +89,7 @@ export default function Profile() {
     isSocialUser,
     username,
     isKakaoOrNaverUser,
+    userNicknameInputState,
   ]);
 
   const handleImageClick = () => {
@@ -103,7 +125,6 @@ export default function Profile() {
       const updatedUserInfo: Partial<UserInfo> = {
         nickname: userNickname,
         profileImgUrl: newProfileImgUrl,
-        watchlist: tags,
         userStockCollection: {
           recentSearch: [],
           recentViews: [],
@@ -195,6 +216,8 @@ export default function Profile() {
             setInputValue={(e) => setUserNickname(e.target.value)}
             placeholder="닉네임을 입력해 주세요."
             label="닉네임"
+            state={userNicknameInputState}
+            buttonClickHandler={userNicknameDuplicateCheck}
           />
           {isSocialUser && (
             <Input

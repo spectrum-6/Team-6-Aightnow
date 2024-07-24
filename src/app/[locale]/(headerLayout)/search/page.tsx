@@ -48,6 +48,7 @@ export default function Search() {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]); // 필터링된 추천 검색어 목록
   const router = useRouter();
   const { user } = useUserStore(); // 유저 정보 가져오기
+  console.log("!!!!!!!!!!!!", user);
   const { recentSearch, setRecentSearch } = useRecentSearchStore(); // 최근 검색어 스토어에서 상태 가져오기
 
   useEffect(() => {
@@ -76,13 +77,19 @@ export default function Search() {
 
       // Firestore에 입력된 값 저장
       if (user) {
-        const userDoc = doc(firestore, "users", user.uid);
-        await updateDoc(userDoc, {
-          "userStockCollection.recentSearch": arrayUnion({
-            term: query,
-            date: new Date().toISOString().split("T")[0], // 날짜만 저장
-          }),
-        });
+        try {
+          const userDoc = doc(firestore, "users", user.uid);
+          await updateDoc(userDoc, {
+            "userStockCollection.recentSearch": arrayUnion({
+              term: query,
+              date: new Date().toISOString().split("T")[0], // 날짜만 저장
+            }),
+          });
+        } catch (error) {
+          console.error("Error updating recent search:", error);
+        }
+      } else {
+        console.log("User is null, cannot update Firestore");
       }
 
       // 검색 결과 페이지로 이동

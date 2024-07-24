@@ -83,7 +83,6 @@ export const createUserInfo = async (
       ...userInfo,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      watchlist: userInfo.watchlist || [],
       userStockCollection: userInfo.userStockCollection || {
         recentSearch: [],
         recentViews: [],
@@ -93,7 +92,7 @@ export const createUserInfo = async (
       username: userInfo.username || null, // 사용자이름 필드(kakao)
     });
     // userStock 컬렉션에 빈 watchList 생성
-    await createUserStock(userId);
+    // await createUserStock(userId);
   } catch (error: any) {
     console.error("Error creating user info:", error.message);
     throw error;
@@ -147,23 +146,23 @@ export const createUserStock = async (
 };
 
 //관심종목 리스트
-export const updateUserWatchList = async (
-  userUID: string,
-  watchList: string[],
-): Promise<void> => {
-  try {
-    await fetch(`/api/userStock/${userUID}/watchList`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ watchList: watchList }),
-    });
-  } catch (error: any) {
-    console.error("Error updating user watch list:", error.message);
-    throw error;
-  }
-};
+// export const updateUserWatchList = async (
+//   userUID: string,
+//   watchList: string[],
+// ): Promise<void> => {
+//   try {
+//     await fetch(`/api/userStock/${userUID}/watchList`, {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ watchList: watchList }),
+//     });
+//   } catch (error: any) {
+//     console.error("Error updating user watch list:", error.message);
+//     throw error;
+//   }
+// };
 
 export const getUserWatchList = async (userId: string): Promise<string[]> => {
   try {

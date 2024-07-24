@@ -4,6 +4,10 @@ import Link from "next/link";
 export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
   const isSocialProvider = userInfo.socialProvider ? true : false;
 
+  console.log(userInfo);
+
+  const profileImgUrl = userInfo.profileImgUrl || "";
+
   return (
     <div>
       <form>
@@ -36,7 +40,10 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
             </h4>
             <div className="flex items-center">
               <img
-                src="https://i.ibb.co/3BtYXVs/Vector.png"
+                src={
+                  userInfo.profileImgUrl ||
+                  "https://i.ibb.co/3BtYXVs/Vector.png"
+                }
                 alt="프로필"
                 className="w-14 h-14 rounded-full mr-4"
               />

@@ -1,46 +1,36 @@
 import RelatedArticleItem from "./RelatedArticleItem";
 
-type TRelatedArticle = {
+type TRelatedArticleData = {
+  id: string;
   title: string;
-  hour: number;
+  date: string;
   company: string;
+  content: string;
+  image: string;
+  stock: string[];
+  stockName: string;
+  viewCount: number;
 };
 
-const data: TRelatedArticle[] = [
-  {
-    title: `일본, '빅테크 규제법' 내년 시행…"사실상 애플·구글 규제"`,
-    hour: 1,
-    company: "문화일보",
-  },
-  {
-    title: `일본, '빅테크 규제법' 내년 시행…"사실상 애플·구글 규제"`,
-    hour: 1,
-    company: "문화일보",
-  },
-  {
-    title: `일본, '빅테크 규제법' 내년 시행…"사실상 애플·구글 규제"`,
-    hour: 1,
-    company: "문화일보",
-  },
-  {
-    title: `일본, '빅테크 규제법' 내년 시행…"사실상 애플·구글 규제"`,
-    hour: 1,
-    company: "문화일보",
-  },
-];
+type TRelatedArticleProps = {
+  articles: TRelatedArticleData[];
+};
 
-export default function RelatedArticle() {
+export default function RelatedArticle({ articles }: TRelatedArticleProps) {
+  const displayArticles = articles.slice(0, 4);
+
   return (
     <>
       <div className="h-[418px] p-8 mt-5 bg-white rounded-2xl">
         <h3 className="mb-[10px] text-navy-900 text-lg font-bold">관련 기사</h3>
         <ul>
-          {data.map((item, index) => (
+          {displayArticles.map((item, index) => (
             <RelatedArticleItem
               key={index}
+              id={item.id}
               index={index}
               title={item.title}
-              hour={item.hour}
+              date={item.date}
               company={item.company}
             />
           ))}

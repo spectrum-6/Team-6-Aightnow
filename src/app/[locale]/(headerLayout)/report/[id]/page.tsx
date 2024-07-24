@@ -1,4 +1,5 @@
 import ReportContainer from "@/containers/report/ReportContainer";
+import promptGenerator from "@/libs/prompts/promptGenerator";
 import {
   realtimeApi,
   integrationApi,
@@ -6,7 +7,6 @@ import {
 } from "@/services/report/stockApi";
 import {
   stockPriceApi,
-  getStockPriceApi,
   patchStockPriceApi,
 } from "@/services/report/stockPriceApi";
 
@@ -44,7 +44,8 @@ export default async function Page({ params }: TParams) {
     id.toUpperCase(),
   );
 
-  const stockPriceInfo = await getStockPriceApi();
+  const promptResult = await promptGenerator(id, symbolCode);
+  console.log("🍋", promptResult);
 
   return (
     <>
@@ -58,7 +59,7 @@ export default async function Page({ params }: TParams) {
         stockExchangeType={stockExchangeType}
         corporateOverview={corporateOverview}
         calcPrice={calcPrice}
-        stockPriceInfo={stockPriceInfo}
+        promptResult={promptResult}
       />
     </>
   );

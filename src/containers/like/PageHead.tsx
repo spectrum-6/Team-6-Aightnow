@@ -1,12 +1,14 @@
 "use client";
 
 import TextButton from "@/components/Button/TextButton";
+import useUserStore from "@/stores/useUserStore";
 import { UserInfo } from "@/types/UserInfo";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function PageHead({ userInfo }: { userInfo: UserInfo }) {
+export default function PageHead() {
+  const { userInfo } = useUserStore();
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   return (
     <div className="flex justify-between mb-6">

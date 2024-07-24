@@ -1,34 +1,42 @@
+/**
+ * 1. users 컬렉션의 interests 배열과 news 컬렉션의 stockName을 비교하여 관련 뉴스를 가져온다.
+ */
+"use client";
+import { useEffect, useState } from "react";
 import FavoriteStockNewsItem from "./FavoriteStockNewsItem";
-
-type TFavoriteStockNews = {
-  title: string;
-  hour: number;
-  company: string;
-  image: string;
-};
-
-const data: TFavoriteStockNews[] = [
-  {
-    title: '올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"',
-    hour: 1,
-    company: "문화일보",
-    image: "/images/news_img03.png",
-  },
-  {
-    title: '올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"',
-    hour: 1,
-    company: "문화일보",
-    image: "/images/news_img04.png",
-  },
-  {
-    title: '올해 자연재해 채권 발행액↑…"美 등 허리케인 피해 크면 손실"',
-    hour: 1,
-    company: "문화일보",
-    image: "/images/news_img05.png",
-  },
-];
+import { fetchFavoriteStockNews, TNewsData } from "@/services/news/news";
+import useUserStore from "@/stores/useUserStore";
 
 export default function FavoriteStockNews() {
+  const [data, setData] = useState<TNewsData[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
+  const userInfo = useUserStore((state) => state.userInfo);
+
+  // 사용자 정보가 로드되었을 때 관심 종목을 설정
+  useEffect(() => {
+    console.log("현재 시간:", new Date());
+    if (userInfo) {
+      // 임시로 관심 종목을 설정 (실제 구현 시에는 userInfo.interests를 사용)
+      setInterests(["AAPL", "TSLA"]);
+    }
+  }, [userInfo]);
+
+  // 관심 종목을 기반으로 뉴스를 가져오기
+  useEffect(() => {
+    // 관심 종목이 설정되어 있을 경우
+    const getFavoriteStockNews = async () => {
+      if (interests.length > 0) {
+        // 관심 종목 관련 뉴스를 가져와서 상태를 업데이트
+        const news = await fetchFavoriteStockNews(interests);
+        setData(news);
+      }
+    };
+
+    getFavoriteStockNews();
+  }, [interests]);
+
+  const displayData = data.slice(0, 3);
+
   return (
     <>
       <section className="w-[1200px] pt-12 mx-auto">
@@ -36,11 +44,12 @@ export default function FavoriteStockNews() {
           관심종목과 관련된 뉴스
         </h2>
         <ul className="flex gap-5">
-          {data.map((item, index) => (
+          {displayData.map((item, index) => (
             <FavoriteStockNewsItem
               key={index}
+              id={item.id}
               title={item.title}
-              hour={item.hour}
+              date={item.date}
               company={item.company}
               image={item.image}
             />

@@ -1,3 +1,5 @@
+"use server";
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 type TStockPriceApiProps = {
@@ -45,7 +47,7 @@ export async function stockPriceApi(props: TStockPriceApiProps) {
 // db에 stockPrice 데이터 업데이트
 export async function patchStockPriceApi(stockPriceData: any, id: string) {
   try {
-    const response = await fetch(`${BASE_URL}/api/stocks`, {
+    const response = await fetch(`${BASE_URL}/api/scheduleStock`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ stockPriceData, id }),
@@ -67,7 +69,25 @@ export async function patchStockPriceApi(stockPriceData: any, id: string) {
 // db에서 stockPrice 데이터 가져오기
 export async function getStockPriceApi() {
   try {
-    const response = await fetch(`${BASE_URL}/api/stocks`);
+    const response = await fetch(`${BASE_URL}/api/scheduleStock`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "failed");
+    }
+
+    const stockInfo = await response.json();
+    return stockInfo;
+  } catch (error: unknown) {
+    console.error("error: ", error);
+    throw error;
+  }
+}
+
+// db에서 stocks 컬렉션의 특정 doc 데이터 가져오기
+export async function getStockInfoApi(id: string) {
+  try {
+    const response = await fetch(`${BASE_URL}/api/scheduleStock/${id}`);
 
     if (!response.ok) {
       const errorData = await response.json();
