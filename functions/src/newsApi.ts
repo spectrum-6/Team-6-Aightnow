@@ -20,7 +20,7 @@ export const fetchNewsDataSchedule = functions
       for (const newsItem of data) {
         // DB 저장
         await db
-          .collection("new3")
+          .collection("scheduleNewsData")
           .doc(newsItem.id)
           .set({
             ...newsItem,
