@@ -39,7 +39,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
   // LLM 초기화
   //   const chatModel = new ChatOpenAI({});
   const chatModel = new ChatTogetherAI({
-    apiKey: process.env.NEXT_PUBLIC_TOGETHER_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
     model: "meta-llama/Llama-3-70b-chat-hf",
     temperature: 0.3,
     topP: 0.3,
@@ -58,7 +58,7 @@ export default async function promptGenerator(id: string, symbolCode: string) {
   // 벡터 스토어 생성 및 인덱싱
   //   const embeddings = new OpenAIEmbeddings();
   const embeddings = new TogetherAIEmbeddings({
-    apiKey: process.env.NEXT_PUBLIC_TOGETHER_API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_TOGETHER_AI_API_KEY,
     model: "togethercomputer/m2-bert-80M-8k-retrieval",
   });
   const vectorstore = await MemoryVectorStore.fromDocuments(
@@ -95,31 +95,44 @@ export default async function promptGenerator(id: string, symbolCode: string) {
 
   // 에이전트 호출
   const agentResult = await agentExecutor.invoke({
-    input: `You are a professional stock analyst. Please write an analysis report on ${stockNames[id]} (${symbolCode}) stock, referencing this ${stockInfo}, ${stockLatestNews}. Follow these instructions:
+    input: `You are a professional stock analyst. Please write a detailed analysis report on ${stockNames[id]} (${symbolCode}) stock, referencing this ${stockInfo}, ${stockLatestNews}. Follow these instructions:
 
-      1. First, accurately state ${stockNames[id]}'s current stock price and the change in amount and percentage compared to the previous day.
-      2. Next, analyze ${stockNames[id]}'s stock price, investment index, profitability, growth potential, and interest level by assessing each. For each indicator, include:
-        - Current value (0-100)
-        - Previous day's value (0-100)
-        - Change in value from the previous day (0-100) (with - sign)
-        - Percentage change from the previous day (%) (with - sign)
-        Both of these must be included.
-      3. The meaning of these indicators:
-        - stock price
-        - Investment index: Overall evaluation of the stock market or a specific stock
-        - Profitability: Measure of profit from financial investment activities
-        - Growth potential: Measured through indicators such as sales, profits, market share, etc., indicating expected future growth
-        - Interest level: Measured by the frequency of searches/mentions of stock-related information or news
-      4. Based on this analysis, provide a professional opinion on ${stockNames[id]}'s current situation and outlook in 3-4 sentences. You can include specific figures, facts, industry trends, comparisons with competitors, etc.
-      5. Finally, present an investment outlook or advice based on this analysis in 1-2 sentences.
-      6. The entire report should be about 10 lines long, including the analysis of each indicator and the comprehensive analysis.
-      7. Answer only in JSON format without additional explanation.
-      8. Use a formal, professional tone, but don't make it too rigid.
+      1. Provide accurate numerical data for the following:
+        - Current stock price
+        - Change amount from previous day
+        - Change percentage from previous day
+        - For each indicator (stock price, investment index, profitability, growth potential, interest level):
+          * Current value (0-100)
+          * Previous day's value (0-100)
+          * Change in value from the previous day (with - sign if negative)
+          * Percentage change from the previous day (with - sign if negative)
 
-      All figures must be accurate, and the report must be written in Korean.
-      You must strictly follow all of the instructions above.
+      2. Provide an in-depth analysis of ${stockNames[id]}'s market position, focusing on:
+        - Recent company developments or news
+        - Industry trends and how they affect ${stockNames[id]}
+        - Competitive landscape and ${stockNames[id]}'s advantages or challenges
+        - Key financial metrics and their implications
 
-      example: ${example}
+      3. Discuss any significant factors that could impact the stock's future performance, such as:
+        - Upcoming product launches or innovations
+        - Economic factors (e.g., interest rates, market conditions)
+        - Regulatory changes or geopolitical events
+        - Company-specific strategies or initiatives
+
+      4. Offer a detailed investment outlook, including:
+        - A specific price target with justification
+        - Short-term and long-term predictions
+        - Potential risks and opportunities
+
+      5. Conclude with a clear investment recommendation and rationale.
+
+
+      Your analysis should be thorough, insightful, and approximately 200-250 words long. Use a professional tone, incorporating industry-specific terminology where appropriate. Provide specific figures and comparisons to support your analysis.
+
+      Answer in Korean and strictly in JSON format as follows:
+      ${example}
+
+      Ensure all information is accurate and based on the provided data and current market knowledge.
     `,
   });
 
