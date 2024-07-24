@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -18,70 +18,71 @@ const LoginClient: React.FC = () => {
   const { setUserInfo } = useUserStore();
 
   // 자동 로그인 체크 (일반 로그인 + 소셜 로그인)
+  const checkAutoLogin = useCallback(async () => {
+    // 일반 로그인 자동 로그인 체크
+    const refreshTokenValue = localStorage.getItem("refreshToken");
+    if (refreshTokenValue) {
+      try {
+        const { accessToken, userInfo } = await refreshToken(refreshTokenValue);
+        setUserInfo(userInfo);
+        await fetch("/api/setAccessToken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken }),
+        });
+        router.push(`/${locale}/main`);
+        return; // 일반 로그인 성공 시 소셜 로그인 체크 스킵
+      } catch (error) {
+        console.error("일반 로그인 자동 로그인 실패:", error);
+        localStorage.removeItem("refreshToken");
+      }
+    }
+
+    // 소셜 로그인 자동 로그인 체크 (NextAuth 세션 활용)
+    if (session?.user) {
+      try {
+        // NextAuth 세션 정보를 사용하여 사용자 정보 설정
+        setUserInfo(session.user);
+
+        // 필요한 경우 Firebase 커스텀 토큰 생성 (서버 사이드에서 처리)
+        const response = await fetch("/api/createFirebaseToken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session }),
+        });
+        const { firebaseToken } = await response.json();
+
+        // Firebase 토큰을 안전하게 저장 (예: HTTP-only 쿠키)
+        await fetch("/api/setFirebaseToken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ firebaseToken }),
+        });
+
+        router.push(`/${locale}/main`);
+      } catch (error) {
+        console.error("소셜 로그인 자동 로그인 실패:", error);
+      }
+    }
+  }, [session, setUserInfo, router, locale]);
+
   useEffect(() => {
-    const checkAutoLogin = async () => {
-      // 일반 로그인 자동 로그인 체크
-      const refreshTokenValue = localStorage.getItem("refreshToken");
-      if (refreshTokenValue) {
-        try {
-          const { accessToken, userInfo } = await refreshToken(
-            refreshTokenValue,
-          );
-          setUserInfo(userInfo);
-          await fetch("/api/setAccessToken", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ accessToken }),
-          });
-          router.push(`/${locale}/main`);
-          return; // 일반 로그인 성공 시 소셜 로그인 체크 스킵
-        } catch (error) {
-          console.error("일반 로그인 자동 로그인 실패:", error);
-          localStorage.removeItem("refreshToken");
-        }
-      }
-
-      // 소셜 로그인 자동 로그인 체크 (NextAuth 세션 활용)
-      if (status === "authenticated" && session) {
-        try {
-          // NextAuth 세션 정보를 사용하여 사용자 정보 설정
-          setUserInfo(session.user as UserInfo);
-
-          // 필요한 경우 Firebase 커스텀 토큰 생성 (서버 사이드에서 처리)
-          const response = await fetch("/api/createFirebaseToken", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ session }),
-          });
-          const { firebaseToken } = await response.json();
-
-          // Firebase 토큰을 안전하게 저장 (예: HTTP-only 쿠키)
-          await fetch("/api/setFirebaseToken", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ firebaseToken }),
-          });
-
-          router.push(`/${locale}/main`);
-        } catch (error) {
-          console.error("소셜 로그인 자동 로그인 실패:", error);
-        }
-      }
-    };
-
     checkAutoLogin();
-  }, [session, status]);
+  }, [checkAutoLogin]);
 
   // 세션 상태에 따라 리다이렉트
   useEffect(() => {
-    if (status === "authenticated" && session) {
-      if (!session.user.registrationCompleted) {
+    if (session?.user) {
+      if (
+        "registrationCompleted" in session.user &&
+        !session.user.registrationCompleted
+      ) {
         router.push(`/${locale}/signUp/profile`);
       } else {
         router.push(`/${locale}/main`);
       }
     }
-  }, [session, status, router, locale]);
+  }, [session, router, locale]);
 
   // 로그인 핸들러 (일반 로그인)
   const handleLogin = async (
