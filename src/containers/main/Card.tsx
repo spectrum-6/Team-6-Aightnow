@@ -166,4 +166,6 @@ const Card = React.memo((props: TCardProps) => {
   );
 });
 
+Card.displayName = "Card";
+
 export default Card;

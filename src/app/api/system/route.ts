@@ -9,6 +9,6 @@ export async function GET(request: Request) {
     return Response.json(docSnap.data());
   } else {
     console.log("No such document!");
-    return null;
+    return Response.json({ result: "no data" });
   }
 }

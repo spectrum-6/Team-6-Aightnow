@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchPopularNews } from "@/app/api/news/route";
+import { fetchPopularNews } from "@/services/news/news";
 import MainNewsItem from "./MainNewsItem";
 
 export default function MainNews() {

@@ -13,6 +13,6 @@ export async function GET(
     return Response.json(docSnap.data());
   } else {
     console.log("No such document!");
-    return null;
+    return Response.json({ result: "no data" });
   }
 }

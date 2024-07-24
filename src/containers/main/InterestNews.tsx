@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchFavoriteStockNews } from "@/app/api/news/route";
+import { fetchFavoriteStockNews } from "@/services/news/news";
 import InterestCard from "./InterestCard";
 import useUserStore from "@/stores/useUserStore";
 

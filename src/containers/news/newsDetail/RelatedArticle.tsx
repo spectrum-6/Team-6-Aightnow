@@ -5,7 +5,7 @@ type TRelatedArticleData = {
   title: string;
   date: string;
   company: string;
-  content: string[];
+  content: string;
   image: string;
   stock: string[];
   stockName: string;

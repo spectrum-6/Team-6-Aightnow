@@ -146,23 +146,23 @@ export const createUserStock = async (
 };
 
 //관심종목 리스트
-export const updateUserWatchList = async (
-  userUID: string,
-  watchList: string[],
-): Promise<void> => {
-  try {
-    await fetch(`/api/userStock/${userUID}/watchList`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ watchList: watchList }),
-    });
-  } catch (error: any) {
-    console.error("Error updating user watch list:", error.message);
-    throw error;
-  }
-};
+// export const updateUserWatchList = async (
+//   userUID: string,
+//   watchList: string[],
+// ): Promise<void> => {
+//   try {
+//     await fetch(`/api/userStock/${userUID}/watchList`, {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ watchList: watchList }),
+//     });
+//   } catch (error: any) {
+//     console.error("Error updating user watch list:", error.message);
+//     throw error;
+//   }
+// };
 
 export const getUserWatchList = async (userId: string): Promise<string[]> => {
   try {
