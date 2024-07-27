@@ -23,6 +23,11 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     async signIn({ user, account, profile }) {
       if (account && user) {
         try {
@@ -54,7 +59,7 @@ const authOptions: NextAuthOptions = {
               firebaseUser.metadata.creationTime || new Date().toISOString(),
             lastLoginAt: new Date().toISOString(),
             transLang: "en",
-            socialProvider: account.provider,
+            socialProvider: account.provider, // 소셜 로그인 제공자 정보 추가
             registrationCompleted: userSnapshot.exists()
               ? userSnapshot.data()?.registrationCompleted || false
               : false,
@@ -76,18 +81,15 @@ const authOptions: NextAuthOptions = {
           // 소셜 로그인 제공자별로 추가 정보 처리
           switch (account.provider) {
             case "google":
-              // Google은 기본적으로 이름을 제공하지만, 전화번호는 안줌
               userData.username = user.name;
               break;
             case "naver":
-              // Naver profile 정보에서 이름과 전화번호 추출
               if (profile) {
                 userData.username = (profile as any).name;
                 userData.phoneNumber = (profile as any).mobile;
               }
               break;
             case "kakao":
-              // Kakao profile 정보에서 이름과 전화번호 추출
               if (profile) {
                 userData.nickname = (profile as any).properties?.nickname;
                 userData.username = (profile as any).name;
@@ -97,6 +99,7 @@ const authOptions: NextAuthOptions = {
               }
               break;
           }
+
           // Firebase Firestore에 저장하기 전에 undefined 값 제거
           Object.keys(userData).forEach((key) => {
             if (userData[key as keyof UserInfo] === undefined) {
@@ -145,6 +148,12 @@ const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/auth/error",
   },
+  // 세션 설정 추가
+  session: {
+    strategy: "jwt",
+  },
+  // CSRF 토큰 설정 추가
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

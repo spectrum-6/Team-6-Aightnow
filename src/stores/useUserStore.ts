@@ -28,12 +28,13 @@ const useUserStore = create<UserState>((set) => ({
   setUser: (user) => set({ user }),
   setUserInfo: (userInfo) => set({ userInfo }),
   setRegistrationStep: (step) => set({ registrationStep: step }),
-  clearUserInfo: () => set({ 
-    user: null, 
-    userInfo: null, 
-    registrationStep: null,
-    isInitialized: false 
-  }),
+  clearUserInfo: () =>
+    set({
+      user: null,
+      userInfo: null,
+      registrationStep: null,
+      isInitialized: false,
+    }),
   setIsInitialized: (isInitialized) => set({ isInitialized }),
 
   syncSessionUser: async (session) => {
@@ -63,15 +64,17 @@ const useUserStore = create<UserState>((set) => ({
       set({
         userInfo: {
           ...userInfo,
-          id: firebaseUser.uid,
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          username: firebaseUser.displayName,
-          profileImgUrl: firebaseUser.photoURL,
-          phoneNumber: firebaseUser.phoneNumber,
-          socialProvider: firebaseUser.providerId,
+          id: userInfo.id || firebaseUser.uid, // 사용자가 입력한 ID 유지
+          uid: firebaseUser.uid, // Firebase UID 사용
+          email: firebaseUser.email || userInfo.email,
+          username: firebaseUser.displayName || userInfo.username,
+          profileImgUrl: firebaseUser.photoURL || userInfo.profileImgUrl,
+          phoneNumber: firebaseUser.phoneNumber || userInfo.phoneNumber,
+          socialProvider: userInfo.socialProvider, // Firestore에서 가져온 값 사용
           createdAt:
-            firebaseUser.metadata.creationTime || new Date().toISOString(),
+            firebaseUser.metadata.creationTime ||
+            userInfo.createdAt ||
+            new Date().toISOString(),
           lastLoginAt:
             firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
         },

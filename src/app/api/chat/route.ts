@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
         messages,
-        temperature: 0.7,
+        temperature: 0.3,
         max_tokens: 1000,
       }),
     });
