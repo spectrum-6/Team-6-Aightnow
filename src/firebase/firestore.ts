@@ -81,15 +81,16 @@ export const createUserInfo = async (
     const userDocRef = doc(firestore, "users", userId);
     await setDoc(userDocRef, {
       ...userInfo,
-      createdAt: new Date().toISOString(),
+      createdAt: userInfo.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       userStockCollection: userInfo.userStockCollection || {
         recentSearch: [],
         recentViews: [],
         watchList: [],
       },
-      phoneNumber: userInfo.phoneNumber || null, // 전화번호 필드(아이디 찾기 떄문에)
-      username: userInfo.username || null, // 사용자이름 필드(kakao)
+      phoneNumber: userInfo.phoneNumber || null,
+      username: userInfo.username || null,
+      socialProvider: userInfo.socialProvider || null,
     });
     // userStock 컬렉션에 빈 watchList 생성
     // await createUserStock(userId);

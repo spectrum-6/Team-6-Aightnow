@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { UserInfo } from "@/types/UserInfo";
 import { auth } from "./firebasedb";
-import { getUserInfo, getUserInfoById } from "./firestore";
+import { getUserInfo, getUserInfoById, updateUserInfo } from "./firestore";
 
 // Firebase를 사용한 로그인 (토큰 반환 추가)
 export const signIn = async (
@@ -46,7 +46,12 @@ export const signIn = async (
       throw new Error("로그인 후 사용자 정보를 찾을 수 없음");
     }
 
-    // 액세스 토큰과 리프레시 토큰 획득
+    // 사용자가 입력한 ID를 updatedUserInfo에 추가
+    updatedUserInfo.id = id;
+
+    // Firestore에 업데이트된 사용자 정보 저장
+    await updateUserInfo(user.uid, { id: id });
+
     const accessToken = await user.getIdToken();
     const refreshToken = user.refreshToken;
 
