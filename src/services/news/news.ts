@@ -58,7 +58,7 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
   const threeDaysAgo = Timestamp.fromDate(
     new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
   );
-  const newsRef = collection(firestore, "news");
+  const newsRef = collection(firestore, "new3");
   const q = query(
     newsRef,
     where("date", ">=", threeDaysAgo),
@@ -92,7 +92,7 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
 export const fetchFavoriteStockNews = async (
   interests: string[],
 ): Promise<TNewsData[]> => {
-  const newsRef = collection(firestore, "news");
+  const newsRef = collection(firestore, "new3");
   const q = query(
     newsRef,
     where("stockName", "in", interests),
@@ -125,7 +125,7 @@ export const fetchFavoriteStockNews = async (
 export const fetchLatestNews = async (
   lastVisible: any = null,
 ): Promise<{ news: TNewsData[]; lastVisible: any }> => {
-  const newsRef = collection(firestore, "news");
+  const newsRef = collection(firestore, "new3");
   let q = query(newsRef, orderBy("date", "desc"), limit(5));
 
   if (lastVisible) {

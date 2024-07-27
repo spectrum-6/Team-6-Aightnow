@@ -18,7 +18,7 @@ import {
   fetchRelatedStocks,
   TStockData,
   TNewsData as TRelatedNewsData,
-} from "@/app/api/news/route";
+} from "@/services/news/news";
 
 type TNewsData = {
   title: string;
@@ -50,7 +50,7 @@ export default function NewsDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        const docRef = doc(firestore, "news", id as string);
+        const docRef = doc(firestore, "new3", id as string);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetchedData = docSnap.data() as DocumentData;

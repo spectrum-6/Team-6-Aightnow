@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchLatestNews } from "@/app/api/news/route";
+import { fetchLatestNews } from "@/services/news/news";
 import { useEffect, useState } from "react";
 import RecentNewsList from "./RecentNewsList";
 

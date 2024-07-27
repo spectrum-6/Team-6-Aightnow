@@ -65,4 +65,5 @@ const LatestNewsItem = React.forwardRef<HTMLLIElement, TLatestNewsItemProps>(
   },
 );
 
+LatestNewsItem.displayName = "LatestNewsItem";
 export default LatestNewsItem;

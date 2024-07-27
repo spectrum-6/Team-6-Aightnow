@@ -4,7 +4,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import FavoriteStockNewsItem from "./FavoriteStockNewsItem";
-import { fetchFavoriteStockNews, TNewsData } from "@/app/api/news/route";
+import { fetchFavoriteStockNews, TNewsData } from "@/services/news/news";
 import useUserStore from "@/stores/useUserStore";
 
 export default function FavoriteStockNews() {

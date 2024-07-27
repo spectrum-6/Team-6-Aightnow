@@ -5,8 +5,6 @@ import {
   useId,
   useState,
 } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { firestore } from "@/firebase/firebasedb";
 
 type TInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -41,15 +39,7 @@ export default function DuplicateCheckInput(props: TInputProps) {
     } else {
       setButtonClassName("bg-[#020408] text-white");
     }
-  }, [inputValue, state]);
-
-  // useEffect(() => {
-  //   if (isDuplicate !== null) {
-  //     setButtonClassName(
-  //       isDuplicate ? "bg-warning-100 text-white" : "bg-success-100 text-white",
-  //     );
-  //   }
-  // }, [isDuplicate]);
+  }, [inputValue, state, disabled]);
 
   const captionTextColor = () => {
     if (disabled) {

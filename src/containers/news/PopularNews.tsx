@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import MainNews from "@/containers/news/MainNews";
 import PopularNewsItem from "@/containers/news/PopularNewsItem";
-import { fetchPopularNews, TNewsData } from "@/app/api/news/route";
+import { fetchPopularNews, TNewsData } from "@/services/news/news";
 
 export default function PopularNews() {
   const [data, setData] = useState<TNewsData[]>([]);

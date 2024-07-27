@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LatestNewsItem from "./LatestNewsItem";
-import { fetchLatestNews, TNewsData } from "@/app/api/news/route";
+import { fetchLatestNews, TNewsData } from "@/services/news/news";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 export default function LatestNews() {
