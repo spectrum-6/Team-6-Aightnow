@@ -41,7 +41,10 @@ const LoginClient: React.FC = () => {
     if (session?.user) {
       try {
         // NextAuth 세션 정보를 사용하여 사용자 정보 설정
-        setUserInfo(session.user);
+        setUserInfo({
+          ...session.user,
+          socialProvider: session.provider || "nextauth",
+        });
 
         // 필요한 경우 Firebase 커스텀 토큰 생성 (서버 사이드에서 처리)
         const response = await fetch("/api/createFirebaseToken", {

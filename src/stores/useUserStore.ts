@@ -49,7 +49,7 @@ const useUserStore = create<UserState>((set) => ({
             email: session.user.email || null,
             username: session.user.name || null,
             profileImgUrl: session.user.image || null,
-            socialProvider: session.provider,
+            socialProvider: session.provider || userInfo.socialProvider,
           },
         });
       }
@@ -59,26 +59,33 @@ const useUserStore = create<UserState>((set) => ({
   },
 
   syncFirebaseUser: async (firebaseUser) => {
-    const userInfo = await getUserInfo(firebaseUser.uid);
-    if (userInfo) {
-      set({
-        userInfo: {
-          ...userInfo,
-          id: userInfo.id || firebaseUser.uid, // 사용자가 입력한 ID 유지
-          uid: firebaseUser.uid, // Firebase UID 사용
-          email: firebaseUser.email || userInfo.email,
-          username: firebaseUser.displayName || userInfo.username,
-          profileImgUrl: firebaseUser.photoURL || userInfo.profileImgUrl,
-          phoneNumber: firebaseUser.phoneNumber || userInfo.phoneNumber,
-          socialProvider: userInfo.socialProvider, // Firestore에서 가져온 값 사용
-          createdAt:
-            firebaseUser.metadata.creationTime ||
-            userInfo.createdAt ||
-            new Date().toISOString(),
-          lastLoginAt:
-            firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
-        },
-      });
+    try {
+      const userInfo = await getUserInfo(firebaseUser.uid);
+      if (userInfo) {
+        set({
+          userInfo: {
+            ...userInfo,
+            id: userInfo.id || firebaseUser.uid,
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || userInfo.email,
+            username: firebaseUser.displayName || userInfo.username,
+            profileImgUrl: firebaseUser.photoURL || userInfo.profileImgUrl,
+            phoneNumber: firebaseUser.phoneNumber || userInfo.phoneNumber,
+            socialProvider: userInfo.socialProvider || "firebase",
+            createdAt:
+              firebaseUser.metadata.creationTime ||
+              userInfo.createdAt ||
+              new Date().toISOString(),
+            lastLoginAt:
+              firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
+          },
+        });
+        await updateLastLoginAt(firebaseUser.uid);
+      } else {
+        console.warn("User info not found in Firestore:", firebaseUser.uid);
+      }
+    } catch (error) {
+      console.error("Error syncing Firebase user:", error);
     }
   },
 }));
@@ -94,32 +101,11 @@ export const initializeAuthListener = () => {
     const store = useUserStore.getState();
 
     if (user) {
-      console.log("Firebase 인증 상태: 사용자 로그인", user.uid);
-
-      try {
-        const userInfo = await getUserInfo(user.uid);
-
-        if (userInfo) {
-          console.log(
-            "Firestore에서 사용자 정보를 성공적으로 가져왔습니다.",
-            user.uid,
-          );
-          store.setUser(user);
-          store.syncFirebaseUser(user);
-          await updateLastLoginAt(user.uid);
-        } else {
-          console.warn(
-            "사용자 정보를 Firestore에서 찾을 수 없습니다.",
-            user.uid,
-          );
-          store.syncFirebaseUser(user);
-        }
-      } catch (error) {
-        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
-        store.clearUserInfo();
-      }
+      console.log("Firebase auth state: User logged in", user.uid);
+      store.setUser(user);
+      await store.syncFirebaseUser(user);
     } else {
-      console.log("Firebase 인증 상태: 로그아웃");
+      console.log("Firebase auth state: User logged out");
       store.clearUserInfo();
     }
 
