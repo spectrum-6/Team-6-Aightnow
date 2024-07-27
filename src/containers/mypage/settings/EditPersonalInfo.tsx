@@ -1,13 +1,10 @@
 import { UserInfo } from "@/types/UserInfo";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
   const isSocialProvider =
-    userInfo.socialProvider && userInfo.socialProvider !== "firebase"
-      ? true
-      : false;
-
-  const profileImgUrl = userInfo.profileImgUrl || "";
+    userInfo.socialProvider !== "firebase" ? true : false;
 
   return (
     <div>
@@ -78,32 +75,60 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
             </div>
           </section>
 
-          <div className="mb-4">
-            <div className="flex mb-2 items-center">
-              <p className="w-[144px] text-[18px] font-medium text-[#121212]">
-                아이디
-              </p>
-              <span className="text-[16px] font-medium text-[#575757]">
-                {userInfo.id}
-              </span>
+          {/* 소셜연동 여부에 따라 처리 */}
+          {isSocialProvider ? (
+            <>
+              <div>
+                <div className="flex mb-2 items-center">
+                  <p className="w-[144px] text-[18px] font-medium text-[#121212]">
+                    계정 정보
+                  </p>
+                  <Image
+                    src="/images/btn_kakao.png"
+                    alt="소셜로그인 카카오 버튼"
+                    width={24}
+                    height={24}
+                  />
+                  <span className="text-[16px] font-medium text-[#575757] ml-4">
+                    카카오톡 로그인
+                  </span>
+                  <Link
+                    href="/settings/account/delete/deleteaccount"
+                    className="text-warning-100 text-sm underline ml-auto"
+                  >
+                    연동 해제
+                  </Link>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="mb-4">
+              <div className="flex mb-2 items-center">
+                <p className="w-[144px] text-[18px] font-medium text-[#121212]">
+                  아이디
+                </p>
+                <span className="text-[16px] font-medium text-[#575757]">
+                  {userInfo.id}
+                </span>
+              </div>
+              <div className="flex mb-2 items-center">
+                <p className="w-[144px] text-[18px] font-medium text-[#121212]">
+                  이름
+                </p>
+                <span className="text-[16px] font-medium text-[#575757]">
+                  {userInfo.username}
+                </span>
+              </div>
+              <div className="flex mb-2 items-center">
+                <p className="w-[144px] text-[18px] font-medium text-[#121212]">
+                  생년월일
+                </p>
+                <span className="text-[16px] font-medium text-[#575757]">
+                  {userInfo.birthDate}
+                </span>
+              </div>
             </div>
-            <div className="flex mb-2 items-center">
-              <p className="w-[144px] text-[18px] font-medium text-[#121212]">
-                이름
-              </p>
-              <span className="text-[16px] font-medium text-[#575757]">
-                {userInfo.username}
-              </span>
-            </div>
-            <div className="flex mb-2 items-center">
-              <p className="w-[144px] text-[18px] font-medium text-[#121212]">
-                생년월일
-              </p>
-              <span className="text-[16px] font-medium text-[#575757]">
-                {userInfo.birthDate}
-              </span>
-            </div>
-          </div>
+          )}
         </main>
       </form>
     </div>
