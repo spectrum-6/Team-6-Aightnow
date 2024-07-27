@@ -2,9 +2,10 @@ import { UserInfo } from "@/types/UserInfo";
 import Link from "next/link";
 
 export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
-  const isSocialProvider = userInfo.socialProvider ? true : false;
-
-  console.log(userInfo);
+  const isSocialProvider =
+    userInfo.socialProvider && userInfo.socialProvider !== "firebase"
+      ? true
+      : false;
 
   const profileImgUrl = userInfo.profileImgUrl || "";
 
