@@ -9,7 +9,6 @@ import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn, refreshToken } from "@/firebase/fireauth";
-import { UserInfo } from "@/types/UserInfo";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();

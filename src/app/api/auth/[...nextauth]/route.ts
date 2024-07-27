@@ -23,6 +23,11 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     async signIn({ user, account, profile }) {
       if (account && user) {
         try {
@@ -145,6 +150,12 @@ const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/auth/error",
   },
+  // 세션 설정 추가
+  session: {
+    strategy: "jwt",
+  },
+  // CSRF 토큰 설정 추가
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
