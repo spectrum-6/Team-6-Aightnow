@@ -83,7 +83,7 @@ export default function UserAIReport() {
   }, [favoriteStock]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="w-[1200px] flex flex-col gap-5">
       <div className="flex gap-4">
         <h4 className="font-bold text-navy-900 leading-9">
           {userInfo?.nickname}님의 AI 리포트
