@@ -36,22 +36,22 @@ export const ticker: Tticker = {
 };
 
 type TRecentViewsListProps = {
-  item: string;
+  recentViewStock: string;
 };
 
 export default function RecentViewsList(props: TRecentViewsListProps) {
-  const { item } = props;
+  const { recentViewStock } = props;
 
   const [realtimeInfo, setRealtimeInfo] = useState<realtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
-    const realtimeInfo = await getRealtimeInfo(item.toLowerCase());
+    const realtimeInfo = await getRealtimeInfo(recentViewStock);
     setRealtimeInfo(realtimeInfo);
   };
 
   useEffect(() => {
     fetchRealtimeData();
-  }, [item]);
+  }, [recentViewStock]);
 
   const getStockLogo = (reutersCode?: string) => {
     switch (reutersCode) {

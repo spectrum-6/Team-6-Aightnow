@@ -20,7 +20,7 @@ type TCardProps = {
   fluctuationsRatio?: string;
 };
 
-const Card = React.memo((props: TCardProps) => {
+export default function Card(props: TCardProps) {
   const {
     item,
     reutersCode,
@@ -30,7 +30,6 @@ const Card = React.memo((props: TCardProps) => {
     compareToPreviousClosePrice,
     fluctuationsRatio,
   } = props;
-  console.log("!!!!!", item);
 
   // percentage
   const investmentIndex = item?.indicators.investmentIndex.changePercentage;
@@ -164,8 +163,4 @@ const Card = React.memo((props: TCardProps) => {
       </div>
     </div>
   );
-});
-
-Card.displayName = "Card";
-
-export default Card;
+}
