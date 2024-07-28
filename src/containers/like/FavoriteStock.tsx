@@ -84,17 +84,15 @@ export default function FavoriteStock() {
       <ul className="flex gap-[19px] flex-wrap">
         {favoriteStock &&
           promptResults &&
-          promptResults.map((item, index) => (
+          favoriteStock.map((item, index) => (
             <FavoriteStockItem
               key={index}
-              item={item}
-              stockName={favoriteStock[index].stockName}
-              symbolCode={favoriteStock[index].symbolCode}
-              closePrice={favoriteStock[index].closePrice}
-              compareToPreviousClosePrice={
-                favoriteStock[index].compareToPreviousClosePrice
-              }
-              fluctuationsRatio={favoriteStock[index].fluctuationsRatio}
+              item={promptResults[index]}
+              stockName={item.stockName}
+              symbolCode={item.symbolCode}
+              closePrice={item.closePrice}
+              compareToPreviousClosePrice={item.compareToPreviousClosePrice}
+              fluctuationsRatio={item.fluctuationsRatio}
             />
           ))}
       </ul>

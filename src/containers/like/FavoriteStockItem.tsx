@@ -39,11 +39,6 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const growthPotential = item?.indicators.growthPotential.changePercentage;
   const interestLevel = item?.indicators.interestLevel.changePercentage;
 
-  console.log(investmentIndex);
-  console.log(profitability);
-  console.log(growthPotential);
-  console.log(interestLevel);
-
   const changeClassName = (price: number) =>
     price > 0
       ? "text-warning-100"
@@ -165,9 +160,14 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
               삭제하기
             </TextButton>
           </Link>
-          <TextButton variant="primary" additionalClass="w-40 h-14">
-            자세히 보기
-          </TextButton>
+          <Link
+            href={`/${locale}/report/${symbolCode.toLowerCase()}`}
+            scroll={false}
+          >
+            <TextButton variant="primary" additionalClass="w-40 h-14">
+              자세히 보기
+            </TextButton>
+          </Link>
         </div>
       </li>
     </>
