@@ -56,7 +56,7 @@ export default function TrendingSearch() {
         <h4 className="mb-4 text-navy-900 text-lg font-medium">인기 검색어</h4>
         <div className="p-6 border border-navy-100 rounded-2xl flex gap-6">
           <ul className="w-full flex flex-col gap-4">
-            {trendingSearchList ? (
+            {trendingSearchList?.length === 5 ? (
               trendingSearchList.map((item, index) => (
                 <TrendingSearchItem
                   key={item.symbolCode}
