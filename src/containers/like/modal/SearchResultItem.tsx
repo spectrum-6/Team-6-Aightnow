@@ -106,7 +106,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
     <>
       <li className="py-2">
         <Link
-          href={`/${locale}/report/${symbolCode.toLowerCase()}`}
+          href={`/${locale}/report/${symbolCode}`}
           className="w-full h-12 block"
         >
           <div className="flex items-center justify-between">

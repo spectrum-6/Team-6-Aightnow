@@ -160,10 +160,7 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
               삭제하기
             </TextButton>
           </Link>
-          <Link
-            href={`/${locale}/report/${symbolCode.toLowerCase()}`}
-            scroll={false}
-          >
+          <Link href={`/${locale}/report/${symbolCode}`} scroll={false}>
             <TextButton variant="primary" additionalClass="w-40 h-14">
               자세히 보기
             </TextButton>

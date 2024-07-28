@@ -46,7 +46,7 @@ export default function TrendingSearchItem(props: TTrendingSearchItemProps) {
     <>
       <li className="h-12 py-2">
         <Link
-          href={`/${locale}/report/${symbolCode.toLowerCase()}`}
+          href={`/${locale}/report/${symbolCode}`}
           className="w-full h-full block"
         >
           <div className="flex items-center justify-between">
