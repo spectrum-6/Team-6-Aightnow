@@ -15,8 +15,14 @@ export default function MainNewsItem(props: TMainNewsItemProps) {
     <div className="flex border border-primary-100 rounded-lg">
       <Link href={`/news/newsDetail/${id}`} className="p-12">
         <div className="flex gap-5">
-          <div className="w-[338px] h-[240px] text-center bg-purple-100 rounded-3xl overflow-hidden">
-            <Image src={image} alt="뉴스 이미지" />
+          <div className="w-[338px] h-[240px] text-center bg-purple-100 rounded-3xl overflow-hidden relative">
+            <Image
+              src={image}
+              alt="뉴스 이미지"
+              fill
+              style={{ objectFit: "cover" }}
+              sizes="100%"
+            />
           </div>
           <div className="flex flex-col w-[667px] h-[240px] item">
             <span className="text-2xl font-medium mb-6">{title}</span>

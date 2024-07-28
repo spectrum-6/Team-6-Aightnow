@@ -83,7 +83,7 @@ export default function UserAIReport() {
   }, [favoriteStock]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="w-[1200px] flex flex-col gap-5">
       <div className="flex gap-4">
         <h4 className="font-bold text-navy-900 leading-9">
           {userInfo?.nickname}님의 AI 리포트
@@ -91,7 +91,7 @@ export default function UserAIReport() {
         <Badge variant="navy" icon={<IconAi />} />
       </div>
       <div className="flex gap-5">
-        {promptResults.length > 0
+        {promptResults.length > 0 && favoriteStock.length > 0
           ? promptResults.map((item, index) => {
               return (
                 <Card
