@@ -91,20 +91,20 @@ export default function UserAIReport() {
         <Badge variant="navy" icon={<IconAi />} />
       </div>
       <div className="flex gap-5">
-        {promptResults.length > 0 && favoriteStock.length > 0
+        {promptResults.length > 0
           ? promptResults.map((item, index) => {
               return (
                 <Card
                   key={index}
                   item={item}
-                  reutersCode={favoriteStock[index].reutersCode}
-                  stockName={favoriteStock[index].stockName}
-                  symbolCode={favoriteStock[index].symbolCode}
-                  closePrice={favoriteStock[index].closePrice}
+                  reutersCode={favoriteStock[index]?.reutersCode}
+                  stockName={favoriteStock[index]?.stockName}
+                  symbolCode={favoriteStock[index]?.symbolCode}
+                  closePrice={favoriteStock[index]?.closePrice}
                   compareToPreviousClosePrice={
-                    favoriteStock[index].compareToPreviousClosePrice
+                    favoriteStock[index]?.compareToPreviousClosePrice
                   }
-                  fluctuationsRatio={favoriteStock[index].fluctuationsRatio}
+                  fluctuationsRatio={favoriteStock[index]?.fluctuationsRatio}
                 />
               );
             })
