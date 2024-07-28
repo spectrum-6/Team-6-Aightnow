@@ -91,7 +91,7 @@ export default function UserAIReport() {
         <Badge variant="navy" icon={<IconAi />} />
       </div>
       <div className="flex gap-5">
-        {promptResults.length > 0
+        {promptResults.length > 0 && favoriteStock.length > 0
           ? promptResults.map((item, index) => {
               return (
                 <Card
