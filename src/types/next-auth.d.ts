@@ -11,10 +11,12 @@ declare module "next-auth" {
     };
     provider?: string;
     firebaseToken?: string;
+    accessToken?: string;
   }
 
   interface User {
     firebaseToken?: string;
+    accessToken?: string;
   }
 }
 
