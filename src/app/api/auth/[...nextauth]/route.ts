@@ -113,6 +113,10 @@ const authOptions: NextAuthOptions = {
           const customToken = await adminAuth.createCustomToken(user.id);
           (user as User & { firebaseToken?: string }).firebaseToken =
             customToken;
+
+          // accessToken 추가
+          (user as User & { accessToken?: string }).accessToken =
+            account.access_token;
         } catch (error) {
           console.error("Firebase 사용자 생성/업데이트 중 오류 발생:", error);
           return false;
@@ -120,11 +124,20 @@ const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // accessToken 추가
+      if (account) {
+        token.accessToken = account.access_token as string;
+      }
+
       if (user) {
         token.firebaseToken = (
           user as User & { firebaseToken?: string }
         ).firebaseToken;
+
+        token.accessToken = (
+          user as User & { accessToken?: string }
+        ).accessToken;
       }
       return token;
     },
@@ -132,6 +145,8 @@ const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.sub!;
         session.firebaseToken = token.firebaseToken;
+        session.accessToken = token.accessToken as string;
+
         // Firestore에서 추가 사용자 정보 가져오기
         const userRef = doc(firestore, "users", token.sub!);
         const userSnapshot = await getDoc(userRef);

@@ -3,8 +3,32 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
-  const isSocialProvider =
-    userInfo.socialProvider !== "firebase" ? true : false;
+  const socialProvider = userInfo.socialProvider;
+
+  const socialInfo = () => {
+    if (socialProvider === "firebase") return false;
+
+    return (
+      <>
+        <Image
+          src={`/images/btn_${socialProvider}.png`}
+          alt={`socialProvider image`}
+          width={24}
+          height={24}
+        />
+        <span className="text-[16px] font-medium text-[#575757] ml-4">
+          {socialProvider === "kakao"
+            ? "카카오"
+            : socialProvider === "google"
+            ? "구글"
+            : socialProvider === "naver"
+            ? "네이버"
+            : ""}{" "}
+          로그인
+        </span>
+      </>
+    );
+  };
 
   return (
     <div>
@@ -63,7 +87,7 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               {/* 소셜연동 가입 사용자가 아닐 경우에만 계정 정보 수정 버튼 노출 */}
-              {!isSocialProvider && (
+              {socialProvider === "firebase" ? (
                 <Link
                   scroll={false}
                   href="/settings/account/edit/verifyPassword"
@@ -71,29 +95,23 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
                 >
                   계정정보 수정
                 </Link>
+              ) : (
+                <></>
               )}
             </div>
           </section>
 
           {/* 소셜연동 여부에 따라 처리 */}
-          {isSocialProvider ? (
+          {socialProvider !== "firebase" ? (
             <>
               <div>
                 <div className="flex mb-2 items-center">
                   <p className="w-[144px] text-[18px] font-medium text-[#121212]">
                     계정 정보
                   </p>
-                  <Image
-                    src="/images/btn_kakao.png"
-                    alt="소셜로그인 카카오 버튼"
-                    width={24}
-                    height={24}
-                  />
-                  <span className="text-[16px] font-medium text-[#575757] ml-4">
-                    카카오톡 로그인
-                  </span>
+                  {socialInfo()}
                   <Link
-                    href="/settings/account/delete/deleteaccount"
+                    href="/settings/account/delete/deletesocialaccount"
                     className="text-warning-100 text-sm underline ml-auto"
                   >
                     연동 해제
