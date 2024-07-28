@@ -29,15 +29,6 @@ type TRadarChartProps = {
 export default function RadarChart(props: TRadarChartProps) {
   const { width, height, labels, promptResult } = props;
 
-  // const stockPrice = promptResult.indicators.stockPrice.currentValue / 10;
-  // const investmentIndex =
-  //   promptResult.indicators.investmentIndex.currentValue / 10;
-  // const profitability =
-  //   promptResult.indicators.profitability.currentValue / 10;
-  // const growthPotential =
-  //   promptResult.indicators.growthPotential.currentValue / 10;
-  // const interestLevel =
-  //   promptResult.indicators.interestLevel.currentValue / 10;
   const stockPrice = promptResult?.indicators.stockPrice.currentValue / 10;
   const investmentIndex =
     promptResult?.indicators.investmentIndex.currentValue / 10;
@@ -88,13 +79,6 @@ export default function RadarChart(props: TRadarChartProps) {
     datasets: [
       {
         label: "AI 리포트",
-        // data: [
-        //   stockPrice,
-        //   investmentIndex,
-        //   profitability,
-        //   growthPotential,
-        //   interestLevel,
-        // ],
         data: promptResult
           ? [
               stockPrice,
@@ -103,7 +87,7 @@ export default function RadarChart(props: TRadarChartProps) {
               growthPotential,
               interestLevel,
             ]
-          : [8, 9, 5, 7.5, 5],
+          : [0, 0, 0, 0, 0],
         backgroundColor: "rgba(178, 230, 250, 0.3)",
         borderColor: "rgba(0, 172, 242, 1)",
         borderWidth: 1,
