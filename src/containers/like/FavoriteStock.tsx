@@ -4,7 +4,21 @@ import FavoriteStockItem from "./FavoriteStockItem";
 import { TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
 import useUserStore from "@/stores/useUserStore";
+import promptGenerator from "@/libs/prompts/promptGenerator";
 
+type TStocks = {
+  [key: string]: string; // index signature
+};
+
+const stocks: TStocks = {
+  AAPL: "aapl",
+  TSLA: "tsla",
+  AMZN: "amzn",
+  MSFT: "msft",
+  GOOGL: "googl",
+  U: "u",
+  NVDA: "nvda",
+};
 // DB에 저장된 stock 조회
 const getStockData = async (symbolCode: string) => {
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -39,18 +53,48 @@ export default function FavoriteStock() {
     }
   }, [watchList]);
 
+  // 프롬프트 데이터 가져오기
+  const [promptResults, setPromptResults] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (
+        favoriteStock.length > 0 &&
+        favoriteStock.length === watchList?.length
+      ) {
+        const promises = favoriteStock.map(async (item) => {
+          const promptResult = await promptGenerator(
+            stocks[item.symbolCode],
+            item.symbolCode,
+          );
+          console.log("promptResult", promptResult);
+          return promptResult;
+        });
+
+        const resolvedResults: any = await Promise.all(promises);
+        setPromptResults(resolvedResults);
+      }
+    };
+
+    fetchData();
+  }, [favoriteStock]);
+
   return (
     <>
       <ul className="flex gap-[19px] flex-wrap">
         {favoriteStock &&
-          favoriteStock.map((item, index) => (
+          promptResults &&
+          promptResults.map((item, index) => (
             <FavoriteStockItem
               key={index}
-              stockName={item.stockName}
-              symbolCode={item.symbolCode}
-              closePrice={item.closePrice}
-              compareToPreviousClosePrice={item.compareToPreviousClosePrice}
-              fluctuationsRatio={item.fluctuationsRatio}
+              item={item}
+              stockName={favoriteStock[index].stockName}
+              symbolCode={favoriteStock[index].symbolCode}
+              closePrice={favoriteStock[index].closePrice}
+              compareToPreviousClosePrice={
+                favoriteStock[index].compareToPreviousClosePrice
+              }
+              fluctuationsRatio={favoriteStock[index].fluctuationsRatio}
             />
           ))}
       </ul>

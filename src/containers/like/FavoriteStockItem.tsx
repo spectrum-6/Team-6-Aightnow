@@ -10,6 +10,7 @@ import StockIcon from "@/components/StockIcon/StockIcon";
 import Link from "next/link";
 
 type TFavoriteStockItemProps = {
+  item?: any;
   stockName: string;
   symbolCode: string;
   closePrice: string;
@@ -19,6 +20,7 @@ type TFavoriteStockItemProps = {
 
 export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const {
+    item,
     stockName,
     symbolCode,
     closePrice,
@@ -29,6 +31,18 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
   const { t } = useTranslation(locale, "stock");
   const { setSymbolCode } = useDeleteWatchList();
+
+  console.log("item : ", item);
+  // percentage
+  const investmentIndex = item?.indicators.investmentIndex.changePercentage;
+  const profitability = item?.indicators.profitability.changePercentage;
+  const growthPotential = item?.indicators.growthPotential.changePercentage;
+  const interestLevel = item?.indicators.interestLevel.changePercentage;
+
+  console.log(investmentIndex);
+  console.log(profitability);
+  console.log(growthPotential);
+  console.log(interestLevel);
 
   const changeClassName = (price: number) =>
     price > 0
@@ -46,6 +60,13 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
 
   const formatRatio = (ratio: string) =>
     Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
+
+  const formatCompareScore = (compareScore: number) =>
+    compareScore > 0
+      ? `▲${compareScore}`
+      : compareScore < 0
+      ? `▼${compareScore.toString().replace("-", "")}`
+      : `${compareScore}`;
 
   return (
     <>
@@ -81,23 +102,53 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
           <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
             <li className="flex justify-between">
               주가
-              <span className="text-blue-600">▲0.0%</span>
+              <span
+                className={`${changeClassName(
+                  Number(fluctuationsRatio),
+                )} text-sm font-medium`}
+              >
+                {formatCompareScore(Number(fluctuationsRatio))}%
+              </span>
             </li>
             <li className="flex justify-between">
               투자지수
-              <span className="text-warning-100">▲0.0%</span>
+              <span
+                className={`${changeClassName(
+                  Number(investmentIndex),
+                )} text-sm font-medium`}
+              >
+                {formatCompareScore(Number(investmentIndex))}%
+              </span>
             </li>
             <li className="flex justify-between">
               수익성
-              <span className="text-warning-100">▲0.0%</span>
+              <span
+                className={`${changeClassName(
+                  Number(profitability),
+                )} text-sm font-medium`}
+              >
+                {formatCompareScore(Number(profitability))}%
+              </span>
             </li>
             <li className="flex justify-between">
               성장성
-              <span className="text-warning-100">▲0.0%</span>
+              <span
+                className={`${changeClassName(
+                  Number(growthPotential),
+                )} text-sm font-medium`}
+              >
+                {formatCompareScore(Number(growthPotential))}%
+              </span>
             </li>
             <li className="flex justify-between">
               관심도
-              <span className="text-warning-100">▲0.0%</span>
+              <span
+                className={`${changeClassName(
+                  Number(interestLevel),
+                )} text-sm font-medium`}
+              >
+                {formatCompareScore(Number(interestLevel))}%
+              </span>
             </li>
           </ul>
         </div>
