@@ -22,22 +22,22 @@ type TRealtimeInfo = {
 };
 
 type TInterestListProps = {
-  item: string;
+  interestStock: string;
 };
 
 export default function InterestList(props: TInterestListProps) {
-  const { item } = props;
+  const { interestStock } = props;
 
   const [realtimeInfo, setRealtimeInfo] = useState<TRealtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
-    const realtimeInfo = await getRealtimeInfo(item.toLowerCase());
+    const realtimeInfo = await getRealtimeInfo(interestStock);
     setRealtimeInfo(realtimeInfo);
   };
 
   useEffect(() => {
     fetchRealtimeData();
-  }, [item]);
+  }, [interestStock]);
 
   const getStockLogo = (reutersCode?: string) => {
     switch (reutersCode) {
@@ -78,7 +78,7 @@ export default function InterestList(props: TInterestListProps) {
   return (
     <li className="h-20 shrink-0">
       <Link
-        href="#"
+        href={`/report/${interestStock}`}
         className="flex justify-between items-center w-full h-full"
       >
         <div className="flex gap-4">

@@ -60,7 +60,11 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
   };
 
   // 버튼 클릭
-  const toggleFavoriteStock = async () => {
+  const toggleFavoriteStock = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    e.preventDefault();
+
     if (watchList) {
       // 관심종목인 경우 삭제
       if (isFavoriteStock) {
@@ -101,7 +105,10 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
   return (
     <>
       <li className="py-2">
-        <Link href="#" className="w-full h-12 block">
+        <Link
+          href={`/${locale}/report/${symbolCode}`}
+          className="w-full h-12 block"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <p>
@@ -135,7 +142,7 @@ export default function SearchResultItem(props: TSearchResultItemProps) {
               <TextButton
                 variant={isFavoriteStock ? "grayscale" : "primary"}
                 additionalClass="w-[120px] h-9 text-sm font-medium"
-                onClick={toggleFavoriteStock}
+                onClick={(e) => toggleFavoriteStock(e)}
               >
                 {isFavoriteStock ? "삭제하기" : "추가"}
               </TextButton>

@@ -5,19 +5,19 @@ type TCodes = {
 };
 
 const codes: TCodes = {
-  aapl: "AAPL.O",
-  tsla: "TSLA.O",
-  amzn: "AMZN.O",
-  msft: "MSFT.O",
-  googl: "GOOGL.O",
-  u: "U",
-  nvda: "NVDA.O",
+  AAPL: "AAPL.O",
+  TSLA: "TSLA.O",
+  AMZN: "AMZN.O",
+  MSFT: "MSFT.O",
+  GOOGL: "GOOGL.O",
+  U: "U",
+  NVDA: "NVDA.O",
 };
 
 // 주식 코드 검증 함수
 function getValidStockCode(code: string): string {
-  const upperCode = code.toUpperCase();
-  const stockCode = codes[upperCode] || codes[code];
+  const lowerCode = code.toLowerCase();
+  const stockCode = codes[code] || codes[lowerCode];
 
   if (!stockCode) {
     throw new Error(`Invalid stock code: ${code}`);
