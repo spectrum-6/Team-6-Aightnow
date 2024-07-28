@@ -92,7 +92,7 @@ export default function RecentViewsList(props: TRecentViewsListProps) {
   return (
     <li className="h-20 shrink-0">
       <Link
-        href="#"
+        href={`/report/${recentViewStock}`}
         className="flex justify-between items-center w-full h-full"
       >
         <div className="flex gap-4">
