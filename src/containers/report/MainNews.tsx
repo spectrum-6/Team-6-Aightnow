@@ -30,7 +30,7 @@ export default function MainNews(props: TMainNewsProps) {
               <p className="text-sm font-medium text-grayscale-200 line-clamp-2 mb-[14px]">
                 {content}
               </p>
-              <p className="text-sm font-medium text-grayscale-200">
+              <p className="text-sm font-medium text-grayscale-300">
                 {date}
                 <span className="before:content-['_•_']">{company}</span>
               </p>
