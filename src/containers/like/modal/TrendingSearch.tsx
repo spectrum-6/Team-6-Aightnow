@@ -17,8 +17,10 @@ const getStockData = async (symbolCode: string) => {
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
+    const response = await fetch(
+      `${BASE_URL}/api/scheduleStock/${symbolCode}`,
+      { cache: "no-store" },
+    );
     return await response.json();
   } catch (e) {
     console.log("error : ", e);

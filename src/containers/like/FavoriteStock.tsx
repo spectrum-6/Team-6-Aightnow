@@ -67,7 +67,6 @@ export default function FavoriteStock() {
             stocks[item.symbolCode],
             item.symbolCode,
           );
-          console.log("promptResult", promptResult);
           return promptResult;
         });
 
@@ -87,7 +86,7 @@ export default function FavoriteStock() {
           favoriteStock.map((item, index) => (
             <FavoriteStockItem
               key={index}
-              item={promptResults[index]}
+              promptResult={promptResults[index]}
               stockName={item.stockName}
               symbolCode={item.symbolCode}
               closePrice={item.closePrice}
