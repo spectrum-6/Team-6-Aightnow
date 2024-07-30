@@ -8,7 +8,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // 인기검색어 DB 조회
 const getTrendingSearchList = async (): Promise<TSearchCountType[]> => {
-  const res = await (await fetch(`${baseUrl}/api/trendingSearch`)).json();
+  const res = await (await fetch(`${baseUrl}/api/searchCount`)).json();
   return res;
 };
 
@@ -17,8 +17,10 @@ const getStockData = async (symbolCode: string) => {
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
+    const response = await fetch(
+      `${BASE_URL}/api/scheduleStock/${symbolCode}`,
+      { cache: "no-store" },
+    );
     return await response.json();
   } catch (e) {
     console.log("error : ", e);

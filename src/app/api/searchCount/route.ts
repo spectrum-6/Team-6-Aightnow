@@ -1,10 +1,13 @@
 import { firestore } from "@/firebase/firebasedb";
 import {
   collection,
+  doc,
   getDocs,
+  increment,
   limit,
   orderBy,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -24,4 +27,17 @@ export async function GET(request: Request) {
   const data = querySnap.docs.map((doc) => doc.data());
 
   return Response.json(data);
+}
+
+// 인기검색어
+// searchCount / requst document 명으로 count 수를 +1
+export async function POST(request: Request) {
+  const { symbolCode } = await request.json();
+
+  const docRef = doc(firestore, "searchCount", symbolCode);
+  await updateDoc(docRef, {
+    count: increment(1),
+  });
+
+  return Response.json({ result: "success" });
 }

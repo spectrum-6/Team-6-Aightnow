@@ -10,7 +10,7 @@ import StockIcon from "@/components/StockIcon/StockIcon";
 import Link from "next/link";
 
 type TFavoriteStockItemProps = {
-  item?: any;
+  promptResult: any;
   stockName: string;
   symbolCode: string;
   closePrice: string;
@@ -20,7 +20,7 @@ type TFavoriteStockItemProps = {
 
 export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const {
-    item,
+    promptResult,
     stockName,
     symbolCode,
     closePrice,
@@ -32,12 +32,13 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
   const { t } = useTranslation(locale, "stock");
   const { setSymbolCode } = useDeleteWatchList();
 
-  console.log("item : ", item);
   // percentage
-  const investmentIndex = item?.indicators.investmentIndex.changePercentage;
-  const profitability = item?.indicators.profitability.changePercentage;
-  const growthPotential = item?.indicators.growthPotential.changePercentage;
-  const interestLevel = item?.indicators.interestLevel.changePercentage;
+  const investmentIndex =
+    promptResult?.indicators.investmentIndex.changePercentage;
+  const profitability = promptResult?.indicators.profitability.changePercentage;
+  const growthPotential =
+    promptResult?.indicators.growthPotential.changePercentage;
+  const interestLevel = promptResult?.indicators.interestLevel.changePercentage;
 
   const changeClassName = (price: number) =>
     price > 0
@@ -93,7 +94,7 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
         </div>
         {/* Chart */}
         <div className="mt-4 flex items-center gap-6">
-          <RaderChart width={136} height={136} />
+          <RaderChart width={136} height={136} promptResult={promptResult} />
           <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
             <li className="flex justify-between">
               주가
