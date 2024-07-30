@@ -1,4 +1,4 @@
-import AddRecentView from "@/containers/report/AddRecentView";
+import ClientComponent from "@/containers/report/ClientComponent";
 import ReportContainer from "@/containers/report/ReportContainer";
 import promptGenerator from "@/libs/prompts/promptGenerator";
 import {
@@ -50,8 +50,8 @@ export default async function Page({ params }: TParams) {
 
   return (
     <>
-      {/* recent view 추가를 위한 client component */}
-      <AddRecentView symbolCode={id} />
+      {/* recent view 추가 / Serch count 를 위한 client component : return 객체 없음 */}
+      <ClientComponent symbolCode={id} />
       <ReportContainer
         reutersCode={reutersCode}
         stockName={stockName}

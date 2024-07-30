@@ -5,7 +5,11 @@ import useUserStore from "@/stores/useUserStore";
 import { UserInfo } from "@/types/UserInfo";
 import { useEffect } from "react";
 
-export default function AddRecentView({ symbolCode }: { symbolCode: string }) {
+export default function ClientComponent({
+  symbolCode,
+}: {
+  symbolCode: string;
+}) {
   const { userInfo, setUserInfo } = useUserStore();
 
   const updateRecentViews = async (uid: string, recentViews: string[]) => {
