@@ -18,6 +18,21 @@ type TParams = {
   };
 };
 
+// 인기검색어 DB count +1
+const IncrementSearchCount = async (symbolCode: string) => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/searchCount`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ symbolCode }),
+    cache: "no-store",
+  });
+
+  return await res.json();
+};
+
 export default async function Page({ params }: TParams) {
   const { id } = params;
 
@@ -48,9 +63,12 @@ export default async function Page({ params }: TParams) {
   const promptResult = await promptGenerator(id, symbolCode);
   console.log("🍋", promptResult);
 
+  // 인기검색어 DB Count+1
+  const searchCount = await IncrementSearchCount(id);
+
   return (
     <>
-      {/* recent view 추가 / Serch count 를 위한 client component : return 객체 없음 */}
+      {/* recent view 추가를 위한 client component : return 객체 없음 */}
       <ClientComponent symbolCode={id} />
       <ReportContainer
         reutersCode={reutersCode}

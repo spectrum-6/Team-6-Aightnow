@@ -8,7 +8,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // 인기검색어 DB 조회
 const getTrendingSearchList = async (): Promise<TSearchCountType[]> => {
-  const res = await (await fetch(`${baseUrl}/api/trendingSearch`)).json();
+  const res = await (await fetch(`${baseUrl}/api/searchCount`)).json();
   return res;
 };
 

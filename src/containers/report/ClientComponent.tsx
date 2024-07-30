@@ -12,6 +12,7 @@ export default function ClientComponent({
 }) {
   const { userInfo, setUserInfo } = useUserStore();
 
+  // user / recentViews 업데이트 함수
   const updateRecentViews = async (uid: string, recentViews: string[]) => {
     if (!userInfo || !userInfo.userStockCollection) return;
     const updatedUserInfo: Partial<UserInfo> = {
