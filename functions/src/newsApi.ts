@@ -7,6 +7,28 @@ const runtimeOpts = {
   timeoutSeconds: 540,
 };
 
+// 별도의 함수로 분리
+export const fetchNewsData = async () => {
+  console.log("Scheduled function triggered");
+  const data = await getNewsData();
+  console.log("Fetched News Data: ", data);
+
+  try {
+    for (const newsItem of data) {
+      await db
+        .collection("scheduleNewsData")
+        .doc(newsItem.id)
+        .set({
+          ...newsItem,
+          date: Timestamp.fromDate(newsItem.date),
+        });
+      console.log(`Saved NewsItem: ${newsItem.id}`);
+    }
+  } catch (error) {
+    console.error("Error saving data: ", error);
+  }
+};
+
 // schedule function - 데이터 DB 저장
 export const fetchNewsDataSchedule = functions
   .runWith(runtimeOpts)
@@ -14,22 +36,7 @@ export const fetchNewsDataSchedule = functions
   .timeZone("Asia/Seoul")
   .onRun(async (context) => {
     // 뉴스 데이터 fetch
-    const data = await getNewsData();
-
-    try {
-      for (const newsItem of data) {
-        // DB 저장
-        await db
-          .collection("scheduleNewsData")
-          .doc(newsItem.id)
-          .set({
-            ...newsItem,
-            date: Timestamp.fromDate(newsItem.date),
-          });
-      }
-    } catch (error) {
-      console.error("Error : ", error);
-    }
+    await getNewsData();
   });
 
 const MAX_PAGES = 2;

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { forwardRef } from "react";
 
 type TLatestNewsItemProps = {
   id: string;
@@ -10,7 +10,7 @@ type TLatestNewsItemProps = {
   image: string;
 };
 
-const LatestNewsItem = React.forwardRef<HTMLLIElement, TLatestNewsItemProps>(
+const LatestNewsItem = forwardRef<HTMLLIElement, TLatestNewsItemProps>(
   ({ id, title, date, company, content, image }, ref) => {
     const now = new Date();
     const newsDate = new Date(date);
@@ -65,5 +65,5 @@ const LatestNewsItem = React.forwardRef<HTMLLIElement, TLatestNewsItemProps>(
   },
 );
 
-LatestNewsItem.displayName = "LatestNewsItem";
+// LatestNewsItem.displayName = "LatestNewsItem";
 export default LatestNewsItem;

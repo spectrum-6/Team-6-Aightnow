@@ -10,15 +10,6 @@ import useUserStore from "@/stores/useUserStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/firebasedb";
 
-// const suggestions = [
-//   "애플",
-//   "아마존",
-//   "구글",
-//   "마이크로소프트",
-//   "엔비디아",
-//   "테슬라",
-//   "유니티",
-// ]; // 추천 검색어 목록
 const suggestions = [
   "애플",
   "apple",
@@ -48,7 +39,6 @@ export default function Search() {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]); // 필터링된 추천 검색어 목록
   const router = useRouter();
   const { user } = useUserStore(); // 유저 정보 가져오기
-  console.log("!!!!!!!!!!!!", user);
   const { recentSearch, setRecentSearch } = useRecentSearchStore(); // 최근 검색어 스토어에서 상태 가져오기
 
   useEffect(() => {

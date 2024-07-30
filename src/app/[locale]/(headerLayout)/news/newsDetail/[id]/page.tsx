@@ -25,7 +25,7 @@ type TNewsData = {
   company: string;
   date: string;
   viewCount: number;
-  content: string[];
+  content: string;
   image: string;
   stock: string[];
 };
@@ -50,11 +50,10 @@ export default function NewsDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        const docRef = doc(firestore, "new3", id as string);
+        const docRef = doc(firestore, "scheduleNewsData", id as string);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetchedData = docSnap.data() as DocumentData;
-          console.log("stock배열 들고와??", fetchedData.stock);
           const formattedData: TNewsData = {
             title: fetchedData.title,
             company: fetchedData.company,
@@ -62,7 +61,7 @@ export default function NewsDetailPage() {
             viewCount: fetchedData.viewCount,
             content: fetchedData.content,
             image: fetchedData.image,
-            stock: fetchedData.stock,
+            stock: fetchedData.stockName,
           };
           setData(formattedData);
 
