@@ -82,15 +82,21 @@ export default function RecentSrc() {
           전체삭제
         </span>
       </div>
-      <div className="flex flex-col bg-white p-6 rounded-xl">
-        {recentSearches.slice(0, 10).map((search) => (
-          <RcSrcList
-            key={search.term}
-            search={search}
-            onDelete={() => handleDelete(search.term, search.date)}
-            onSearchClick={handleSearchClick}
-          />
-        ))}
+      <div className="flex flex-col bg-white p-6 rounded-xl w-[590px]">
+        {recentSearches.length > 0 ? (
+          recentSearches
+            .slice(0, 10)
+            .map((search) => (
+              <RcSrcList
+                key={search.term}
+                search={search}
+                onDelete={() => handleDelete(search.term, search.date)}
+                onSearchClick={handleSearchClick}
+              />
+            ))
+        ) : (
+          <div className="text-grayscale-600">최근 검색어가 없습니다.</div>
+        )}
       </div>
     </div>
   );

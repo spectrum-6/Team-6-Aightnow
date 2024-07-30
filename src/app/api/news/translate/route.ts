@@ -1,51 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
+  const { text, targetLang } = await req.json();
+  const apiKey = process.env.NEXT_PUBLIC_DEEPL_API_KEY;
+
+  if (!apiKey) {
+    return NextResponse.json({ error: 'DeepL API key is not defined' }, { status: 500 });
+  }
+
   try {
-    const { text, targetLanguage } = await req.json();
-
-    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
-
-    const response = await fetch(
-      "https://api.openai.com/v1/engines/davinci-codex/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          prompt: `Translate the following text to ${targetLanguage} using economic terms and concepts: ${text}`,
-          max_tokens: 100,
-        }),
+    const response = await fetch("https://api-free.deepl.com/v2/translate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": `DeepL-Auth-Key ${apiKey}`,
       },
-    );
+      body: new URLSearchParams({
+        text,
+        target_lang: targetLang,
+      }).toString(),
+    });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json(
-        { error: `Failed to translate text: ${errorText}` },
-        { status: response.status },
-      );
+      return NextResponse.json({ error: 'DeepL API request failed' }, { status: response.status });
     }
 
     const data = await response.json();
-    const translatedText = data.choices[0].text.trim();
-
-    return NextResponse.json({ translatedText });
+    return NextResponse.json({ translation: data.translations[0].text });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    return NextResponse.json(
-      { error: `An error occurred: ${errorMessage}` },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'An error occurred while translating' }, { status: 500 });
   }
-}
-
-export async function GET() {
-  return NextResponse.json(
-    { message: "This endpoint only supports POST requests." },
-    { status: 405 },
-  );
 }

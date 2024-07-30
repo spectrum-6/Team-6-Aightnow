@@ -16,18 +16,17 @@ export default function LatestNews() {
     const { news, lastVisible: newLastVisible } = await fetchLatestNews(
       lastVisible,
     );
-    setData((prev) => [...prev, ...news]);
+    // setData((prev) => [...prev, ...news]);
+    setData((prev) => {
+      // 중복된 항목 제거
+      const uniqueNews = [...prev, ...news].filter((item, index, self) =>
+        index === self.findIndex((t) => t.id === item.id)
+      );
+      return uniqueNews;
+    });
     setLastVisible(newLastVisible);
     setLoading(false);
   };
-
-  // useEffect(() => {
-  //   const getLatestNews = async () => {
-  //     const news = await fetchLatestNews();
-  //     setData(news);
-  //   };
-
-  // getLatestNews();
 
   useEffect(() => {
     loadMore();
@@ -48,16 +47,19 @@ export default function LatestNews() {
     [loading],
   );
 
+  // 데이터를 날짜와 시간 순으로 정렬
+  const sortedData = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <>
       <section className="w-[1200px] pt-12 pb-20 mx-auto">
         <h2 className="mb-6 text-navy-900 text-3xl font-bold">최신 뉴스</h2>
         <ul className="p-12 bg-white text-grayscale-900 rounded-2xl">
-          {data.map((item, index) => {
-            if (data.length === index + 1) {
+          {sortedData.map((item, index) => {
+            if (sortedData.length === index + 1) {
               return (
                 <LatestNewsItem
-                  key={index}
+                  key={`${item.id}-${index}`} // 고유한 key로 id와 index 결합
                   id={item.id}
                   title={item.title}
                   date={item.date}
@@ -70,7 +72,7 @@ export default function LatestNews() {
             } else {
               return (
                 <LatestNewsItem
-                  key={item.id}
+                  key={`${item.id}-${index}`} // 고유한 key로 id와 index 결합
                   id={item.id}
                   title={item.title}
                   date={item.date}
