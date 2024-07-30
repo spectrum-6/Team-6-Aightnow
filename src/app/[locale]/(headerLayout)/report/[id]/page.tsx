@@ -1,3 +1,4 @@
+import AddRecentView from "@/containers/report/AddRecentView";
 import ReportContainer from "@/containers/report/ReportContainer";
 import promptGenerator from "@/libs/prompts/promptGenerator";
 import {
@@ -49,6 +50,8 @@ export default async function Page({ params }: TParams) {
 
   return (
     <>
+      {/* recent view 추가를 위한 client component */}
+      <AddRecentView symbolCode={id} />
       <ReportContainer
         reutersCode={reutersCode}
         stockName={stockName}
