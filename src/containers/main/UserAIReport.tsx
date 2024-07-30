@@ -7,6 +7,7 @@ import { TStockType } from "@/types/stockType";
 import { Badge } from "@/components/Badge";
 import Card from "./Card";
 import { IconAi } from "@/icons";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
 type TStocks = {
   [key: string]: string; // index signature
@@ -22,19 +23,6 @@ const stocks: TStocks = {
   NVDA: "nvda",
 };
 
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
-};
-
 export default function UserAIReport() {
   // 세션에 저장된 유저 정보
   const { userInfo } = useUserStore();
@@ -46,7 +34,7 @@ export default function UserAIReport() {
     let list: TStockType[] = [];
     if (watchList) {
       watchList.map(async (symbolCode) => {
-        const result = await getStockData(symbolCode);
+        const result = await getStockDataWithSymbolCode(symbolCode);
 
         if (result) {
           list.push(result);

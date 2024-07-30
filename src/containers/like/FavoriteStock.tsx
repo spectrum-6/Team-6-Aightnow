@@ -5,31 +5,11 @@ import { TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
 import useUserStore from "@/stores/useUserStore";
 import promptGenerator from "@/libs/prompts/promptGenerator";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
+import CardSkeleton from "./CardSkeleton";
 
-type TStocks = {
-  [key: string]: string; // index signature
-};
-
-const stocks: TStocks = {
-  AAPL: "aapl",
-  TSLA: "tsla",
-  AMZN: "amzn",
-  MSFT: "msft",
-  GOOGL: "googl",
-  U: "u",
-  NVDA: "nvda",
-};
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
+type TFavoriteStockType = TStockType & {
+  promptResult: any;
 };
 
 export default function FavoriteStock() {
@@ -37,63 +17,52 @@ export default function FavoriteStock() {
   const { userInfo } = useUserStore();
   const watchList = userInfo?.userStockCollection?.watchList; //symbolCode List
 
-  const [favoriteStock, setFavoriteStock] = useState<TStockType[]>([]);
+  const [favoriteStock, setFavoriteStock] = useState<TFavoriteStockType[]>([]);
 
   useEffect(() => {
-    let list: TStockType[] = [];
-    if (watchList) {
-      watchList.map(async (symbolCode) => {
-        const result = await getStockData(symbolCode);
+    if (!watchList) return;
 
-        if (result) {
-          list.push(result);
-        }
-        setFavoriteStock([...list]);
-      });
-    }
-  }, [watchList]);
+    const fetchStockData = async () => {
+      if (watchList && watchList.length > 0) {
+        const promises = watchList.map(async (symbolCode) => {
+          // await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  // 프롬프트 데이터 가져오기
-  const [promptResults, setPromptResults] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (
-        favoriteStock.length > 0 &&
-        favoriteStock.length === watchList?.length
-      ) {
-        const promises = favoriteStock.map(async (item) => {
+          // 관심종목에 저장된 코드로 주식정보를 가져옴
+          const resultData = await getStockDataWithSymbolCode(symbolCode);
+          // 프롬프트 데이터를 가져옴
           const promptResult = await promptGenerator(
-            stocks[item.symbolCode],
-            item.symbolCode,
+            symbolCode.toLowerCase(),
+            symbolCode,
           );
-          return promptResult;
+
+          const result = { ...resultData, promptResult: promptResult };
+          return result;
         });
 
         const resolvedResults: any = await Promise.all(promises);
-        setPromptResults(resolvedResults);
+        setFavoriteStock(resolvedResults);
       }
     };
 
-    fetchData();
-  }, [favoriteStock]);
+    fetchStockData();
+  }, [watchList]);
 
   return (
     <>
       <ul className="flex gap-[19px] flex-wrap">
-        {favoriteStock &&
-          promptResults &&
-          favoriteStock.map((item, index) => (
-            <FavoriteStockItem
-              key={index}
-              promptResult={promptResults[index]}
-              stockName={item.stockName}
-              symbolCode={item.symbolCode}
-              closePrice={item.closePrice}
-              compareToPreviousClosePrice={item.compareToPreviousClosePrice}
-              fluctuationsRatio={item.fluctuationsRatio}
-            />
-          ))}
+        {favoriteStock.length > 0
+          ? favoriteStock.map((item, index) => (
+              <FavoriteStockItem
+                key={index}
+                promptResult={item.promptResult}
+                stockName={item.stockName}
+                symbolCode={item.symbolCode}
+                closePrice={item.closePrice}
+                compareToPreviousClosePrice={item.compareToPreviousClosePrice}
+                fluctuationsRatio={item.fluctuationsRatio}
+              />
+            ))
+          : watchList?.map((_, index) => <CardSkeleton key={_} />)}
       </ul>
     </>
   );

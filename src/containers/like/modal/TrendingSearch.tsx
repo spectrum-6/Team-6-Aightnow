@@ -3,6 +3,7 @@ import TrendingSearchItem from "./TrendingSearchItem";
 import { TSearchCountType, TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
 import TrendingSkeleton from "./TrendingSkeleton";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -11,22 +12,6 @@ const getTrendingSearchList = async (): Promise<TSearchCountType[]> => {
   const res = await (await fetch(`${baseUrl}/api/searchCount`)).json();
   return res;
 };
-
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(
-      `${BASE_URL}/api/scheduleStock/${symbolCode}`,
-      { cache: "no-store" },
-    );
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
-};
-
 export default function TrendingSearch() {
   const [trendingSearchList, setTrendingSearchList] = useState<TStockType[]>();
 
@@ -39,7 +24,7 @@ export default function TrendingSearch() {
     let list: TStockType[] = [];
 
     data.map(async (item) => {
-      const result = await getStockData(item.symbolCode);
+      const result = await getStockDataWithSymbolCode(item.symbolCode);
 
       if (result) {
         list.push(result);

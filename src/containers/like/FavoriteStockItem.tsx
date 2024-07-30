@@ -93,8 +93,8 @@ export default function FavoriteStockItem(props: TFavoriteStockItemProps) {
           </div>
         </div>
         {/* Chart */}
-        <div className="mt-4 flex items-center gap-6">
-          <RaderChart width={136} height={136} promptResult={promptResult} />
+        <div className="mt-4 flex">
+          <RaderChart width={155} height={155} promptResult={promptResult} />
           <ul className="w-[168px] h-[168px] px-6 py-4 bg-[#F9F9F9] text-grayscale-600 rounded-3xl flex flex-col gap-1">
             <li className="flex justify-between">
               주가
