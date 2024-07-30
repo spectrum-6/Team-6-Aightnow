@@ -21,6 +21,8 @@ export const fetchNewsData = async () => {
         .set({
           ...newsItem,
           date: Timestamp.fromDate(newsItem.date),
+          fullContent: newsItem.fullContent, // fullContent 저장
+          relatedStocks: newsItem.relatedStocks, // relatedStocks 저장
         });
       console.log(`Saved NewsItem: ${newsItem.id}`);
     }
@@ -36,7 +38,7 @@ export const fetchNewsDataSchedule = functions
   .timeZone("Asia/Seoul")
   .onRun(async (context) => {
     // 뉴스 데이터 fetch
-    await getNewsData();
+    await fetchNewsData();
   });
 
 const MAX_PAGES = 2;
@@ -65,17 +67,28 @@ export const getNewsData = async (): Promise<NewsItem[]> => {
           break;
         }
 
-        const newsItems = data.map((item: any) => ({
-          id: item.aid,
-          title: item.tit,
-          link: `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${item.aid}?reutersCode=${name}`,
-          content: item.subcontent,
-          date: stringToDate(item.dt), // 문자열을 Date 객체로 변환
-          company: item.ohnm,
-          image: item.thumbUrl || "",
-          stockName: name,
-          viewCount: 0,
-        }));
+        const newsItems = await Promise.all(
+          data.map(async (item: any) => {
+            const fullContentUrl = `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${item.aid}?reutersCode=${name}`;
+            const { fullContent, relatedStocks } =
+              await fetchFullContentAndStocks(fullContentUrl);
+
+            return {
+              id: item.aid,
+              title: item.tit,
+              // link: `https://api.stock.naver.com/news/worldNews/stock/fnGuide/${item.aid}?reutersCode=${name}`,
+              link: fullContentUrl,
+              content: item.subcontent,
+              date: stringToDate(item.dt), // 문자열을 Date 객체로 변환
+              company: item.ohnm,
+              image: item.thumbUrl || "",
+              stockName: name,
+              viewCount: 0,
+              fullContent: fullContent, // 본문 내용 추가
+              relatedStocks: relatedStocks, // 관련 주식 추가
+            };
+          }),
+        );
 
         allNewsItems.push(...newsItems);
       } catch (error) {
@@ -89,4 +102,25 @@ export const getNewsData = async (): Promise<NewsItem[]> => {
   }
 
   return allNewsItems;
+};
+
+// API를 사용하여 전체 내용과 관련 주식 정보 가져오기
+const fetchFullContentAndStocks = async (url: string) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch content: ${response.statusText}`);
+    }
+    const data = await response.json();
+    
+    const fullContent = data.article.content ? data.article.content : "";
+    const relatedStocks = data.article.relatedItems ? data.article.relatedItems.map((item: any) => item.itemName) : [];
+    
+    console.log("Related Stocks:", relatedStocks); // 콘솔에 relatedStocks 로그
+
+    return { fullContent, relatedStocks };
+  } catch (error) {
+    console.error(`Error fetching full content and related stocks:`, error);
+    return { fullContent: [], relatedStocks: [] };
+  }
 };

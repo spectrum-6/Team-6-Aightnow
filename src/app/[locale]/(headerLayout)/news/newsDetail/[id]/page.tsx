@@ -15,7 +15,6 @@ import Article from "@/containers/news/newsDetail/Article";
 import { firestore } from "@/firebase/firebasedb";
 import {
   fetchRelatedArticles,
-  fetchRelatedStocks,
   TStockData,
   TNewsData as TRelatedNewsData,
 } from "@/services/news/news";
@@ -27,7 +26,9 @@ type TNewsData = {
   viewCount: number;
   content: string;
   image: string;
-  stock: string[];
+  fullContent: string;
+  stockName: string;
+  relatedStocks: string[];
 };
 
 // 날짜 변환
@@ -54,6 +55,8 @@ export default function NewsDetailPage() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetchedData = docSnap.data() as DocumentData;
+          const stockName = fetchedData.stockName;
+
           const formattedData: TNewsData = {
             title: fetchedData.title,
             company: fetchedData.company,
@@ -61,7 +64,9 @@ export default function NewsDetailPage() {
             viewCount: fetchedData.viewCount,
             content: fetchedData.content,
             image: fetchedData.image,
-            stock: fetchedData.stockName,
+            fullContent: fetchedData.fullContent,
+            stockName: fetchedData.stockName,
+            relatedStocks: fetchedData.relatedStocks,
           };
           setData(formattedData);
 
@@ -77,16 +82,27 @@ export default function NewsDetailPage() {
               : prevData,
           );
 
-          // 관련 주식 데이터 가져오기
-          const stocks = await fetchRelatedStocks(fetchedData.stock);
-          console.log("stock 데이터:", stocks);
-          setRelatedStocks(stocks);
+          const stockPromises = fetchedData.relatedStocks.map(async (stockName: string) => {
+            const stockDocRef = doc(firestore, "scheduleStockData", stockName);
+            const stockDocSnap = await getDoc(stockDocRef);
+            if (stockDocSnap.exists()) {
+              return stockDocSnap.data() as TStockData;
+            } else {
+              console.log(`${stockName} 문서를 찾을 수 없습니다`);
+              return null;
+            }
+          });
+
+          const stocks = (await Promise.all(stockPromises)).filter(stock => stock !== null) as TStockData[];
+          console.log("관련 주식 데이터:", stocks);
+          setRelatedStocks(stocks);  
 
           // 관련 기사 데이터 가져오기
-          const articles = await fetchRelatedArticles(fetchedData.stockName);
-          setRelatedArticles(articles);
+          const relatedArticles = await fetchRelatedArticles(fetchedData.relatedStocks, id as string);
+          console.log("관련 기사 데이터:", relatedArticles);
+          setRelatedArticles(relatedArticles);
         } else {
-          console.log("문서가 없어요🤨");
+          console.log("문서를 찾을 수 없습니다");
         }
       }
     };

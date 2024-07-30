@@ -147,7 +147,7 @@ export default function SearchAf() {
           <div className="text-gray-500">검색어를 입력해주세요.</div>
         )}
         {/* 뉴스 */}
-        <News />
+        <News stockCode={mapSearchTermToStock(inputValue)} />
       </main>
       <ChatBotBtn />
     </>
