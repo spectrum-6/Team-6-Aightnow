@@ -62,7 +62,7 @@ export default function InterestCard(props: TInterestCardProps) {
   };
 
   return (
-    <div className="flex border border-primary-100 rounded-lg w-[355px] h-[100px] justify-center items-center ">
+    <div className="flex border border-navy-100 rounded-lg w-[355px] h-[100px] justify-center items-center ">
       <Link
         href={`/news/newsDetail/${id}`}
         className="w-full h-full flex justify-center items-center"

@@ -11,9 +11,7 @@ type TRecentNewsListProps = {
   isLast?: boolean;
 };
 
-const RecentNewsList: React.FC<TRecentNewsListProps> = (
-  props: TRecentNewsListProps,
-) => {
+export default function RecentNewsList(props: TRecentNewsListProps) {
   const { id, title, date, company, content, image, isLast } = props;
 
   const now = new Date();
@@ -40,39 +38,33 @@ const RecentNewsList: React.FC<TRecentNewsListProps> = (
   }
 
   return (
-    <ul
+    <li
       className={`flex flex-col py-[14px] border-b border-grayscale-400 ${
         isLast ? "border-b-0" : ""
       }`}
     >
-      <li>
-        <Link href={`/news/newsDetail/${id}`} className="flex py-8 gap-5">
-          <div className="w-[172px] h-[100px] rounded-2xl overflow-hidden relative">
-            <Image
-              src={image}
-              alt="뉴스 이미지"
-              fill
-              style={{ objectFit: "cover" }}
-              sizes="100%"
-            />
-          </div>
-          <div className="flex flex-col justify-between w-[832px] gap-4">
-            <div className="flex justify-between gap-5">
-              <span className="text-lg font-bold truncate">{title}</span>
-              <div className="flex justify-between shrink-0 gap-2">
-                <span className="text-sm text-grayscale-600">
-                  {displayDate}
-                </span>
-                <span className="text-sm text-grayscale-600">•</span>
-                <span className="text-sm text-grayscale-600">{company}</span>
-              </div>
+      <Link href={`/news/newsDetail/${id}`} className="flex py-8 gap-5">
+        <div className="w-[172px] h-[100px] rounded-2xl overflow-hidden relative">
+          <Image
+            src={image}
+            alt="뉴스 이미지"
+            fill
+            style={{ objectFit: "cover" }}
+            sizes="100%"
+          />
+        </div>
+        <div className="flex flex-col justify-between w-[832px] gap-4">
+          <div className="flex justify-between gap-5">
+            <span className="text-lg font-bold truncate">{title}</span>
+            <div className="flex justify-between shrink-0 gap-2">
+              <span className="text-sm text-grayscale-600">{displayDate}</span>
+              <span className="text-sm text-grayscale-600">•</span>
+              <span className="text-sm text-grayscale-600">{company}</span>
             </div>
-            <p className="text-base text-grayscale-900 truncate-2">{content}</p>
           </div>
-        </Link>
-      </li>
-    </ul>
+          <p className="text-base text-grayscale-900 truncate-2">{content}</p>
+        </div>
+      </Link>
+    </li>
   );
-};
-
-export default RecentNewsList;
+}
