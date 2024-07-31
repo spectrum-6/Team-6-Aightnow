@@ -1,6 +1,14 @@
 import { LocaleTypes } from "./localization/settings";
 import { getStockData } from "./stockData";
 
+interface ApiResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
+
 export async function callTogetherAI(
   messages: { role: string; content: string }[],
   stockSymbol?: string,
@@ -45,17 +53,26 @@ export async function callTogetherAI(
     });
 
     if (!response.ok) {
-      throw new Error("API 응답이 올바르지 않습니다.");
+      const errorText = await response.text();
+      throw new Error(`API 응답 오류: ${response.status} ${response.statusText}\n${errorText}`);
     }
 
-    const data = await response.json();
-    let aiResponse = data.choices[0].message.content;
+    const data: ApiResponse = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error("API 응답 구조가 예상과 다릅니다.");
+    }
 
-    return aiResponse;
+    return data.choices[0].message.content;
   } catch (error) {
     console.error("Together.ai API 호출 중 오류 발생:", error);
+    
+    if (error instanceof TypeError) {
+      console.error("네트워크 오류가 발생했습니다.");
+    }
+    
     return language === "ko"
-      ? "죄송합니다. 응답을 생성하는 중 오류가 발생했습니다."
-      : "Sorry, an error occurred while generating the response.";
+      ? "죄송합니다. 응답을 생성하는 중 오류가 발생했습니다"
+      : "Sorry, an error occurred while generating the response";
   }
 }
