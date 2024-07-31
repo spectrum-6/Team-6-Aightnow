@@ -5,6 +5,9 @@ import IconMs from "@/icons/IconMs";
 import IconNvidia from "@/icons/IconNvidia";
 import IconTesla from "@/icons/IconTsla"; // 여기서 IconTesla 임포트
 import IconUnity from "@/icons/IconUnity";
+import { useParams } from "next/navigation";
+import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
+import Link from "next/link";
 
 type TSrcStockListProps = {
   stockName: string;
@@ -51,7 +54,11 @@ export default function SrcStockList({
   compareToPreviousClosePrice,
   fluctuationsRatio,
 }: TSrcStockListProps) {
+
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+
   return (
+    <Link href={`/${locale}/report/${symbolCode}`}>
     <li className="flex justify-between items-center h-16">
       <div className="flex gap-4">
         {mapStockCodeToIcon(symbolCode)}
@@ -72,5 +79,6 @@ export default function SrcStockList({
         </div>
       </div>
     </li>
+      </Link>
   );
 }
