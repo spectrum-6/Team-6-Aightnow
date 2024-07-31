@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "team-6-aightnow"
-  }
+    "default": "team-6-aightnow",
+    "news": "team-6-aightnow"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

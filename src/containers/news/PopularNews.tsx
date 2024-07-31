@@ -24,9 +24,10 @@ export default function PopularNews() {
     content: "",
     company: "",
     image: "",
-    stock: [],
     stockName: "",
+    relatedStocks: [],
     viewCount: 0,
+    link: ""
   };
 
   const mainNewsData = data[0] || placeholderData;

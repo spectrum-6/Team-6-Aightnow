@@ -1,5 +1,5 @@
 /**
- * 1. users 컬렉션의 interests 배열과 news 컬렉션의 stockName을 비교하여 관련 뉴스를 가져온다.
+ * 1. users 컬렉션의 watchList 배열과 fetchScheduleNewsData컬렉션의 stockName을 비교하여 관련 뉴스를 가져온다.
  */
 "use client";
 import { useEffect, useState } from "react";
@@ -9,31 +9,37 @@ import useUserStore from "@/stores/useUserStore";
 
 export default function FavoriteStockNews() {
   const [data, setData] = useState<TNewsData[]>([]);
-  const [interests, setInterests] = useState<string[]>([]);
+  const [watchList, setWatchList] = useState<string[]>([]);
   const userInfo = useUserStore((state) => state.userInfo);
 
   // 사용자 정보가 로드되었을 때 관심 종목을 설정
   useEffect(() => {
     console.log("현재 시간:", new Date());
     if (userInfo) {
-      // 임시로 관심 종목을 설정 (실제 구현 시에는 userInfo.interests를 사용)
-      setInterests(["AAPL", "TSLA"]);
+      console.log("유저 정보:", userInfo);
+
+      const userWatchList = userInfo?.userStockCollection?.watchList || [];
+      setWatchList(userWatchList);
+
+      // watchList 배열 콘솔 로그
+      console.log("유저 watchList 배열:", userWatchList);
     }
   }, [userInfo]);
 
   // 관심 종목을 기반으로 뉴스를 가져오기
   useEffect(() => {
     // 관심 종목이 설정되어 있을 경우
-    const getFavoriteStockNews = async () => {
-      if (interests.length > 0) {
-        // 관심 종목 관련 뉴스를 가져와서 상태를 업데이트
-        const news = await fetchFavoriteStockNews(interests);
+    const getScheduleNewsData = async () => {
+      if (watchList.length > 0) {
+        // scheduleNewsData 컬렉션에서 관심 종목 관련 뉴스를 가져와서 상태를 업데이트
+        const news = await fetchFavoriteStockNews(watchList);
+
         setData(news);
       }
     };
 
-    getFavoriteStockNews();
-  }, [interests]);
+    getScheduleNewsData();
+  }, [watchList]);
 
   const displayData = data.slice(0, 3);
 
@@ -46,7 +52,7 @@ export default function FavoriteStockNews() {
         <ul className="flex gap-5">
           {displayData.map((item, index) => (
             <FavoriteStockNewsItem
-              key={index}
+              key={item.id}
               id={item.id}
               title={item.title}
               date={item.date}

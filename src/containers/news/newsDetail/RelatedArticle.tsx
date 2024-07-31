@@ -7,8 +7,8 @@ type TRelatedArticleData = {
   company: string;
   content: string;
   image: string;
-  stock: string[];
   stockName: string;
+  relatedStocks: string[];
   viewCount: number;
 };
 
