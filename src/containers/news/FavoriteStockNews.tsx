@@ -1,5 +1,5 @@
 /**
- * 1. users 컬렉션의 recentViews 배열과 fetchScheduleNewsData컬렉션의 stockName을 비교하여 관련 뉴스를 가져온다.
+ * 1. users 컬렉션의 watchList 배열과 fetchScheduleNewsData컬렉션의 stockName을 비교하여 관련 뉴스를 가져온다.
  */
 "use client";
 import { useEffect, useState } from "react";
@@ -9,7 +9,7 @@ import useUserStore from "@/stores/useUserStore";
 
 export default function FavoriteStockNews() {
   const [data, setData] = useState<TNewsData[]>([]);
-  const [recentViews, setRecentViews] = useState<string[]>([]);
+  const [watchList, setWatchList] = useState<string[]>([]);
   const userInfo = useUserStore((state) => state.userInfo);
 
   // 사용자 정보가 로드되었을 때 관심 종목을 설정
@@ -18,13 +18,11 @@ export default function FavoriteStockNews() {
     if (userInfo) {
       console.log("유저 정보:", userInfo);
 
-      // // 임시로 관심 종목을 설정 (실제 구현 시에는 userInfo.recentView를 사용)
-      // setInterests(["AAPL", "TSLA"]);
-      const userRecentViews = userInfo?.userStockCollection?.recentViews || [];
-      setRecentViews(userRecentViews);
+      const userWatchList = userInfo?.userStockCollection?.watchList || [];
+      setWatchList(userWatchList);
 
-      // recentViews 배열 콘솔 로그
-      console.log("유저 recentViews 배열:", userRecentViews);
+      // watchList 배열 콘솔 로그
+      console.log("유저 watchList 배열:", userWatchList);
     }
   }, [userInfo]);
 
@@ -32,19 +30,16 @@ export default function FavoriteStockNews() {
   useEffect(() => {
     // 관심 종목이 설정되어 있을 경우
     const getScheduleNewsData = async () => {
-      if (recentViews.length > 0) {
+      if (watchList.length > 0) {
         // scheduleNewsData 컬렉션에서 관심 종목 관련 뉴스를 가져와서 상태를 업데이트
-        const news = await fetchFavoriteStockNews(recentViews);
-
-        // fetchScheduleNewsData 결과 콘솔 로그
-        // console.log("가져온 뉴스 데이터:", news);
+        const news = await fetchFavoriteStockNews(watchList);
 
         setData(news);
       }
     };
 
     getScheduleNewsData();
-  }, [recentViews]);
+  }, [watchList]);
 
   const displayData = data.slice(0, 3);
 

@@ -25,8 +25,8 @@ export type TNewsData = {
   content: string;
   company: string;
   image: string;
-  stock: string[]; // 관련 주식을 담아온 데이터 필요 
   stockName: string;
+  relatedStocks: string[];
   viewCount: number;
   link: string;
 };
@@ -84,6 +84,7 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
         stockName: data.stockName,
         viewCount: data.viewCount,
         link: data.link,
+        relatedStocks: data.relatedStocks,
       };
     }),
   );
@@ -92,14 +93,14 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
 
 // 관심종목 뉴스를 가져오기
 export const fetchFavoriteStockNews = async (
-  recentViews: string[],
+  watchList: string[],
 ): Promise<TNewsData[]> => {
   // Firestore에서 fetchScheduleNewsData 컬렉션 참조
   const newsRef = collection(firestore, "scheduleNewsData");
   // 쿼리 작성: 주식 이름이 관심 종목에 포함되고, 날짜 내림차순 정렬, 최대 5개 문서
   const q = query(
     newsRef,
-    where("stockName", "in", recentViews),
+    where("stockName", "in", watchList),
     orderBy("date", "desc"),
     limit(5),
   );
@@ -107,7 +108,7 @@ export const fetchFavoriteStockNews = async (
   const querySnapshot = await getDocs(q);
 
   // fetchScheduleNewsData에서 stockName 콘솔 로그
-  console.log("fetchScheduleNewsData 쿼리:", recentViews);
+  console.log("fetchScheduleNewsData 쿼리:", watchList);
 
   const favoriteStockNews = await Promise.all(
     querySnapshot.docs.map(async (doc) => {
@@ -123,6 +124,7 @@ export const fetchFavoriteStockNews = async (
         image: await getRandomImage(),
         stock: data.stock,
         stockName: data.stockName,
+        relatedStocks: data.relatedStocks,
         viewCount: data.viewCount,
         link: data.link,
       };
@@ -167,6 +169,7 @@ export const fetchLatestNews = async (
         image: await getRandomImage(),
         stock: data.stock,
         stockName: data.stockName,
+        relatedStocks: data.relatedStocks,
         viewCount: data.viewCount,
         link: data.link,
       };
@@ -211,31 +214,39 @@ export const fetchRelatedStocks = async (
 
 // 뉴스 디테일 페이지의 관련 기사 가져오기
 export const fetchRelatedArticles = async (
-  stockName: string,
+  stockNames: string[],
+  currentNewsId: string // 해당 ID의 뉴스 제외
 ): Promise<TNewsData[]> => {
   const newsRef = collection(firestore, "scheduleNewsData");
-  const q = query(newsRef, where("stock", "array-contains", stockName));
-  const querySnapshot = await getDocs(q);
+  const relatedArticles: TNewsData[] = [];
+  const articleIds = new Set<string>(); // 뉴스 중복 방지
 
-  const relatedArticles = querySnapshot.docs.map((doc) => {
-    const data = doc.data() as DocumentData;
-    return {
-      id: doc.id,
-      title: data.title,
-      date: data.date.toDate().toISOString(),
-      company: data.company,
-      content: Array.isArray(data.content)
-        ? data.content.join(" ")
-        : data.content,
-      image: data.image,
-      stock: data.stock,
-      stockName: data.stockName,
-      viewCount: data.viewCount,
-      link: data.link,
-    };
-  });
+  for (const stockName of stockNames) {
+    const q = query(newsRef, where("relatedStocks", "array-contains", stockName));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.docs.forEach((doc) => {
+      if (!articleIds.has(doc.id) && doc.id !== currentNewsId) {
+        const data = doc.data() as DocumentData;
+        relatedArticles.push({
+          id: doc.id,
+          title: data.title,
+          date: data.date.toDate().toISOString(),
+          company: data.company,
+          content: Array.isArray(data.content) ? data.content.join(" ") : data.content,
+          image: data.image,
+          stockName: data.stockName,
+          relatedStocks: data.relatedStocks,
+          viewCount: data.viewCount,
+          link: data.link,
+        });
+        articleIds.add(doc.id); // 뉴스 중복 방지
+      }
+    });
+  }
 
   console.log("Related articles data:", relatedArticles);
 
   return relatedArticles;
 };
+

@@ -8,6 +8,8 @@ export type NewsItem = {
   image: string;
   stockName: string;
   viewCount: number;
+  fullContent?: string; // fullContent 속성 추가
+  relatedStocks?: string[]; // relatedStocks 속성 추가
 };
 
 export const stockUrls = [
