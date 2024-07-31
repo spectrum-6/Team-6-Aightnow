@@ -1,3 +1,4 @@
+
 import StockIcon from "@/components/StockIcon/StockIcon";
 
 type TSrcStockListProps = {
