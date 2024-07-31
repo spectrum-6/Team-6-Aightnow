@@ -35,6 +35,9 @@ export default function Header() {
       // Zustand 상태 초기화
       clearUserInfo();
 
+      // 세션 스토리지에서 액세스 토큰 제거
+      sessionStorage.removeItem("accessToken");
+
       // 쿠키 및 로컬 스토리지 정리
       document.cookie.split(";").forEach((c) => {
         document.cookie = c

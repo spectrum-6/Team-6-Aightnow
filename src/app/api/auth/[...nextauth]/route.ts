@@ -59,7 +59,7 @@ const authOptions: NextAuthOptions = {
               firebaseUser.metadata.creationTime || new Date().toISOString(),
             lastLoginAt: new Date().toISOString(),
             transLang: "en",
-            socialProvider: account.provider, // 소셜 로그인 제공자 정보 추가
+            socialProvider: account.provider,
             registrationCompleted: userSnapshot.exists()
               ? userSnapshot.data()?.registrationCompleted || false
               : false,
@@ -127,7 +127,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       // accessToken 추가
       if (account) {
-        token.accessToken = account.access_token as string;
+        token.accessToken = account.access_token;
       }
 
       if (user) {
@@ -144,7 +144,7 @@ const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub!;
-        session.firebaseToken = token.firebaseToken;
+        session.firebaseToken = token.firebaseToken as string;
         session.accessToken = token.accessToken as string;
 
         // Firestore에서 추가 사용자 정보 가져오기
@@ -163,11 +163,9 @@ const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/auth/error",
   },
-  // 세션 설정 추가
   session: {
     strategy: "jwt",
   },
-  // CSRF 토큰 설정 추가
   secret: process.env.NEXTAUTH_SECRET,
 };
 
