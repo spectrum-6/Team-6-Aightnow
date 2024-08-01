@@ -28,9 +28,7 @@ const mapStockCodeToIcon = (symbolCode: string) => {
     TSLA: <IconTesla width={48} height={48} />,
     U: <IconUnity width={48} height={48} />,
   };
-  const icon = mapping[symbolCode];
-  console.log(`Rendering icon for ${symbolCode}:`, icon);
-  return icon;
+  return mapping[symbolCode] || null;
 };
 
 const changeClassName = (price: number) =>
@@ -48,7 +46,6 @@ const formatRatio = (ratio: string) =>
 
 export default function SrcStockList({
   stockName,
-  stockCode,
   symbolCode,
   closePrice,
   compareToPreviousClosePrice,
@@ -64,7 +61,7 @@ export default function SrcStockList({
         {mapStockCodeToIcon(symbolCode)}
         <div className="flex flex-col justify-center">
           <span className="text-sm font-bold grayscale-900">{stockName}</span>
-          <span className="text-sm font-regular grayscale-900">{stockCode}</span>
+          <span className="text-sm font-regular grayscale-900">{symbolCode}</span>
         </div>
       </div>
       <div className="flex flex-col items-center">

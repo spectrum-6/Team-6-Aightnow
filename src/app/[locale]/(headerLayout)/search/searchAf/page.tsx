@@ -1,13 +1,14 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/firebasedb";
 import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 import Input from "@/components/Input";
 import News from "@/containers/search/searchAf/News";
 import Stock from "@/containers/search/searchAf/Stock";
+import useUserStore from "@/stores/useUserStore";
 
 // 검색어 매핑 함수
 const mapSearchTermToStock = (term: string) => {
@@ -39,7 +40,11 @@ const mapSearchTermToStock = (term: string) => {
 
 // 가격 변동에 따른 클래스 이름 반환 함수
 const changeClassName = (price: number) =>
-  price > 0 ? "text-warning-100" : price < 0 ? "text-blue-600" : "text-grayscale-500";
+  price > 0
+    ? "text-warning-100"
+    : price < 0
+    ? "text-blue-600"
+    : "text-grayscale-500";
 
 // 비교 가격 포맷팅 함수
 const formatComparePrice = (comparePrice: string) =>
@@ -59,6 +64,7 @@ export default function SearchAf() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태
   const searchParams = useSearchParams(); // URL 쿼리 파라미터 가져오기
   const query = searchParams.get("query"); // 'query' 파라미터 값 가져오기
+  const { userInfo } = useUserStore(); // 사용자 정보 가져오기
 
   useEffect(() => {
     if (query) {
@@ -76,23 +82,22 @@ export default function SearchAf() {
           const stockSnap = await getDoc(stockDoc);
           if (stockSnap.exists()) {
             const data = stockSnap.data();
-            console.log('Stock data:', data); // 로그 추가
+            
             setStockData({
-              stockName: inputValue,
-              stockCode: data.reutersCode,
-              SymbolCode: data.symbolCode,
+              stockName: data.stockName,
+              stockCode: data.stockCode,
+              symbolCode: data.symbolCode,
               closePrice: data.closePrice,
               compareToPreviousClosePrice: data.compareToPreviousClosePrice,
               fluctuationsRatio: data.fluctuationsRatio,
             }); // 주식 데이터 설정
             setErrorMessage(null); // 에러 메시지 초기화
           } else {
-            console.log("stocks 컬렉션이 존재하지 않습니다.");
             setStockData(null); // 주식 데이터 초기화
             setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
           }
         } catch (error) {
-          console.error('Error fetching stock data:', error);
+          console.error("Error fetching stock data:", error);
           setErrorMessage("데이터를 불러오는 도중 오류가 발생했습니다.");
         }
       } else {
@@ -131,9 +136,10 @@ export default function SearchAf() {
               {
                 stockName: stockData.stockName,
                 stockCode: stockData.stockCode,
-                SymbolCode: stockData.SymbolCode,
+                symbolCode: stockData.symbolCode,
                 closePrice: stockData.closePrice,
-                compareToPreviousClosePrice: stockData.compareToPreviousClosePrice,
+                compareToPreviousClosePrice:
+                  stockData.compareToPreviousClosePrice,
                 fluctuationsRatio: stockData.fluctuationsRatio,
               },
             ]}
