@@ -1,14 +1,12 @@
-import { useStockStore } from "@/stores/stockStore";
 import TrendingSearchItem from "./TrendingSearchItem";
 import { TSearchCountType, TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
 import TrendingSkeleton from "./TrendingSkeleton";
 import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
 // 인기검색어 DB 조회
 const getTrendingSearchList = async (): Promise<TSearchCountType[]> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const res = await (await fetch(`${baseUrl}/api/searchCount`)).json();
   return res;
 };

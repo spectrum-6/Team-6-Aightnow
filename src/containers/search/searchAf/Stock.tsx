@@ -21,7 +21,7 @@ export default function Stock({ stockNames, onItemClick }: TStockProps) {
           ({stockNames.length})
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl">
+      <div className=" bg-white p-6 rounded-xl">
         {stockNames.slice(0, 6).map((stock, index) => (
           <SrcStockList
             key={index}
