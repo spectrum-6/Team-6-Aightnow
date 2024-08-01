@@ -4,7 +4,7 @@ type TStockProps = {
   stockNames: {
     stockName: string;
     stockCode: string;
-    SymbolCode: string;
+    symbolCode: string;
     closePrice: string;
     compareToPreviousClosePrice: string;
     fluctuationsRatio: string;
@@ -27,7 +27,7 @@ export default function Stock({ stockNames, onItemClick }: TStockProps) {
             key={index}
             stockName={stock.stockName}
             stockCode={stock.stockCode}
-            symbolCode={stock.SymbolCode}
+            symbolCode={stock.symbolCode}
             closePrice={stock.closePrice}
             compareToPreviousClosePrice={stock.compareToPreviousClosePrice}
             fluctuationsRatio={stock.fluctuationsRatio}
