@@ -65,5 +65,6 @@ const LatestNewsItem = forwardRef<HTMLLIElement, TLatestNewsItemProps>(
   },
 );
 
-// LatestNewsItem.displayName = "LatestNewsItem";
+LatestNewsItem.displayName = "LatestNewsItem";
+
 export default LatestNewsItem;
