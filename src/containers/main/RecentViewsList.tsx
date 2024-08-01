@@ -36,22 +36,22 @@ export const ticker: Tticker = {
 };
 
 type TRecentViewsListProps = {
-  item: string;
+  recentViewStock: string;
 };
 
 export default function RecentViewsList(props: TRecentViewsListProps) {
-  const { item } = props;
+  const { recentViewStock } = props;
 
   const [realtimeInfo, setRealtimeInfo] = useState<realtimeInfo | null>(null);
 
   const fetchRealtimeData = async () => {
-    const realtimeInfo = await getRealtimeInfo(item.toLowerCase());
+    const realtimeInfo = await getRealtimeInfo(recentViewStock);
     setRealtimeInfo(realtimeInfo);
   };
 
   useEffect(() => {
     fetchRealtimeData();
-  }, [item]);
+  }, [recentViewStock]);
 
   const getStockLogo = (reutersCode?: string) => {
     switch (reutersCode) {
@@ -90,44 +90,70 @@ export default function RecentViewsList(props: TRecentViewsListProps) {
     Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
 
   return (
-    <li className="h-20 shrink-0">
-      <Link
-        href="#"
-        className="flex justify-between items-center w-full h-full"
-      >
-        <div className="flex gap-4">
-          {getStockLogo(realtimeInfo?.reutersCode)}
-          <div className="flex flex-col justify-center">
-            <span className="text-xl font-bold grayscale-900">
-              {realtimeInfo?.stockName}
-            </span>
-            <span className="flex text-sm font-regular grayscale-900">
-              {realtimeInfo?.symbolCode}
-            </span>
+    <>
+      {realtimeInfo ? (
+        <li className="h-20 shrink-0">
+          <Link
+            href={`/report/${recentViewStock}`}
+            className="flex justify-between items-center w-full h-full"
+          >
+            <div className="flex gap-4">
+              {getStockLogo(realtimeInfo?.reutersCode)}
+              <div className="flex flex-col justify-center">
+                <span className="text-xl font-bold grayscale-900">
+                  {realtimeInfo?.stockName}
+                </span>
+                <span className="flex text-sm font-regular grayscale-900">
+                  {realtimeInfo?.symbolCode}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-lg grayscale-900 font-meduim self-end">
+                ${realtimeInfo?.closePrice}
+              </span>
+              <div className="flex gap-2">
+                <span
+                  className={changeClassName(
+                    Number(realtimeInfo?.compareToPreviousClosePrice),
+                  )}
+                >
+                  {formatComparePrice(
+                    realtimeInfo?.compareToPreviousClosePrice,
+                  )}
+                </span>
+                <span
+                  className={changeClassName(
+                    Number(realtimeInfo?.fluctuationsRatio),
+                  )}
+                >
+                  {formatRatio(realtimeInfo?.fluctuationsRatio)}%
+                </span>
+              </div>
+            </div>
+          </Link>
+        </li>
+      ) : (
+        // Skeleton
+        <li className="h-20 shrink-0">
+          <div className="w-full h-full flex justify-between items-center">
+            <div className="flex gap-4">
+              <div className="w-16 h-16 bg-grayscale-200 rounded-full animate-pulse"></div>
+              <div className="flex flex-col justify-center">
+                <div className="w-24 h-6 mb-1 bg-grayscale-200 rounded animate-pulse"></div>
+                <div className="w-16 h-4 bg-grayscale-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <div className="w-20 h-6 mb-1 bg-grayscale-200 rounded animate-pulse"></div>
+              <div className="flex gap-2">
+                <div className="w-14 h-4 bg-grayscale-200 rounded animate-pulse"></div>
+                <div className="w-14 h-4 bg-grayscale-200 rounded animate-pulse"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col justify-center">
-          <span className="text-lg grayscale-900 font-meduim self-end">
-            ${realtimeInfo?.closePrice}
-          </span>
-          <div className="flex gap-2">
-            <span
-              className={changeClassName(
-                Number(realtimeInfo?.compareToPreviousClosePrice),
-              )}
-            >
-              {formatComparePrice(realtimeInfo?.compareToPreviousClosePrice)}
-            </span>
-            <span
-              className={changeClassName(
-                Number(realtimeInfo?.fluctuationsRatio),
-              )}
-            >
-              {formatRatio(realtimeInfo?.fluctuationsRatio)}%
-            </span>
-          </div>
-        </div>
-      </Link>
-    </li>
+        </li>
+      )}
+    </>
   );
 }

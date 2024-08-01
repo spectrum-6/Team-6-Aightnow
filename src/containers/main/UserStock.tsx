@@ -5,7 +5,7 @@ import useUserStore from "@/stores/useUserStore";
 import IconExclam from "@/icons/IconExclam";
 import RecentViewsList from "./RecentViewsList";
 
-export default function RecentViews({ className }: { className?: string }) {
+export default function UserStock() {
   const { userInfo } = useUserStore();
 
   const recentViews = userInfo?.userStockCollection?.recentViews;
@@ -25,7 +25,7 @@ export default function RecentViews({ className }: { className?: string }) {
             {recentViews?.length !== 0 ? (
               <ul className="flex flex-col w-[494px] overflow-hidden">
                 {recentViews?.map((item, index) => (
-                  <RecentViewsList key={index} item={item} />
+                  <RecentViewsList key={index} recentViewStock={item} />
                 ))}
               </ul>
             ) : (
@@ -42,10 +42,9 @@ export default function RecentViews({ className }: { className?: string }) {
         <div className="flex flex-col gap-6">
           <h4 className="font-bold text-navy-900">관심 종목</h4>
           <div className="flex flex-col items-center w-[590px] h-96 rounded-2xl bg-white p-8 gap-[13px]">
-            {/* list */}
             <ul className="flex flex-col w-[494px] overflow-hidden">
               {watchList?.map((item, index) => {
-                return <InterestList key={index} item={item} />;
+                return <InterestList key={index} interestStock={item} />;
               })}
             </ul>
           </div>

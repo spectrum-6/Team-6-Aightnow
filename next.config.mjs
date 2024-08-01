@@ -23,6 +23,11 @@ const nextConfig = {
         pathname: "/dn/**",
       },
       {
+        protocol: "http",
+        hostname: "t1.kakaocdn.net",
+        pathname: "/account_images/**",
+      },
+      {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
         pathname: "/v0/b/**",

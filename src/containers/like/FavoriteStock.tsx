@@ -4,18 +4,12 @@ import FavoriteStockItem from "./FavoriteStockItem";
 import { TStockType } from "@/types/stockType";
 import { useEffect, useState } from "react";
 import useUserStore from "@/stores/useUserStore";
+import promptGenerator from "@/libs/prompts/promptGenerator";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
+import CardSkeleton from "./CardSkeleton";
 
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
+type TFavoriteStockType = TStockType & {
+  promptResult: any;
 };
 
 export default function FavoriteStock() {
@@ -23,36 +17,52 @@ export default function FavoriteStock() {
   const { userInfo } = useUserStore();
   const watchList = userInfo?.userStockCollection?.watchList; //symbolCode List
 
-  const [favoriteStock, setFavoriteStock] = useState<TStockType[]>([]);
+  const [favoriteStock, setFavoriteStock] = useState<TFavoriteStockType[]>([]);
 
   useEffect(() => {
-    let list: TStockType[] = [];
-    if (watchList) {
-      watchList.map(async (symbolCode) => {
-        const result = await getStockData(symbolCode);
+    if (!watchList) return;
 
-        if (result) {
-          list.push(result);
-        }
-        setFavoriteStock([...list]);
-      });
-    }
+    const fetchStockData = async () => {
+      if (watchList && watchList.length > 0) {
+        const promises = watchList.map(async (symbolCode) => {
+          // await new Promise((resolve) => setTimeout(resolve, 5000));
+
+          // 관심종목에 저장된 코드로 주식정보를 가져옴
+          const resultData = await getStockDataWithSymbolCode(symbolCode);
+          // 프롬프트 데이터를 가져옴
+          const promptResult = await promptGenerator(
+            symbolCode.toLowerCase(),
+            symbolCode,
+          );
+
+          const result = { ...resultData, promptResult: promptResult };
+          return result;
+        });
+
+        const resolvedResults: any = await Promise.all(promises);
+        setFavoriteStock(resolvedResults);
+      }
+    };
+
+    fetchStockData();
   }, [watchList]);
 
   return (
     <>
       <ul className="flex gap-[19px] flex-wrap">
-        {favoriteStock &&
-          favoriteStock.map((item, index) => (
-            <FavoriteStockItem
-              key={index}
-              stockName={item.stockName}
-              symbolCode={item.symbolCode}
-              closePrice={item.closePrice}
-              compareToPreviousClosePrice={item.compareToPreviousClosePrice}
-              fluctuationsRatio={item.fluctuationsRatio}
-            />
-          ))}
+        {favoriteStock.length > 0
+          ? favoriteStock.map((item, index) => (
+              <FavoriteStockItem
+                key={index}
+                promptResult={item.promptResult}
+                stockName={item.stockName}
+                symbolCode={item.symbolCode}
+                closePrice={item.closePrice}
+                compareToPreviousClosePrice={item.compareToPreviousClosePrice}
+                fluctuationsRatio={item.fluctuationsRatio}
+              />
+            ))
+          : watchList?.map((_, index) => <CardSkeleton key={_} />)}
       </ul>
     </>
   );

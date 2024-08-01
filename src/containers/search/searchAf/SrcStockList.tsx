@@ -8,6 +8,7 @@ import IconUnity from "@/icons/IconUnity";
 import { useParams } from "next/navigation";
 import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
 import Link from "next/link";
+import StockIcon from "@/components/StockIcon/StockIcon";
 
 type TSrcStockListProps = {
   stockName: string;
@@ -16,19 +17,6 @@ type TSrcStockListProps = {
   closePrice: string;
   compareToPreviousClosePrice: string;
   fluctuationsRatio: string;
-};
-
-const mapStockCodeToIcon = (symbolCode: string) => {
-  const mapping: { [key: string]: JSX.Element } = {
-    AAPL: <IconApple width={48} height={48} />,
-    AMZN: <IconAmazon width={48} height={48} />,
-    GOOGL: <IconGoogle width={48} height={48} />,
-    MSFT: <IconMs width={48} height={48} />,
-    NVDA: <IconNvidia width={48} height={48} />,
-    TSLA: <IconTesla width={48} height={48} />,
-    U: <IconUnity width={48} height={48} />,
-  };
-  return mapping[symbolCode] || null;
 };
 
 const changeClassName = (price: number) =>
@@ -58,19 +46,27 @@ export default function SrcStockList({
     <Link href={`/${locale}/report/${symbolCode}`}>
     <li className="flex justify-between items-center h-16">
       <div className="flex gap-4">
-        {mapStockCodeToIcon(symbolCode)}
+        <StockIcon symbolCode={symbolCode} width={48} height={48} />
         <div className="flex flex-col justify-center">
           <span className="text-sm font-bold grayscale-900">{stockName}</span>
           <span className="text-sm font-regular grayscale-900">{symbolCode}</span>
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <span className="text-sm grayscale-900 font-medium self-end">${closePrice}</span>
+        <span className="text-sm grayscale-900 font-medium self-end">
+          ${closePrice}
+        </span>
         <div className="flex gap-2">
-          <span className={`text-xs ${changeClassName(Number(compareToPreviousClosePrice))}`}>
+          <span
+            className={`text-xs ${changeClassName(
+              Number(compareToPreviousClosePrice),
+            )}`}
+          >
             {formatComparePrice(compareToPreviousClosePrice)}
           </span>
-          <span className={`text-xs ${changeClassName(Number(fluctuationsRatio))}`}>
+          <span
+            className={`text-xs ${changeClassName(Number(fluctuationsRatio))}`}
+          >
             {formatRatio(fluctuationsRatio)}%
           </span>
         </div>

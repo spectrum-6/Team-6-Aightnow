@@ -63,14 +63,26 @@ export default function EditProfile() {
     }
   };
 
-  // userNickname 값이 유효한지 확인하여 버튼 활성화
+  // user nickname input 값 변경 시 상태를 null 로 설정
   useEffect(() => {
-    if (userNickname.trim() !== "" && userNicknameInputState === "success") {
+    setUserNicknameInputState(null);
+  }, [userNickname]);
+
+  // 이미지 변경 혹은 닉네임 중복 체크 true일 경우에만 버튼 활성화
+  useEffect(() => {
+    const isChangeImage = profileImg !== userInfo?.profileImgUrl;
+    const isNotEmptyNickname = userNickname.trim() !== "";
+    const isCheckNickname = userNicknameInputState === "success";
+
+    if (
+      (!isNotEmptyNickname && isChangeImage) ||
+      (isNotEmptyNickname && isCheckNickname)
+    ) {
       setButtonEnable(true);
     } else {
       setButtonEnable(false);
     }
-  }, [userNickname, userNicknameInputState]);
+  }, [userNickname, userNicknameInputState, profileImg]);
 
   // ESC 키를 누르면 모달을 닫음
   useEffect(() => {
@@ -108,7 +120,7 @@ export default function EditProfile() {
 
       const updatedUserInfo: Partial<UserInfo> = {
         ...userInfo,
-        nickname: userNickname,
+        nickname: userNickname.trim() !== "" ? userNickname : userInfo.nickname,
         profileImgUrl: newProfileImgUrl,
       };
 

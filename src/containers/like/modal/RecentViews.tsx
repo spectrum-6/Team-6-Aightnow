@@ -6,19 +6,7 @@ import useUserStore from "@/stores/useUserStore";
 import RecentViewList from "./RecentViewList";
 import { UserInfo } from "@/types/UserInfo";
 import { updateUserInfo } from "@/firebase/firestore";
-
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
-};
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
 export default function RecentViews() {
   const { userInfo, setUserInfo } = useUserStore();
@@ -31,7 +19,7 @@ export default function RecentViews() {
       let list: TStockType[] = [];
 
       recentViewList.map(async (symbolCode) => {
-        const result = await getStockData(symbolCode);
+        const result = await getStockDataWithSymbolCode(symbolCode);
         list.push(result);
         setRecentViews([...list]);
       });

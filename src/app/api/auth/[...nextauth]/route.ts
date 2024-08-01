@@ -23,6 +23,11 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     async signIn({ user, account, profile }) {
       if (account && user) {
         try {
@@ -76,18 +81,15 @@ const authOptions: NextAuthOptions = {
           // 소셜 로그인 제공자별로 추가 정보 처리
           switch (account.provider) {
             case "google":
-              // Google은 기본적으로 이름을 제공하지만, 전화번호는 안줌
               userData.username = user.name;
               break;
             case "naver":
-              // Naver profile 정보에서 이름과 전화번호 추출
               if (profile) {
                 userData.username = (profile as any).name;
                 userData.phoneNumber = (profile as any).mobile;
               }
               break;
             case "kakao":
-              // Kakao profile 정보에서 이름과 전화번호 추출
               if (profile) {
                 userData.nickname = (profile as any).properties?.nickname;
                 userData.username = (profile as any).name;
@@ -97,6 +99,7 @@ const authOptions: NextAuthOptions = {
               }
               break;
           }
+
           // Firebase Firestore에 저장하기 전에 undefined 값 제거
           Object.keys(userData).forEach((key) => {
             if (userData[key as keyof UserInfo] === undefined) {
@@ -110,6 +113,10 @@ const authOptions: NextAuthOptions = {
           const customToken = await adminAuth.createCustomToken(user.id);
           (user as User & { firebaseToken?: string }).firebaseToken =
             customToken;
+
+          // accessToken 추가
+          (user as User & { accessToken?: string }).accessToken =
+            account.access_token;
         } catch (error) {
           console.error("Firebase 사용자 생성/업데이트 중 오류 발생:", error);
           return false;
@@ -117,18 +124,29 @@ const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // accessToken 추가
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+
       if (user) {
         token.firebaseToken = (
           user as User & { firebaseToken?: string }
         ).firebaseToken;
+
+        token.accessToken = (
+          user as User & { accessToken?: string }
+        ).accessToken;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub!;
-        session.firebaseToken = token.firebaseToken;
+        session.firebaseToken = token.firebaseToken as string;
+        session.accessToken = token.accessToken as string;
+
         // Firestore에서 추가 사용자 정보 가져오기
         const userRef = doc(firestore, "users", token.sub!);
         const userSnapshot = await getDoc(userRef);
@@ -145,6 +163,10 @@ const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/auth/error",
   },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

@@ -9,7 +9,6 @@ import AccountFormBox from "@/containers/account/AccountFormBox";
 import LoginForm from "@/containers/account/login/LoginForm";
 import useUserStore from "@/stores/useUserStore";
 import { signIn as firebaseSignIn, refreshToken } from "@/firebase/fireauth";
-import { UserInfo } from "@/types/UserInfo";
 
 const LoginClient: React.FC = () => {
   const router = useRouter();
@@ -25,11 +24,8 @@ const LoginClient: React.FC = () => {
       try {
         const { accessToken, userInfo } = await refreshToken(refreshTokenValue);
         setUserInfo(userInfo);
-        await fetch("/api/setAccessToken", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ accessToken }),
-        });
+        // accessToken을 세션 스토리지에 저장
+        sessionStorage.setItem("accessToken", accessToken);
         router.push(`/${locale}/main`);
         return; // 일반 로그인 성공 시 소셜 로그인 체크 스킵
       } catch (error) {
@@ -42,22 +38,15 @@ const LoginClient: React.FC = () => {
     if (session?.user) {
       try {
         // NextAuth 세션 정보를 사용하여 사용자 정보 설정
-        setUserInfo(session.user);
-
-        // 필요한 경우 Firebase 커스텀 토큰 생성 (서버 사이드에서 처리)
-        const response = await fetch("/api/createFirebaseToken", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session }),
+        setUserInfo({
+          ...session.user,
+          socialProvider: session.provider || "nextauth",
         });
-        const { firebaseToken } = await response.json();
 
-        // Firebase 토큰을 안전하게 저장 (예: HTTP-only 쿠키)
-        await fetch("/api/setFirebaseToken", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ firebaseToken }),
-        });
+        // accessToken이 session에 있다면 세션 스토리지에 저장
+        if (session.accessToken) {
+          sessionStorage.setItem("accessToken", session.accessToken);
+        }
 
         router.push(`/${locale}/main`);
       } catch (error) {
@@ -96,11 +85,8 @@ const LoginClient: React.FC = () => {
         password,
       );
       setUserInfo(userInfo);
-      await fetch("/api/setAccessToken", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken }),
-      });
+      // accessToken을 세션 스토리지에 저장
+      sessionStorage.setItem("accessToken", accessToken);
       if (isAutoLogin) {
         localStorage.setItem("refreshToken", refreshToken);
       }
