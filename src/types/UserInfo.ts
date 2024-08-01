@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface UserInfo {
   id?: string;
   uid?: string;
@@ -25,8 +27,10 @@ export interface WatchlistItem {
   timestamp: string;
 }
 
+export type TRecentSearch = { term: string; date: Timestamp };
+
 export interface IUserStockCollection {
-  recentSearch: string[];
+  recentSearch: TRecentSearch[];
   recentViews: string[];
   watchList: string[]; //symbolCode만
 }
