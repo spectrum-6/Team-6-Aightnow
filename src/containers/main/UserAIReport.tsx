@@ -7,6 +7,7 @@ import { TStockType } from "@/types/stockType";
 import { Badge } from "@/components/Badge";
 import Card from "./Card";
 import { IconAi } from "@/icons";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
 type TStocks = {
   [key: string]: string; // index signature
@@ -22,19 +23,6 @@ const stocks: TStocks = {
   NVDA: "nvda",
 };
 
-// DB에 저장된 stock 조회
-const getStockData = async (symbolCode: string) => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock/${symbolCode}`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
-};
-
 export default function UserAIReport() {
   // 세션에 저장된 유저 정보
   const { userInfo } = useUserStore();
@@ -46,7 +34,7 @@ export default function UserAIReport() {
     let list: TStockType[] = [];
     if (watchList) {
       watchList.map(async (symbolCode) => {
-        const result = await getStockData(symbolCode);
+        const result = await getStockDataWithSymbolCode(symbolCode);
 
         if (result) {
           list.push(result);
@@ -91,20 +79,20 @@ export default function UserAIReport() {
         <Badge variant="navy" icon={<IconAi />} />
       </div>
       <div className="flex gap-5">
-        {promptResults.length > 0 && favoriteStock.length > 0
+        {promptResults.length > 0
           ? promptResults.map((item, index) => {
               return (
                 <Card
                   key={index}
                   item={item}
-                  reutersCode={favoriteStock[index].reutersCode}
-                  stockName={favoriteStock[index].stockName}
-                  symbolCode={favoriteStock[index].symbolCode}
-                  closePrice={favoriteStock[index].closePrice}
+                  reutersCode={favoriteStock[index]?.reutersCode}
+                  stockName={favoriteStock[index]?.stockName}
+                  symbolCode={favoriteStock[index]?.symbolCode}
+                  closePrice={favoriteStock[index]?.closePrice}
                   compareToPreviousClosePrice={
-                    favoriteStock[index].compareToPreviousClosePrice
+                    favoriteStock[index]?.compareToPreviousClosePrice
                   }
-                  fluctuationsRatio={favoriteStock[index].fluctuationsRatio}
+                  fluctuationsRatio={favoriteStock[index]?.fluctuationsRatio}
                 />
               );
             })

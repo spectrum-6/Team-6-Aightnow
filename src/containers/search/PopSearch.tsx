@@ -1,75 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  setDoc,
-  writeBatch,
-} from "firebase/firestore";
-import { firestore } from "@/firebase/firebasedb";
 import PopSrcList from "./PopSrcList";
+import { TSearchCountType } from "@/types/stockType";
 
-type TPopularSearch = {
-  term: string;
-  count: number;
+// 인기검색어 DB 조회
+const getTrendingSearchList = async (): Promise<TSearchCountType[]> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const res = await (await fetch(`${baseUrl}/api/searchCount?limit=10`)).json();
+  return res;
 };
 
 export default function PopSearch() {
-  const [popularSearches, setPopularSearches] = useState<TPopularSearch[]>([]);
-
-  const checkAndResetSearchCounts = async () => {
-    const resetDocRef = doc(firestore, "searchCount", "lastReset");
-    const resetDoc = await getDoc(resetDocRef);
-
-    let lastResetTime = resetDoc.exists()
-      ? resetDoc.data().lastReset.toDate()
-      : null;
-    const now = new Date();
-
-    if (
-      !lastResetTime ||
-      now.getDate() !== lastResetTime.getDate() ||
-      now.getMonth() !== lastResetTime.getMonth() ||
-      now.getFullYear() !== lastResetTime.getFullYear()
-    ) {
-      // 00:00 기준 초기화 조건을 확인하여 초기화 수행
-      const searchCountRef = collection(firestore, "searchCount");
-      const snapshot = await getDocs(searchCountRef);
-      const batch = writeBatch(firestore);
-
-      snapshot.forEach((doc) => {
-        if (doc.id !== "lastReset") {
-          batch.update(doc.ref, { count: 0 });
-        }
-      });
-
-      await batch.commit();
-
-      await setDoc(resetDocRef, { lastReset: new Date() });
-
-      console.log("Search counts reset at 00:00 KST");
-    }
-  };
+  const [popularSearches, setPopularSearches] = useState<TSearchCountType[]>(
+    [],
+  );
 
   useEffect(() => {
     const fetchPopularSearches = async () => {
-      await checkAndResetSearchCounts();
-
-      const q = query(
-        collection(firestore, "searchCount"),
-        orderBy("count", "desc"),
-        limit(10),
-      );
-      const querySnapshot = await getDocs(q);
-      const searches = querySnapshot.docs.map((doc) => ({
-        term: doc.id,
-        count: doc.data().count,
-      }));
-      setPopularSearches(searches);
+      const res = await getTrendingSearchList();
+      setPopularSearches(res);
     };
 
     fetchPopularSearches();
@@ -83,15 +31,19 @@ export default function PopSearch() {
           00:00 기준
         </span>
       </div>
-      <div className="flex p-6 gap-4 rounded-xl bg-white">
-        <PopSrcList
-          popularSearches={popularSearches.slice(0, 5)}
-          startIndex={1}
-        />
-        <PopSrcList
-          popularSearches={popularSearches.slice(5, 10)}
-          startIndex={6}
-        />
+      <div className="w-[590px] max-h-64 flex flex-col flex-wrap gap-x-4 p-6 rounded-xl bg-white">
+        {popularSearches.length > 0 ? (
+          <PopSrcList popularSearches={popularSearches} />
+        ) : (
+          <>
+            {[...Array(7)].map((item, index) => (
+              <div key={index} className="flex gap-5 h-10 items-center">
+                <span className="text-base font-medium">{index + 1}</span>
+                <span className="w-28 h-6 bg-grayscale-200 rounded-2xl animate-pulse"></span>
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

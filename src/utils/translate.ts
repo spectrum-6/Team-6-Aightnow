@@ -1,20 +1,16 @@
-export const translateText = async (
-  text: string,
-  targetLanguage: string = "ko",
-): Promise<string> => {
+export const translateText = async (text: string, targetLang: string): Promise<string> => {
   const response = await fetch("/api/news/translate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text, targetLanguage }),
+    body: JSON.stringify({ text, targetLang }),
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`번역 실패: ${errorText}`);
+    throw new Error('Translation request failed');
   }
 
-  const { translatedText } = await response.json();
-  return translatedText;
+  const data = await response.json();
+  return data.translation;
 };

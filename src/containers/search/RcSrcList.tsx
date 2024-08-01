@@ -1,13 +1,12 @@
 import { IconClose, IconTime } from "@/icons";
-
-type TRecentSearch = {
-  term: string;
-  date: string;
-};
+import { TRecentSearch } from "@/types/UserInfo";
+import { fallbackLng, LocaleTypes } from "@/utils/localization/settings";
+import { Timestamp } from "firebase/firestore";
+import { useParams } from "next/navigation";
 
 type TRcSrcListProps = {
   search: TRecentSearch;
-  onDelete: (term: string, date: string) => void;
+  onDelete: (term: string, date: Timestamp) => void;
   onSearchClick: (term: string) => void;
 };
 
@@ -16,13 +15,19 @@ export default function RcSrcList({
   onDelete,
   onSearchClick,
 }: TRcSrcListProps) {
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+
   // 날짜를 mm.dd 형식으로 변환하는 함수
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
-      month: "2-digit",
-      day: "2-digit",
+  const formatDate = (timestamp: Timestamp) => {
+    const date = timestamp.toDate();
+
+    const localeOpt = locale === "ko" ? "ko-KR" : "en-US";
+
+    const formattedDate = date.toLocaleDateString(localeOpt, {
+      month: "long",
+      day: "numeric",
     });
+    return formattedDate;
   };
 
   return (

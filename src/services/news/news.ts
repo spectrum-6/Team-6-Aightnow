@@ -1,4 +1,3 @@
-// src/firebase/firestoreQueries.ts
 import { firestore } from "@/firebase/firebasedb";
 import {
   collection,
@@ -12,6 +11,7 @@ import {
   startAfter,
   doc,
   getDoc,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 
@@ -25,9 +25,10 @@ export type TNewsData = {
   content: string;
   company: string;
   image: string;
-  stock: string[];
   stockName: string;
+  relatedStocks: string[];
   viewCount: number;
+  link: string;
 };
 
 export type TStockData = {
@@ -58,7 +59,7 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
   const threeDaysAgo = Timestamp.fromDate(
     new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
   );
-  const newsRef = collection(firestore, "new3");
+  const newsRef = collection(firestore, "scheduleNewsData");
   const q = query(
     newsRef,
     where("date", ">=", threeDaysAgo),
@@ -82,6 +83,8 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
         stock: data.stock,
         stockName: data.stockName,
         viewCount: data.viewCount,
+        link: data.link,
+        relatedStocks: data.relatedStocks,
       };
     }),
   );
@@ -90,17 +93,23 @@ export const fetchPopularNews = async (): Promise<TNewsData[]> => {
 
 // 관심종목 뉴스를 가져오기
 export const fetchFavoriteStockNews = async (
-  interests: string[],
+  watchList: string[],
 ): Promise<TNewsData[]> => {
-  const newsRef = collection(firestore, "new3");
+  // Firestore에서 fetchScheduleNewsData 컬렉션 참조
+  const newsRef = collection(firestore, "scheduleNewsData");
+  // 쿼리 작성: 주식 이름이 관심 종목에 포함되고, 날짜 내림차순 정렬, 최대 5개 문서
   const q = query(
     newsRef,
-    where("stockName", "in", interests),
+    where("stockName", "in", watchList),
     orderBy("date", "desc"),
     limit(5),
   );
 
   const querySnapshot = await getDocs(q);
+
+  // fetchScheduleNewsData에서 stockName 콘솔 로그
+  console.log("fetchScheduleNewsData 쿼리:", watchList);
+
   const favoriteStockNews = await Promise.all(
     querySnapshot.docs.map(async (doc) => {
       const data = doc.data() as DocumentData;
@@ -115,17 +124,23 @@ export const fetchFavoriteStockNews = async (
         image: await getRandomImage(),
         stock: data.stock,
         stockName: data.stockName,
+        relatedStocks: data.relatedStocks,
         viewCount: data.viewCount,
+        link: data.link,
       };
     }),
   );
   return favoriteStockNews;
 };
 
+// 최신 뉴스
 export const fetchLatestNews = async (
-  lastVisible: any = null,
-): Promise<{ news: TNewsData[]; lastVisible: any }> => {
-  const newsRef = collection(firestore, "new3");
+  lastVisible: QueryDocumentSnapshot<DocumentData> | null = null,
+): Promise<{
+  news: TNewsData[];
+  lastVisible: QueryDocumentSnapshot<DocumentData> | null;
+}> => {
+  const newsRef = collection(firestore, "scheduleNewsData");
   let q = query(newsRef, orderBy("date", "desc"), limit(5));
 
   if (lastVisible) {
@@ -139,7 +154,8 @@ export const fetchLatestNews = async (
 
   const querySnapshot = await getDocs(q);
   const lastVisibleDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-  const latestNews = await Promise.all(
+
+  const news = await Promise.all(
     querySnapshot.docs.map(async (doc) => {
       const data = doc.data() as DocumentData;
       return {
@@ -153,11 +169,20 @@ export const fetchLatestNews = async (
         image: await getRandomImage(),
         stock: data.stock,
         stockName: data.stockName,
+        relatedStocks: data.relatedStocks,
         viewCount: data.viewCount,
+        link: data.link,
       };
     }),
   );
-  return { news: latestNews, lastVisible: lastVisibleDoc };
+
+  const uniqueNews = news.filter((item, index, self) =>
+    index === self.findIndex((t) => ( 
+      t.id === item.id
+    ))
+  );
+
+  return { news: uniqueNews, lastVisible: lastVisibleDoc };
 };
 
 // 뉴스 디테일 페이지의 관심 종목 가져오기
@@ -167,7 +192,7 @@ export const fetchRelatedStocks = async (
   const relatedStocks: TStockData[] = [];
 
   for (const stockId of stockIds) {
-    const stockDocRef = doc(firestore, "stocks", stockId);
+    const stockDocRef = doc(firestore, "scheduleStockData", stockId);
     const stockDocSnap = await getDoc(stockDocRef);
     if (stockDocSnap.exists()) {
       const data = stockDocSnap.data() as DocumentData;
@@ -189,30 +214,39 @@ export const fetchRelatedStocks = async (
 
 // 뉴스 디테일 페이지의 관련 기사 가져오기
 export const fetchRelatedArticles = async (
-  stockName: string,
+  stockNames: string[],
+  currentNewsId: string // 해당 ID의 뉴스 제외
 ): Promise<TNewsData[]> => {
-  const newsRef = collection(firestore, "news");
-  const q = query(newsRef, where("stock", "array-contains", stockName));
-  const querySnapshot = await getDocs(q);
+  const newsRef = collection(firestore, "scheduleNewsData");
+  const relatedArticles: TNewsData[] = [];
+  const articleIds = new Set<string>(); // 뉴스 중복 방지
 
-  const relatedArticles = querySnapshot.docs.map((doc) => {
-    const data = doc.data() as DocumentData;
-    return {
-      id: doc.id,
-      title: data.title,
-      date: data.date.toDate().toISOString(),
-      company: data.company,
-      content: Array.isArray(data.content)
-        ? data.content.join(" ")
-        : data.content,
-      image: data.image,
-      stock: data.stock,
-      stockName: data.stockName,
-      viewCount: data.viewCount,
-    };
-  });
+  for (const stockName of stockNames) {
+    const q = query(newsRef, where("relatedStocks", "array-contains", stockName));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.docs.forEach((doc) => {
+      if (!articleIds.has(doc.id) && doc.id !== currentNewsId) {
+        const data = doc.data() as DocumentData;
+        relatedArticles.push({
+          id: doc.id,
+          title: data.title,
+          date: data.date.toDate().toISOString(),
+          company: data.company,
+          content: Array.isArray(data.content) ? data.content.join(" ") : data.content,
+          image: data.image,
+          stockName: data.stockName,
+          relatedStocks: data.relatedStocks,
+          viewCount: data.viewCount,
+          link: data.link,
+        });
+        articleIds.add(doc.id); // 뉴스 중복 방지
+      }
+    });
+  }
 
   console.log("Related articles data:", relatedArticles);
 
   return relatedArticles;
 };
+

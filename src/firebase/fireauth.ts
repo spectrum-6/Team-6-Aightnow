@@ -55,6 +55,9 @@ export const signIn = async (
     const accessToken = await user.getIdToken();
     const refreshToken = user.refreshToken;
 
+    // accessToken 쿠키 저장
+    document.cookie = `userAccessToken=${accessToken}; path=/`;
+
     return { userInfo: updatedUserInfo, accessToken, refreshToken };
   } catch (error: any) {
     console.error("로그인 오류:", error);
@@ -85,6 +88,9 @@ export const refreshToken = async (
     if (!userInfo) {
       throw new Error("사용자 정보를 찾을 수 없음");
     }
+
+    // accessToken 쿠키 저장
+    document.cookie = `userAccessToken=${accessToken}; path=/`;
 
     return { accessToken, userInfo };
   } catch (error) {

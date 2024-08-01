@@ -3,22 +3,13 @@
 import Input from "@/components/Input";
 import PopSearch from "@/containers/search/PopSearch";
 import RecentSrc from "@/containers/search/RecentSrc";
-import { useState, ChangeEvent, KeyboardEvent, useEffect } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useRecentSearchStore } from "@/stores/recentSearchStore"; // 최근 검색어 스토어 import
 import useUserStore from "@/stores/useUserStore";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { firestore } from "@/firebase/firebasedb";
+import { Timestamp } from "firebase/firestore";
+import { TRecentSearch, UserInfo } from "@/types/UserInfo";
+import { updateUserInfo } from "@/firebase/firestore";
 
-// const suggestions = [
-//   "애플",
-//   "아마존",
-//   "구글",
-//   "마이크로소프트",
-//   "엔비디아",
-//   "테슬라",
-//   "유니티",
-// ]; // 추천 검색어 목록
 const suggestions = [
   "애플",
   "apple",
@@ -46,10 +37,31 @@ const suggestions = [
 export default function Search() {
   const [inputValue, setInputValue] = useState<string>("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]); // 필터링된 추천 검색어 목록
+
   const router = useRouter();
-  const { user } = useUserStore(); // 유저 정보 가져오기
-  console.log("!!!!!!!!!!!!", user);
-  const { recentSearch, setRecentSearch } = useRecentSearchStore(); // 최근 검색어 스토어에서 상태 가져오기
+
+  const { userInfo, setUserInfo } = useUserStore(); // 유저 정보 가져오기
+
+  // userStore 업데이트 및 DB 업데이트 로직 분리
+  const updateRecentSearch = async (newRecentSearch: TRecentSearch[]) => {
+    if (!userInfo || !userInfo.uid || !userInfo.userStockCollection) {
+      throw new Error(`사용자 정보를 찾을 수 없습니다.`);
+    }
+
+    // 사용자 정보 업데이트
+    const updatedUserInfo: Partial<UserInfo> = {
+      ...userInfo,
+      userStockCollection: {
+        ...userInfo.userStockCollection,
+        recentSearch: newRecentSearch,
+      },
+    };
+
+    // DB 업데이트
+    await updateUserInfo(userInfo?.uid, updatedUserInfo);
+    // 세션 정보 업데이트
+    setUserInfo(updatedUserInfo);
+  };
 
   useEffect(() => {
     if (inputValue.trim() !== "") {
@@ -62,35 +74,26 @@ export default function Search() {
     }
   }, [inputValue]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value); // 입력받은 값을 문자열로 설정
-  };
-
   const handleSearch = async (query: string) => {
+    // 필요한 user 정보가 없을 경우 에러 처리
+    if (!userInfo || !userInfo.uid || !userInfo.userStockCollection) {
+      throw new Error(`사용자 정보를 찾을 수 없습니다.`);
+    }
+
     if (query.trim() !== "") {
+      const recentSearch = userInfo.userStockCollection.recentSearch;
+
       // 최근 검색어 업데이트
       const newRecentSearch = [
-        query,
-        ...recentSearch.filter((term) => term !== query),
+        {
+          term: query,
+          date: Timestamp.fromDate(new Date()),
+        },
+        ...recentSearch.filter((item) => item.term !== query),
       ].slice(0, 10);
-      setRecentSearch(newRecentSearch);
 
-      // Firestore에 입력된 값 저장
-      if (user) {
-        try {
-          const userDoc = doc(firestore, "users", user.uid);
-          await updateDoc(userDoc, {
-            "userStockCollection.recentSearch": arrayUnion({
-              term: query,
-              date: new Date().toISOString().split("T")[0], // 날짜만 저장
-            }),
-          });
-        } catch (error) {
-          console.error("Error updating recent search:", error);
-        }
-      } else {
-        console.log("User is null, cannot update Firestore");
-      }
+      // 압데이트 호출
+      updateRecentSearch(newRecentSearch);
 
       // 검색 결과 페이지로 이동
       router.push(`/search/searchAf?query=${query}`);
@@ -114,7 +117,7 @@ export default function Search() {
       <div className="w-[590px] h-[56px]">
         <Input
           inputValue={inputValue}
-          setInputValue={handleInputChange}
+          setInputValue={(e) => setInputValue(e.target.value)}
           iconType="search"
           iconPosition="left"
           placeholder="종목을 검색해주세요"
@@ -135,7 +138,7 @@ export default function Search() {
         )}
       </div>
       {/* 최근검색어 */}
-      <RecentSrc />
+      <RecentSrc updateRecentSearch={updateRecentSearch} />
       {/* 인기 검색어 */}
       <PopSearch />
     </main>
