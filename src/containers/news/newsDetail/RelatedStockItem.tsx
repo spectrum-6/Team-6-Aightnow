@@ -47,7 +47,6 @@ export default function RelatedStockItem(props: TRelatedStockItemProps) {
       <li className="mt-5">
         {/* report 페이지로 연결 */}
         <Link href={`/${locale}/report/${symbolCode}`} className="w-full h-full block">
-        {/* 연결이 안된다융... */}
           <div className="flex justify-between">
             <div className="flex gap-4">
               <p>
@@ -74,7 +73,6 @@ export default function RelatedStockItem(props: TRelatedStockItemProps) {
               </span>
             </p>
           </div>
-          <div></div>
         </Link>
       </li>
     </>
