@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type NewsListProps = {
@@ -28,10 +29,12 @@ export default function NewsList({ news }: NewsListProps) {
           <div className="flex gap-4 items-center">
             <div className="flex w-[120px] h-[64px] bg-gray-300 rounded-lg">
               {news.image && (
-                <img
+                <Image
                   src={news.image}
                   alt={news.title}
                   className="object-cover w-full h-full rounded-lg"
+                  width={120}
+                  height={64}
                 />
               )}
             </div>

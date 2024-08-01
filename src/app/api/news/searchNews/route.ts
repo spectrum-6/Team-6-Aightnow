@@ -1,11 +1,16 @@
 import { firestore } from "@/firebase/firebasedb";
-import { collection, getDocs, or, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  or,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const stockCode = searchParams.get("stockCode");
-
-  console.log(stockCode, "-------------------");
 
   const q = query(
     collection(firestore, "scheduleNewsData"),
@@ -13,6 +18,7 @@ export async function GET(request: Request) {
       where("stockName", "==", stockCode),
       //   where("relatedStocks", "array-contains", stockCode),
     ),
+    orderBy("date", "desc"),
   );
 
   const querySnapshot = await getDocs(q);
