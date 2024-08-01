@@ -1,10 +1,12 @@
 import * as functions from "firebase-functions";
 import { fetchNewsData, fetchNewsDataSchedule } from "./newsApi";
 import { realtimeApiSchedule } from "./realTimeApi";
+import { resetCount } from "./resetSearchCount";
 
 // 기존 함수
 export const getStockDataRealtimeAPI = realtimeApiSchedule;
 export const getNewsDataAPI = fetchNewsDataSchedule;
+export const resetSearchCount = resetCount;
 
 // 테스트 함수 추가
 export const testNewsFunction = functions.https.onRequest(async (req, res) => {

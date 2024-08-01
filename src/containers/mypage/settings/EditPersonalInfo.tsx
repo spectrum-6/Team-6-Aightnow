@@ -87,7 +87,7 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
             </div>
             <div className="flex lg:items-center lg:ml-4">
               {/* 소셜연동 가입 사용자가 아닐 경우에만 계정 정보 수정 버튼 노출 */}
-              {socialProvider === "firebase" ? (
+              {socialProvider === "firebase" || !socialProvider ? (
                 <Link
                   scroll={false}
                   href="/settings/account/edit/verifyPassword"
@@ -102,7 +102,7 @@ export default function EditPersonalInfo({ userInfo }: { userInfo: UserInfo }) {
           </section>
 
           {/* 소셜연동 여부에 따라 처리 */}
-          {socialProvider !== "firebase" ? (
+          {socialProvider && socialProvider !== "firebase" ? (
             <>
               <div>
                 <div className="flex mb-2 items-center">

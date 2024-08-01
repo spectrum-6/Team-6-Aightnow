@@ -30,7 +30,19 @@ export default function MainNews() {
         />
       ) : (
         // Skeleton
-        <></>
+        <div className="flex p-12 border border-navy-100 rounded-lg gap-5">
+          <div className="w-[338px] h-[240px] bg-grayscale-200 rounded-3xl animate-pulse"></div>
+          <div className="w-[667px] h-[240px] flex flex-col">
+            <div className="w-3/4 h-8 mb-6 bg-grayscale-200 rounded animate-pulse"></div>
+            <div className="space-y-2 py-6 border-t border-grayscale-500">
+              <p className="w-full h-5 bg-grayscale-200 rounded animate-pulse"></p>
+              <p className="w-full h-5 bg-grayscale-200 rounded animate-pulse"></p>
+              <p className="w-full h-5 bg-grayscale-200 rounded animate-pulse"></p>
+              <p className="w-full h-5 bg-grayscale-200 rounded animate-pulse"></p>
+              <p className="w-full h-5 bg-grayscale-200 rounded animate-pulse"></p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

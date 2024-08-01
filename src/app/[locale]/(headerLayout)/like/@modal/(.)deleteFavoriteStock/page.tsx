@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDeleteWatchList } from "@/stores/watchListStore";
 import useUserStore from "@/stores/useUserStore";
-import { useTranslation } from "@/utils/localization/client";
 import { updateUserInfo } from "@/firebase/firestore";
 import { UserInfo } from "@/types/UserInfo";
 

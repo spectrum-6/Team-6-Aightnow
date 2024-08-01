@@ -7,19 +7,7 @@ import SearchResult from "@/containers/like/modal/SearchResult";
 import SearchContainer from "@/containers/like/modal/SearchContainer";
 import { IconClose } from "@/icons";
 import { TStockType } from "@/types/stockType";
-
-// DB에 저장된 모든 stock 리스트 조회
-const getStockListData = async () => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/scheduleStock`);
-
-    return await response.json();
-  } catch (e) {
-    console.log("error : ", e);
-  }
-};
+import { getAllStockData } from "@/utils/getStockDataFromDB";
 
 export default function AddFavoriteStock() {
   const router = useRouter();
@@ -33,7 +21,7 @@ export default function AddFavoriteStock() {
   const [stockListData, setStockListData] = useState<TStockType[]>([]);
 
   const getList = async () => {
-    const result = await getStockListData();
+    const result = await getAllStockData();
     if (result) {
       setStockListData(result);
     }
