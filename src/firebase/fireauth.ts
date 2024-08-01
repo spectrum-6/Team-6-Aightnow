@@ -89,6 +89,9 @@ export const refreshToken = async (
       throw new Error("사용자 정보를 찾을 수 없음");
     }
 
+    // accessToken 쿠키 저장
+    document.cookie = `userAccessToken=${accessToken}; path=/`;
+
     return { accessToken, userInfo };
   } catch (error) {
     console.error("토큰 갱신 오류:", error);

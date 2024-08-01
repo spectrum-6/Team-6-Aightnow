@@ -15,11 +15,12 @@ export default function RcSrcList({
   onDelete,
   onSearchClick,
 }: TRcSrcListProps) {
+  const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
+
   // 날짜를 mm.dd 형식으로 변환하는 함수
   const formatDate = (timestamp: Timestamp) => {
     const date = timestamp.toDate();
 
-    const locale = (useParams()?.locale as LocaleTypes) || fallbackLng;
     const localeOpt = locale === "ko" ? "ko-KR" : "en-US";
 
     const formattedDate = date.toLocaleDateString(localeOpt, {
