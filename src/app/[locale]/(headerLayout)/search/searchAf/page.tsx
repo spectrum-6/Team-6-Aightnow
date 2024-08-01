@@ -2,13 +2,10 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "@/firebase/firebasedb";
-import ChatBotBtn from "@/components/Chatbot/ChatBotBtn";
 import Input from "@/components/Input";
 import News from "@/containers/search/searchAf/News";
 import Stock from "@/containers/search/searchAf/Stock";
-import useUserStore from "@/stores/useUserStore";
+import { getStockDataWithSymbolCode } from "@/utils/getStockDataFromDB";
 
 // 검색어 매핑 함수
 const mapSearchTermToStock = (term: string) => {
@@ -59,12 +56,12 @@ const formatRatio = (ratio: string) =>
   Number(ratio) > 0 ? `+${ratio}` : `${ratio}`;
 
 export default function SearchAf() {
+  const searchParams = useSearchParams(); // URL 쿼리 파라미터 가져오기
+  const query = searchParams.get("query"); // 'query' 파라미터 값 가져오기
+
   const [inputValue, setInputValue] = useState<string>("");
   const [stockData, setStockData] = useState<any>(null); // 주식 데이터 상태
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태
-  const searchParams = useSearchParams(); // URL 쿼리 파라미터 가져오기
-  const query = searchParams.get("query"); // 'query' 파라미터 값 가져오기
-  const { userInfo } = useUserStore(); // 사용자 정보 가져오기
 
   useEffect(() => {
     if (query) {
@@ -78,11 +75,11 @@ export default function SearchAf() {
       const stockCode = mapSearchTermToStock(inputValue);
       if (stockCode) {
         try {
-          const stockDoc = doc(firestore, "scheduleStockData", stockCode);
-          const stockSnap = await getDoc(stockDoc);
-          if (stockSnap.exists()) {
-            const data = stockSnap.data();
-            
+          const data = await getStockDataWithSymbolCode(stockCode);
+          if (data.result === "no data") {
+            setStockData(null); // 주식 데이터 초기화
+            setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
+          } else {
             setStockData({
               stockName: data.stockName,
               stockCode: data.stockCode,
@@ -92,9 +89,6 @@ export default function SearchAf() {
               fluctuationsRatio: data.fluctuationsRatio,
             }); // 주식 데이터 설정
             setErrorMessage(null); // 에러 메시지 초기화
-          } else {
-            setStockData(null); // 주식 데이터 초기화
-            setErrorMessage("검색어와 일치하는 주식 코드가 없습니다.");
           }
         } catch (error) {
           console.error("Error fetching stock data:", error);
@@ -155,7 +149,6 @@ export default function SearchAf() {
         {/* 뉴스 */}
         <News stockCode={mapSearchTermToStock(inputValue)} />
       </main>
-      <ChatBotBtn />
     </>
   );
 }
